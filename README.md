@@ -1,8 +1,8 @@
 # BlazorShop
 
-Uma aplicação de e-commerce desenvolvida com **Blazor** e **ASP.NET Core**, projetada utilizando arquitetura em camadas, separação de responsabilidades e comunicação através de APIs REST.
+Uma aplicação de e-commerce desenvolvida com Blazor e ASP.NET Core, projetada utilizando arquitetura em camadas, separação de responsabilidades e comunicação através de APIs REST.
 
-O projeto foi criado com foco em escalabilidade, manutenibilidade e aplicação de boas práticas do ecossistema .NET, simulando cenários encontrados em sistemas corporativos reais.
+O projeto foi criado com foco em escalabilidade, aplicação de boas práticas do ecossistema .NET, simulando cenários encontrados em sistemas corporativos reais.
 
 ---
 
@@ -137,7 +137,10 @@ dotnet restore
 cd BlazorShop.Api
 dotnet run
 ```
-
+## Executar Banco de dados
+```bash
+dotnet ef database update
+```
 ### Executar o Front-end
 
 ```bash
@@ -146,8 +149,6 @@ dotnet run
 ```
 
 ---
-
-## Status do Projeto
 
 🚧 Projeto em desenvolvimento ativo.
 
