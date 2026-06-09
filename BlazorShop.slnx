@@ -1,0 +1,5 @@
+<Solution>
+  <Project Path="BlazorShop.Api/BlazorShop.Api.csproj" Id="6384af40-22dc-4e84-b048-25a6a16517fc" />
+  <Project Path="BlazorShop.Models/BlazorShop.Models.csproj" Id="598ea2ea-5dd0-4cb0-8681-21e20020fe61" />
+  <Project Path="BlazorShop.Web/BlazorShop.Web.csproj" />
+</Solution>
