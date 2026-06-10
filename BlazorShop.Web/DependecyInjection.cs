@@ -19,13 +19,13 @@ public static class DependecyInjection
         services.AddHttpClient(HttpConfiguration.Compras, opts =>
         {
             opts.BaseAddress = new Uri(HttpConfiguration.BaseUrl);
-            opts.Timeout = TimeSpan.FromSeconds(30);
+            opts.Timeout = TimeSpan.FromSeconds(10);
         });
 
         services.AddHttpClient(HttpConfiguration.Produtos, opts =>
         {
             opts.BaseAddress = new Uri(HttpConfiguration.BaseUrl);
-            opts.Timeout = TimeSpan.FromSeconds(30);
+            opts.Timeout = TimeSpan.FromSeconds(10);
         });
     }
 }

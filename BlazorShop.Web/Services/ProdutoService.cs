@@ -1,4 +1,5 @@
-﻿using BlazorShop.Models.Config;
+﻿using BlazorShop.Models.Commons;
+using BlazorShop.Models.Config;
 using BlazorShop.Models.DTOs;
 using BlazorShop.Web.Services.Interfaces;
 using System.Net;
@@ -16,13 +17,17 @@ public class ProdutoService : IProdutoService
         _logger = logger;
     }
 
-    public async Task<IEnumerable<ProdutoDto>> GetItens()
+    public async Task<OperationResult<IEnumerable<ProdutoDto>>> GetItens()
     {
         try
         {
             var produtosDto = await _httpClient.
-            GetFromJsonAsync<IEnumerable<ProdutoDto>>("/api/produtos");
-            return produtosDto;
+            GetFromJsonAsync<IEnumerable<ProdutoDto>>("produtos");
+            if (produtosDto != null)
+            {
+                return OperationResult<IEnumerable<ProdutoDto>>.Ok(produtosDto);
+            }
+            return OperationResult<IEnumerable<ProdutoDto>>.Fail("NENHUM PRODUTO ENCONTRADO");
         }
         catch (Exception)
         {
@@ -31,18 +36,24 @@ public class ProdutoService : IProdutoService
         }
     }
 
-    public async Task<ProdutoDto> GetItem(int id)
+    public async Task<OperationResult<ProdutoDto>> GetItem(int id)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"api/produtos/{id}");
+            var response = await _httpClient.GetAsync($"produtos/{id}");
             if (response.IsSuccessStatusCode)
             {
                 if (response.StatusCode == HttpStatusCode.NoContent)
                 {
-                    return default(ProdutoDto);
+                    return OperationResult<ProdutoDto>.Ok(new ProdutoDto());
                 }
-                return await response.Content.ReadFromJsonAsync<ProdutoDto>();
+                var produto = await _httpClient.GetFromJsonAsync<ProdutoDto>($"produtos/{id}");
+                if (produto != null)
+                {
+                    return OperationResult<ProdutoDto>.Ok(produto);
+                }
+                return OperationResult<ProdutoDto>.Fail("Produto não encontrado");
+
             }
             else
             {
@@ -50,12 +61,11 @@ public class ProdutoService : IProdutoService
                 _logger.LogError("Erro ao obter o produto pelo id {Id} - {Message}", id, message);
                 throw new Exception($"Status Code: {response.StatusCode} - {message}");
             }
-            
+
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            _logger.LogError("Erro ao obter o produto ou acessar a API");
-            throw;
+            return OperationResult<ProdutoDto>.Fail("ERRO INTERNO CONTATAR O SUPORTE, OU TENTE MAIS TARDE!"+ex.Message);
         }
     }
 }

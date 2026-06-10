@@ -26,6 +26,7 @@ else
                         @Produto.Preco.ToString("C")&nbsp;(@Produto.Quantidade items em estoque)
                     </b>
                 </p>
+                
             </div>
             <div>
                 <button class="btn btn-success"
@@ -36,7 +37,7 @@ else
                             Quantidade = 1
                         })">
 
-                Incluir no Carrinho
+                    Incluir no Carrinho
                 </button>
             </div>
         </div>
@@ -45,11 +46,11 @@ else
 
 @code {
     [Inject]
-    public IProdutoService? ProdutoService { get; set; }
+    public IProdutoService ProdutoService { get; set; } = null!;
     [Inject]
-    public ICarrinhoCompraService? CarrinhoCompraService { get; set; }
+    public ICarrinhoCompraService? CarrinhoCompraService { get; set; } = null!;
     [Inject]
-    public NavigationManager? NavigationManager { get; set; }
+    public NavigationManager? NavigationManager { get; set; }= null!;
 
     [Parameter]
     public int id { get; set; }
@@ -58,27 +59,23 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        
-        try
+        OperationResult<ProdutoDto> resultado = await ProdutoService.GetItem(id);
+        if (resultado.Success)
         {
-            Produto = await ProdutoService.GetItem(id);
+            Produto = resultado.Value;
         }
-        catch (Exception ex)
+        else
         {
-            MensagemErro = ex.Message;
+            MensagemErro = resultado.Message;
         }
     }
 
     protected async Task AdicionarAoCarrinho_Click(CarrinhoItemAdicionaDto carrinhoItemAdicionaDto)
     {
-        try
-        {
-            var carrinhoItemDto = await CarrinhoCompraService.AdicionaItem(carrinhoItemAdicionaDto);
-            NavigationManager.NavigateTo("/CarrinhoCompra");
-        }
-        catch (Exception ex)
-        {
-            throw;
-        }
+
+        var carrinhoItemDto = await CarrinhoCompraService.AdicionaItem(carrinhoItemAdicionaDto);
+        NavigationManager.NavigateTo("/CarrinhoCompra");
+
+        
     }
 }

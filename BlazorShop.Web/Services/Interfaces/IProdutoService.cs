@@ -1,9 +1,10 @@
-﻿using BlazorShop.Models.DTOs;
+﻿using BlazorShop.Models.Commons;
+using BlazorShop.Models.DTOs;
 
 namespace BlazorShop.Web.Services.Interfaces;
 
 public interface IProdutoService
 {
-    Task<IEnumerable<ProdutoDto>> GetItens();
-    Task<ProdutoDto> GetItem(int id);
+    Task<OperationResult<IEnumerable<ProdutoDto>>> GetItens();
+    Task<OperationResult<ProdutoDto>> GetItem(int id);
 }
