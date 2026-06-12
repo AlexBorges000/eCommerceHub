@@ -122,7 +122,7 @@ Além das funcionalidades de negócio, o foco está na aplicação de conceitos 
 ### Clonar o repositório
 
 ```bash
-git clone https://github.com/seu-usuario/BlazorShop.git
+git clone https://github.com/AlexBorges000/eCommerceHub.git
 ```
 
 ### Restaurar dependências
