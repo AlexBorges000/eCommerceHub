@@ -1,6 +1,6 @@
 ﻿using BlazorShop.Api.Entities;
 
-namespace BlazorShop.Api.Repositories;
+namespace BlazorShop.Api.Repositories.Interfaces;
 
 public interface IProdutoRepository
 {

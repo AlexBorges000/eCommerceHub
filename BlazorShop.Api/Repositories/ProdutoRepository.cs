@@ -1,5 +1,6 @@
 ﻿using BlazorShop.Api.Context;
 using BlazorShop.Api.Entities;
+using BlazorShop.Api.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlazorShop.Api.Repositories;

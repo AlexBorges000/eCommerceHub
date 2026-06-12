@@ -1,5 +1,5 @@
 ﻿using BlazorShop.Api.Mappings;
-using BlazorShop.Api.Repositories;
+using BlazorShop.Api.Repositories.Interfaces;
 using BlazorShop.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 

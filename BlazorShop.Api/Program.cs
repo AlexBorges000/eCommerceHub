@@ -1,5 +1,6 @@
 using BlazorShop.Api.Context;
 using BlazorShop.Api.Repositories;
+using BlazorShop.Api.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Net.Http.Headers;
 

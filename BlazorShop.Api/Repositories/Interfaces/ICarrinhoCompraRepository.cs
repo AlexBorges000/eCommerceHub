@@ -1,7 +1,7 @@
 ﻿using BlazorShop.Api.Entities;
 using BlazorShop.Models.DTOs;
 
-namespace BlazorShop.Api.Repositories;
+namespace BlazorShop.Api.Repositories.Interfaces;
 
 public interface ICarrinhoCompraRepository
 {

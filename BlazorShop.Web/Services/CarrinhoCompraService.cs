@@ -39,9 +39,9 @@ public class CarrinhoCompraService : ICarrinhoCompraService
                 throw new Exception($"Http Status Code: {response.StatusCode}, Message: {message}");
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            return OperationResult<CarrinhoItemDto>.Fail("ERRO INTERNO! CONTATE O SUPORTE DE SISTEMA!");
+            return OperationResult<CarrinhoItemDto>.Fail("ERRO INTERNO! CONTATE O SUPORTE DE SISTEMA!" + ex.Message);
         }
     }
 
@@ -56,9 +56,9 @@ public class CarrinhoCompraService : ICarrinhoCompraService
             }
             return OperationResult<CarrinhoItemDto>.Ok(new CarrinhoItemDto());
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            return OperationResult<CarrinhoItemDto>.Fail("ERRO INTERNO! CONTATE O SUPORTE DE SISTEMA!");
+            return OperationResult<CarrinhoItemDto>.Fail("ERRO INTERNO! CONTATE O SUPORTE DE SISTEMA!" + ex.Message);
         }
 
     }
@@ -88,9 +88,9 @@ public class CarrinhoCompraService : ICarrinhoCompraService
                 throw new Exception($"Http Status Code: {response.StatusCode}, Message: {message}");
             }
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            return OperationResult<List<CarrinhoItemDto>>.Fail("ERRO INTERNO! CONTATE O SUPORTE DE SISTEMA!");
+            return OperationResult<List<CarrinhoItemDto>>.Fail("ERRO INTERNO! CONTATE O SUPORTE DE SISTEMA!" + ex.Message);
         }
     }
 
@@ -121,9 +121,28 @@ public class CarrinhoCompraService : ICarrinhoCompraService
             }
 
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            return OperationResult<List<CarrinhoItemDto>>.Fail("ERRO INTERNO CONTATAR O SUPORTE"); ;
+            return OperationResult<List<CarrinhoItemDto>>.Fail("ERRO INTERNO CONTATAR O SUPORTE" + ex.Message); ;
         }
     }
+
+    public async Task<OperationResult<CarrinhoItemDto>> AtualizaQuantidade(int id, CarrinhoItemAtualizaQuantidadeDto carrinhoItemAtualizaQuantidadeDto)
+    {
+        try
+        {
+            var response = await _httpClient.GetAsync($"CarrinhoCompra/{id}/");
+            if (response.IsSuccessStatusCode)
+            {
+                return OperationResult<CarrinhoItemDto>.Ok(new CarrinhoItemDto());
+            }
+            return OperationResult<CarrinhoItemDto>.Ok(new CarrinhoItemDto());
+        }
+        catch(Exception ex)
+        {
+            return OperationResult<CarrinhoItemDto>.Fail("Erro FATAL: " + ex);
+        }
+    }
+
+    
 }

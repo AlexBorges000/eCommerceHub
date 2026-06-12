@@ -1,5 +1,6 @@
-﻿using BlazorShop.Api.Mappings;
-using BlazorShop.Api.Repositories;
+﻿using BlazorShop.Api.Entities;
+using BlazorShop.Api.Mappings;
+using BlazorShop.Api.Repositories.Interfaces;
 using BlazorShop.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
@@ -124,5 +125,28 @@ public class CarrinhoCompraController : ControllerBase
         }
     }
 
+    [HttpPatch("{id:int}")]
+    public async Task<ActionResult<CarrinhoItemDto>> AtualizaQuantidade(int id, CarrinhoItemAtualizaQuantidadeDto carrinhoItemAtualizaQuantidadeDto)
+    {
 
+        try
+        {
+
+            var carrinhoItem = await _carrinhoCompraRepository.AtualizaQuantidade(id,
+                                   carrinhoItemAtualizaQuantidadeDto);
+
+            if (carrinhoItem == null)
+            {
+                return NotFound();
+            }
+            var produto = await _produtoRepository.GetItem(carrinhoItem.ProdutoId);
+            var carrinhoItemDto = carrinhoItem.ConverterCarrinhoItemParaDto(produto);
+            return Ok(carrinhoItemDto);
+
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(StatusCodes.Status500InternalServerError, ex.Message);
+        }
+    }
 }
