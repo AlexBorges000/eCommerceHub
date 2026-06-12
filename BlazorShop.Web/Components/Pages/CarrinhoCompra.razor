@@ -1,5 +1,6 @@
 ﻿@page "/CarrinhoCompra"
 @rendermode InteractiveServer
+@inject IJSRuntime JSRuntime
 
 @if (CarrinhoCompraItens is null && MensagemErro is null)
 {
@@ -27,7 +28,20 @@ else
                             <div class="mb-4">
                                 @item.ProdutoDescricao
                             </div>
-                            <span>Preço:<b> @item.Preco.ToString("c")</b></span>
+                            <!-- TODO Fazer a quantidade aumentar/diminuir com o click na caixa de valores ou usar a uma caixa de seleção-->                         
+                                <label>Quantidade:</label>
+                                <input type="number" value="@item.Quantidade" min="1" max="99"/>
+                               <!--- <select name="quantidade" id="quantidade">
+                                    <option hidden value="@item.Quantidade"> @item.Quantidade Unidade</option>
+                                    <option value="1">1 Unidade</option>
+                                    <option value="2"> 2 Unidade</option>
+                                    <option value="3"> 3 Unidade</option>
+                                    <option value="4"> 4 Unidade</option>
+                                    <option value="other"> + de 4</option>
+                                </select>
+                                --->
+                            <br />
+                            <span>Valor Total:<b>@(item.Preco * item.Quantidade)</b></span>
                             <div>
                                 <button class="btn btn-danger sm" @onclick="() => DeleteCarrinhoItem_Click(item.Id)">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
@@ -44,7 +58,7 @@ else
             <div class="col-md-3">
                 <h5> Carrinho - Resumo</h5>
                 <div class="mt-2">
-                    <div>Total - </div>
+                    <div>Total - @ValorFinal().ToString("C")</div>
                     <a href="#" class="btn btn-success">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-credit-card" viewBox="0 0 16 16">
                             <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v1h14V4a1 1 0 0 0-1-1zm13 4H1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1z" />
@@ -64,10 +78,11 @@ else
 }
 
 @code {
-    [Inject] 
+    [Inject]
     public ICarrinhoCompraService CarrinhoCompraService { get; set; } = null!;
     public List<CarrinhoItemDto> CarrinhoCompraItens { get; set; } = null!;
     public string? MensagemErro { get; set; }
+    public int Quantidade { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
@@ -76,7 +91,7 @@ else
         {
             MensagemErro = result.Message;
         }
-        CarrinhoCompraItens = result.Value!;
+        CarrinhoCompraItens = result.Value;
     }
 
     protected async Task DeleteCarrinhoItem_Click(int id)
@@ -91,9 +106,21 @@ else
         return CarrinhoCompraItens.FirstOrDefault(x => x.Id == id);
     }
 
+    private decimal ValorFinal()
+    {
+        return CarrinhoCompraItens
+        .Sum(itens => itens.Preco * itens.Quantidade);
+    }
+
+    /*private decimal ValorProdutos(int quantidade)
+    {
+        var qtd = JSRuntime.
+       return CarrinhoCompraItens.Sum(itens => itens.Preco * quantidade);
+    }*/
     private async Task RemoveCarrinhoItem(int id)
     {
         var carrinhoItemDto = GetCarrinhoItem(id);
         CarrinhoCompraItens.Remove(carrinhoItemDto);
     }
+
 }

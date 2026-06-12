@@ -1,6 +1,8 @@
 ﻿using BlazorShop.Api.Context;
 using BlazorShop.Api.Entities;
+using BlazorShop.Api.Repositories.Interfaces;
 using BlazorShop.Models.DTOs;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Migrations.Operations;
 using System.Security.AccessControl;
@@ -45,17 +47,15 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
     }
     public async Task<CarrinhoItem> AtualizaQuantidade(int id, CarrinhoItemAtualizaQuantidadeDto carrinhoItemAtulizaQuantidadeDto)
     {
-        /*var item = await(from produto in _context.CarrinhoItem
-                     where produto.ProdutoId == id
-                     select new CarrinhoItem
-                     {
-                         ProdutoId = carrinhoItemAtulizaQuantidadeDto.CarrinhoItemId,
-                         Quantidade = carrinhoItemAtulizaQuantidadeDto.Quantidade
-                     }).SingleOrDefaultAsync();
-        var resultado = _context.Update(item);
-        await _context.SaveChangesAsync();
-        return resultado.Entity;*/
-        throw new NotImplementedException();
+        var carrinhoItem = await _context.CarrinhoItem.FindAsync(id);
+
+        if (carrinhoItem is not null)
+        {
+            carrinhoItem.Quantidade = carrinhoItemAtulizaQuantidadeDto.Quantidade;
+            await _context.SaveChangesAsync();
+            return carrinhoItem;
+        }
+        return null;
     }
 
     public async Task<CarrinhoItem> DeleteItem(int id)

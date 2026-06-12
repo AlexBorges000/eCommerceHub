@@ -9,4 +9,5 @@ public interface ICarrinhoCompraService
     Task<OperationResult<CarrinhoItemDto>> AdicionaItem(CarrinhoItemAdicionaDto carrinhoItemAdicionaDto);
     Task<OperationResult<CarrinhoItemDto>> DeleteItem(int id);
     Task<OperationResult<List<CarrinhoItemDto>>> GetItensReturnsResult(int usuarioId);
+    Task<OperationResult<CarrinhoItemDto>> AtualizaQuantidade(int usuarioId, CarrinhoItemAtualizaQuantidadeDto carrinhoItemAtualizaQuantidadeDto);
 }
