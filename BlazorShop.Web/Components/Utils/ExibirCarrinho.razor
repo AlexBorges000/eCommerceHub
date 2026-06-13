@@ -1,0 +1,40 @@
+﻿<div class="row mb-3">
+    <div class="col-md-3">
+        <img src="@Item.ProdutoImagemURL" width="250" class="img-thumbnail" />
+    </div>
+    <div class="col-md-9">
+        <h5>@Item.ProdutoNome</h5>
+        <div class="mb-4">
+            @Item.ProdutoDescricao
+        </div>
+        <label>Quantidade:</label>
+        <input type="number" @bind-value="@Item.Quantidade" @bind-value:event="oninput" @bind-value:after="() => UpdateQuantidade()" "min="1" max="50" />
+        <br />
+        <span>Valor Total:<b>@(Item.Preco * Item.Quantidade)</b></span>
+        <div>
+            <button class="btn btn-danger sm" @onclick="() => Delete()">
+                <i class="bi bi-trash"/>
+            </button>
+        </div>
+    </div>
+
+</div>
+
+@code{
+    [Parameter]
+    public CarrinhoItemDto Item { get; set; } = null!;
+    [Parameter]
+    public EventCallback<int> OnDelete { get; set; }
+    [Parameter]
+    public EventCallback<int> OnInput { get; set; }
+
+    private async Task Delete()
+    {
+        await OnDelete.InvokeAsync(Item.Id);
+    }
+
+    private async Task UpdateQuantidade()
+    {
+        await OnInput.InvokeAsync(Item.Id);
+    }
+}

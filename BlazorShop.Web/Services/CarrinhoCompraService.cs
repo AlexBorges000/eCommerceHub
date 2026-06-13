@@ -3,6 +3,8 @@ using BlazorShop.Models.Config;
 using BlazorShop.Models.DTOs;
 using BlazorShop.Web.Services.Interfaces;
 using System.Net;
+using System.Text;
+using System.Text.Json;
 namespace BlazorShop.Web.Services;
 
 public class CarrinhoCompraService : ICarrinhoCompraService
@@ -127,22 +129,31 @@ public class CarrinhoCompraService : ICarrinhoCompraService
         }
     }
 
-    public async Task<OperationResult<CarrinhoItemDto>> AtualizaQuantidade(int id, CarrinhoItemAtualizaQuantidadeDto carrinhoItemAtualizaQuantidadeDto)
+    public async Task<OperationResult<CarrinhoItemDto>> AtualizaQuantidade(CarrinhoItemAtualizaQuantidadeDto
+                                                carrinhoItemAtualizaQuantidadeDto)
     {
         try
         {
-            var response = await _httpClient.GetAsync($"CarrinhoCompra/{id}/");
+            var jsonRequest = JsonSerializer.Serialize(carrinhoItemAtualizaQuantidadeDto);
+            var content = new StringContent(jsonRequest, Encoding.UTF8, "application/json-patch+json");
+            var response = await _httpClient.PatchAsync($"CarrinhoCompra/{carrinhoItemAtualizaQuantidadeDto.CarrinhoItemId}", content);
+
             if (response.IsSuccessStatusCode)
             {
-                return OperationResult<CarrinhoItemDto>.Ok(new CarrinhoItemDto());
+                return await response.Content.ReadFromJsonAsync<OperationResult<CarrinhoItemDto>>();
             }
-            return OperationResult<CarrinhoItemDto>.Ok(new CarrinhoItemDto());
+            return OperationResult<CarrinhoItemDto>.Fail("Ocorreu Um Erro" + response.RequestMessage);
         }
-        catch(Exception ex)
+        catch (Exception)
         {
-            return OperationResult<CarrinhoItemDto>.Fail("Erro FATAL: " + ex);
+            throw;
         }
-    }
 
-    
+    }
 }
+
+
+
+
+
+

@@ -1,8 +1,6 @@
 ﻿@page "/CarrinhoCompra"
 @rendermode InteractiveServer
-@inject IJSRuntime JSRuntime
-
-@if (CarrinhoCompraItens is null && MensagemErro is null)
+@if (CarrinhoCompraItens?.Count < 1 && MensagemErro is null)
 {
     <ExibirSpinner />
 }
@@ -12,6 +10,7 @@ else if (MensagemErro is not null)
 }
 else
 {
+
     <h3 class="mb-5">Carrinho</h3>
     @if (CarrinhoCompraItens != null)
     {
@@ -19,53 +18,13 @@ else
             <div class="col-md-9">
                 @foreach (var item in CarrinhoCompraItens)
                 {
-                    <div class="row mb-3">
-                        <div class="col-md-3">
-                            <img src="@item.ProdutoImagemURL" width="250" class="img-thumbnail" />
-                        </div>
-                        <div class="col-md-9">
-                            <h5>@item.ProdutoNome</h5>
-                            <div class="mb-4">
-                                @item.ProdutoDescricao
-                            </div>
-                            <!-- TODO Fazer a quantidade aumentar/diminuir com o click na caixa de valores ou usar a uma caixa de seleção-->                         
-                                <label>Quantidade:</label>
-                                <input type="number" value="@item.Quantidade" min="1" max="99"/>
-                               <!--- <select name="quantidade" id="quantidade">
-                                    <option hidden value="@item.Quantidade"> @item.Quantidade Unidade</option>
-                                    <option value="1">1 Unidade</option>
-                                    <option value="2"> 2 Unidade</option>
-                                    <option value="3"> 3 Unidade</option>
-                                    <option value="4"> 4 Unidade</option>
-                                    <option value="other"> + de 4</option>
-                                </select>
-                                --->
-                            <br />
-                            <span>Valor Total:<b>@(item.Preco * item.Quantidade)</b></span>
-                            <div>
-                                <button class="btn btn-danger sm" @onclick="() => DeleteCarrinhoItem_Click(item.Id)">
-                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash" viewBox="0 0 16 16">
-                                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5m3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0z" />
-                                        <path d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4zM2.5 3h11V2h-11z" />
-                                    </svg>
-                                </button>
-                            </div>
-                        </div>
-
-                    </div>
+                    <ExibirCarrinho Item="item"
+                                    OnDelete="DeleteCarrinhoItem_Click"
+                                    OnInput="OnInput" />
                 }
             </div>
             <div class="col-md-3">
-                <h5> Carrinho - Resumo</h5>
-                <div class="mt-2">
-                    <div>Total - @ValorFinal().ToString("C")</div>
-                    <a href="#" class="btn btn-success">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-credit-card" viewBox="0 0 16 16">
-                            <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm2-1a1 1 0 0 0-1 1v1h14V4a1 1 0 0 0-1-1zm13 4H1v5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1z" />
-                            <path d="M2 10a1 1 0 0 1 1-1h1a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1z" />
-                        </svg>&nbsp; Finalizar Pedido
-                    </a>
-                </div>
+                <FecharCarrinho Total="ValorFinal()" />
             </div>
         </div>
     }
@@ -77,12 +36,15 @@ else
     }
 }
 
+
+
 @code {
     [Inject]
     public ICarrinhoCompraService CarrinhoCompraService { get; set; } = null!;
     public List<CarrinhoItemDto> CarrinhoCompraItens { get; set; } = null!;
+    public CarrinhoItemAtualizaQuantidadeDto carrinhoItemAtualizaQuantidadeDtos { get; set; } = null!;
     public string? MensagemErro { get; set; }
-    public int Quantidade { get; set; }
+    private readonly Dictionary<int, CancellationTokenSource> _tokens = [];
 
     protected override async Task OnInitializedAsync()
     {
@@ -103,7 +65,8 @@ else
 
     private CarrinhoItemDto GetCarrinhoItem(int id)
     {
-        return CarrinhoCompraItens.FirstOrDefault(x => x.Id == id);
+        var produtos = CarrinhoCompraItens.SingleOrDefault(x => x.Id == id);
+        return produtos;
     }
 
     private decimal ValorFinal()
@@ -112,15 +75,51 @@ else
         .Sum(itens => itens.Preco * itens.Quantidade);
     }
 
-    /*private decimal ValorProdutos(int quantidade)
+    private async Task UpdateQuantidade(int id)
     {
-        var qtd = JSRuntime.
-       return CarrinhoCompraItens.Sum(itens => itens.Preco * quantidade);
-    }*/
+        var produto = CarrinhoCompraItens
+            .SingleOrDefault(x => x.Id == id);
+
+        var carrinhodto = new CarrinhoItemAtualizaQuantidadeDto
+        {
+            CarrinhoItemId = id,
+            Quantidade = produto.Quantidade
+        };
+        if (carrinhodto.Quantidade == 0)
+        {
+            await DeleteCarrinhoItem_Click(produto.Id);
+        }
+        await CarrinhoCompraService.AtualizaQuantidade(carrinhodto);
+
+    }
+
     private async Task RemoveCarrinhoItem(int id)
     {
         var carrinhoItemDto = GetCarrinhoItem(id);
         CarrinhoCompraItens.Remove(carrinhoItemDto);
     }
 
+    private async Task OnInput(int id)
+    {
+        if (_tokens.TryGetValue(id, out var cts))
+        {
+            cts.Cancel();
+            cts.Dispose();
+        }
+
+        cts = new CancellationTokenSource();
+
+        _tokens[id] = cts;
+
+        try
+        {
+            await Task.Delay(TimeSpan.FromSeconds(3), cts.Token);
+
+            await UpdateQuantidade(id);
+        }
+        catch (TaskCanceledException)
+        {
+            return;
+        }
+    }
 }
