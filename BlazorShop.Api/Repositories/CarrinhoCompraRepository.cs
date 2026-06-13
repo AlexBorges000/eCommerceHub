@@ -45,17 +45,19 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
     {
         return await _context.CarrinhoItem.AnyAsync(c=> c.CarrinhoId == carrinhoId && c.ProdutoId == produtoId);
     }
+
     public async Task<CarrinhoItem> AtualizaQuantidade(int id, CarrinhoItemAtualizaQuantidadeDto carrinhoItemAtulizaQuantidadeDto)
     {
         var carrinhoItem = await _context.CarrinhoItem.FindAsync(id);
 
         if (carrinhoItem is not null)
         {
+           
             carrinhoItem.Quantidade = carrinhoItemAtulizaQuantidadeDto.Quantidade;
             await _context.SaveChangesAsync();
             return carrinhoItem;
         }
-        return null;
+        throw new NullReferenceException("Erro");
     }
 
     public async Task<CarrinhoItem> DeleteItem(int id)
@@ -85,9 +87,6 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
                       }).SingleOrDefaultAsync();
 
     }
-
-
-
 
     public async Task<IEnumerable<CarrinhoItem>> GetItens(int usuarioId)
     {

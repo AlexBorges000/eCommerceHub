@@ -1,8 +1,6 @@
 ﻿@page "/CarrinhoCompra"
 @rendermode InteractiveServer
-@inject IJSRuntime JSRuntime
-
-@if (CarrinhoCompraItens is null && MensagemErro is null)
+@if (CarrinhoCompraItens?.Count < 1 && MensagemErro is null)
 {
     <ExibirSpinner />
 }
@@ -12,13 +10,14 @@ else if (MensagemErro is not null)
 }
 else
 {
+
     <h3 class="mb-5">Carrinho</h3>
     @if (CarrinhoCompraItens != null)
     {
         <div class="row mb-5">
             <div class="col-md-9">
                 @foreach (var item in CarrinhoCompraItens)
-                {
+                {      
                     <div class="row mb-3">
                         <div class="col-md-3">
                             <img src="@item.ProdutoImagemURL" width="250" class="img-thumbnail" />
@@ -28,18 +27,8 @@ else
                             <div class="mb-4">
                                 @item.ProdutoDescricao
                             </div>
-                            <!-- TODO Fazer a quantidade aumentar/diminuir com o click na caixa de valores ou usar a uma caixa de seleção-->                         
-                                <label>Quantidade:</label>
-                                <input type="number" value="@item.Quantidade" min="1" max="99"/>
-                               <!--- <select name="quantidade" id="quantidade">
-                                    <option hidden value="@item.Quantidade"> @item.Quantidade Unidade</option>
-                                    <option value="1">1 Unidade</option>
-                                    <option value="2"> 2 Unidade</option>
-                                    <option value="3"> 3 Unidade</option>
-                                    <option value="4"> 4 Unidade</option>
-                                    <option value="other"> + de 4</option>
-                                </select>
-                                --->
+                            <label>Quantidade:</label>
+                            <input type="number" @bind-value="@item.Quantidade" @bind-value:event="oninput" @bind-value:after="() => OnInput(item.Id)" "min=" 1" max="99" />
                             <br />
                             <span>Valor Total:<b>@(item.Preco * item.Quantidade)</b></span>
                             <div>
@@ -81,8 +70,9 @@ else
     [Inject]
     public ICarrinhoCompraService CarrinhoCompraService { get; set; } = null!;
     public List<CarrinhoItemDto> CarrinhoCompraItens { get; set; } = null!;
+    public CarrinhoItemAtualizaQuantidadeDto carrinhoItemAtualizaQuantidadeDtos { get; set; } = null!;
     public string? MensagemErro { get; set; }
-    public int Quantidade { get; set; }
+    private CancellationTokenSource? _cts;
 
     protected override async Task OnInitializedAsync()
     {
@@ -103,7 +93,8 @@ else
 
     private CarrinhoItemDto GetCarrinhoItem(int id)
     {
-        return CarrinhoCompraItens.FirstOrDefault(x => x.Id == id);
+        var produtos = CarrinhoCompraItens.SingleOrDefault(x => x.Id == id);
+        return produtos;
     }
 
     private decimal ValorFinal()
@@ -112,15 +103,45 @@ else
         .Sum(itens => itens.Preco * itens.Quantidade);
     }
 
-    /*private decimal ValorProdutos(int quantidade)
+    private async Task UpdateQuantidade(int id)
     {
-        var qtd = JSRuntime.
-       return CarrinhoCompraItens.Sum(itens => itens.Preco * quantidade);
-    }*/
+        await Task.Delay(TimeSpan.FromSeconds(2));
+
+        var produto = CarrinhoCompraItens
+            .SingleOrDefault(x => x.Id == id);
+
+        var carrinhodto = new CarrinhoItemAtualizaQuantidadeDto
+        {
+            CarrinhoItemId = id,
+            Quantidade = produto.Quantidade
+        };
+        if (carrinhodto.Quantidade == 0)
+        {
+            await DeleteCarrinhoItem_Click(produto.Id);
+        }
+        await CarrinhoCompraService.AtualizaQuantidade(carrinhodto);
+
+    }
+
     private async Task RemoveCarrinhoItem(int id)
     {
         var carrinhoItemDto = GetCarrinhoItem(id);
         CarrinhoCompraItens.Remove(carrinhoItemDto);
     }
 
+    private async Task OnInput(int id)
+    {
+        _cts?.Cancel();
+        _cts = new CancellationTokenSource();
+        try
+        {
+            await Task.Delay(TimeSpan.FromSeconds(3), _cts.Token);
+
+            await UpdateQuantidade(id);
+        }
+        catch (TaskCanceledException)
+        {
+            return;
+        }
+    }
 }
