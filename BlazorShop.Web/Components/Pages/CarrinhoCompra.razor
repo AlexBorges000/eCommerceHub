@@ -20,7 +20,8 @@ else
                 {
                     <ExibirCarrinho Item="item"
                                     OnDelete="DeleteCarrinhoItem_Click"
-                                    OnInput="OnInput" />
+                                    OnInput="OnInput" 
+                                    id="@item.ProdutoId"/>
                 }
             </div>
             <div class="col-md-3">
@@ -41,6 +42,10 @@ else
 @code {
     [Inject]
     public ICarrinhoCompraService CarrinhoCompraService { get; set; } = null!;
+
+    [Parameter]
+    public IEnumerable<ProdutoDto>? Produtos { get; set; }
+
     public List<CarrinhoItemDto> CarrinhoCompraItens { get; set; } = null!;
     public CarrinhoItemAtualizaQuantidadeDto carrinhoItemAtualizaQuantidadeDtos { get; set; } = null!;
     public string? MensagemErro { get; set; }
@@ -49,11 +54,17 @@ else
     protected override async Task OnInitializedAsync()
     {
         var result = await CarrinhoCompraService.GetItensReturnsResult(UsuarioLogado.CarrinhoId);
+        if (result is null)
+        {
+            MensagemErro = "Carrinho Nulo";
+            return;
+        }
         if (!result.Success)
         {
             MensagemErro = result.Message;
+            return;
         }
-        CarrinhoCompraItens = result.Value;
+        CarrinhoCompraItens = result.Value ?? new List<CarrinhoItemDto>();
     }
 
     protected async Task DeleteCarrinhoItem_Click(int id)
@@ -65,7 +76,8 @@ else
 
     private CarrinhoItemDto GetCarrinhoItem(int id)
     {
-        var produtos = CarrinhoCompraItens.SingleOrDefault(x => x.Id == id);
+        var produtos = CarrinhoCompraItens.SingleOrDefault(x => x.Id == id)
+        ?? throw new Exception("Item não encontrado no carrinho");
         return produtos;
     }
 
@@ -79,17 +91,25 @@ else
     {
         var produto = CarrinhoCompraItens
             .SingleOrDefault(x => x.Id == id);
+        if (produto is not null)
+        {
+            var carrinhodto = new CarrinhoItemAtualizaQuantidadeDto
+                {
+                    CarrinhoItemId = id,
+                    Quantidade = produto.Quantidade
+                };
 
-        var carrinhodto = new CarrinhoItemAtualizaQuantidadeDto
-        {
-            CarrinhoItemId = id,
-            Quantidade = produto.Quantidade
-        };
-        if (carrinhodto.Quantidade == 0)
-        {
-            await DeleteCarrinhoItem_Click(produto.Id);
+
+
+            if (carrinhodto.Quantidade > 0)
+            {
+                await CarrinhoCompraService.AtualizaQuantidade(carrinhodto);
+            }
+            else
+            {
+                await DeleteCarrinhoItem_Click(produto.Id);
+            }
         }
-        await CarrinhoCompraService.AtualizaQuantidade(carrinhodto);
 
     }
 
@@ -113,8 +133,7 @@ else
 
         try
         {
-            await Task.Delay(TimeSpan.FromSeconds(3), cts.Token);
-
+            await Task.Delay(TimeSpan.FromSeconds(1), cts.Token);
             await UpdateQuantidade(id);
         }
         catch (TaskCanceledException)
@@ -122,4 +141,5 @@ else
             return;
         }
     }
+    
 }

@@ -8,7 +8,7 @@
             @Item.ProdutoDescricao
         </div>
         <label>Quantidade:</label>
-        <input type="number" @bind-value="@Item.Quantidade" @bind-value:event="oninput" @bind-value:after="() => UpdateQuantidade()" "min="1" max="50" />
+        <input type="number" @bind-value="@Item.Quantidade" @bind-value:event="oninput" @bind-value:after="() => UpdateQuantidade()" min="0" max="@Quantidade" />
         <br />
         <span>Valor Total:<b>@(Item.Preco * Item.Quantidade)</b></span>
         <div>
@@ -21,12 +21,28 @@
 </div>
 
 @code{
+    [Inject]
+    public IProdutoService ProdutoService { get; set; } = null!;
     [Parameter]
     public CarrinhoItemDto Item { get; set; } = null!;
     [Parameter]
     public EventCallback<int> OnDelete { get; set; }
     [Parameter]
     public EventCallback<int> OnInput { get; set; }
+    [Parameter]
+    public int id { get; set; }
+    public ProdutoDto Produto { get; set; } = null!;
+    public int Quantidade { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        OperationResult<ProdutoDto> resultado = await ProdutoService.GetItem(id);
+        if (resultado.Success)
+        {
+            Produto = resultado.Value!;
+            Quantidade = Produto!.Quantidade;
+        }
+    }
 
     private async Task Delete()
     {
@@ -37,4 +53,5 @@
     {
         await OnInput.InvokeAsync(Item.Id);
     }
+
 }
