@@ -7,11 +7,11 @@ public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     { }
-    public DbSet<Carrinho>? Carrinho { get; set; }
-    public DbSet<CarrinhoItem>? CarrinhoItem { get; set; }
-    public DbSet<Produto>? Produtos { get; set; }
-    public DbSet<Categoria>? Categorias { get; set; }
-    public DbSet<Usuario>? Usuarios { get; set; }
+    public DbSet<Carrinho> Carrinho { get; set; } = null!;
+    public DbSet<CarrinhoItem> CarrinhoItem { get; set; } = null!;
+    public DbSet<Produto> Produtos { get; set; } = null!;
+    public DbSet<Categoria> Categorias { get; set; } = null!;
+    public DbSet<Usuario> Usuarios { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

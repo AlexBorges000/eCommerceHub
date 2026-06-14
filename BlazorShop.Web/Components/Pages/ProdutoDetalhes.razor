@@ -1,7 +1,7 @@
 ﻿@page "/ProdutoDetalhes/{id:int}"
 @rendermode InteractiveServer
 
-@if (Produto is null && MensagemErro is null)
+@if (Produto is null)
 {
     <ExibirSpinner />
 }
@@ -27,19 +27,14 @@ else
                         </b>
                         <br/>
                         <label>Quantidade:</label>
-                        <input type="number" @bind="Quantidade" min="1" max="@Produto.Quantidade" step="1">
+                        <input type="number" @bind="Quantidade" min="1" max="@Produto.Quantidade">
                     </p>
                 
                 
                 </div>
                 <div>
                     <button class="btn btn-success"
-                            @onclick="() => AdicionarAoCarrinho_Click(new CarrinhoItemAdicionaDto
-                            {
-                                CarrinhoId = UsuarioLogado.CarrinhoId,
-                                ProdutoId = Produto.Id,
-                                Quantidade = Quantidade
-                            })">
+                            @onclick="() => AdicionarAoCarrinho_Click()">
 
                         Incluir no Carrinho
                     </button>
@@ -53,22 +48,23 @@ else
     [Inject]
     public IProdutoService ProdutoService { get; set; } = null!;
     [Inject]
-    public ICarrinhoCompraService? CarrinhoCompraService { get; set; } = null!;
+    public ICarrinhoCompraService CarrinhoCompraService { get; set; } = null!;
     [Inject]
-    public NavigationManager? NavigationManager { get; set; }= null!;
+    public NavigationManager NavigationManager { get; set; }= default!;
 
     [Parameter]
     public int id { get; set; }
-    public ProdutoDto? Produto { get; set; }
+    public ProdutoDto? Produto { get; set; } = null!;
     public string? MensagemErro { get; set; }
     public int Quantidade = 1;
+    public CarrinhoItemAdicionaDto carrinhoItemAdicionaDto { get; set; } = null!;
 
     protected override async Task OnInitializedAsync()
     {
         OperationResult<ProdutoDto> resultado = await ProdutoService.GetItem(id);
         if (resultado.Success)
         {
-            Produto = resultado.Value;
+            Produto = resultado.Value ?? new ProdutoDto();
         }
         else
         {
@@ -76,10 +72,16 @@ else
         }
     }
 
-    protected async Task AdicionarAoCarrinho_Click(CarrinhoItemAdicionaDto carrinhoItemAdicionaDto)
+    protected async Task AdicionarAoCarrinho_Click()
     {
+        var dto = new CarrinhoItemAdicionaDto
+        {
+            CarrinhoId = UsuarioLogado.CarrinhoId,
+            ProdutoId = Produto!.Id,
+            Quantidade = Quantidade
+        };
 
-        var carrinhoItemDto = await CarrinhoCompraService.AdicionaItem(carrinhoItemAdicionaDto);
+        var carrinhoItemDto = await CarrinhoCompraService.AdicionaItem(dto);
         NavigationManager.NavigateTo("/CarrinhoCompra");
 
         

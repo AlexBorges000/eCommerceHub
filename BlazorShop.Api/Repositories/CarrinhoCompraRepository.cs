@@ -17,33 +17,33 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
     {
         _context = context;
     }
-    
+
     public async Task<CarrinhoItem> AdicionaItem(CarrinhoItemAdicionaDto carrinhoItemAdicionaDto)
     {
         if (await CarrinhoItemJaExiste(carrinhoItemAdicionaDto.CarrinhoId, carrinhoItemAdicionaDto.ProdutoId) == false)
         {
-           var item =  await (from produto in _context.Produtos
-                          where produto.Id == carrinhoItemAdicionaDto.ProdutoId
-                          select new CarrinhoItem
-                          {
-                              CarrinhoId = carrinhoItemAdicionaDto.CarrinhoId,
-                              ProdutoId = carrinhoItemAdicionaDto.ProdutoId,
-                              Quantidade = carrinhoItemAdicionaDto.Quantidade
-                          }).SingleOrDefaultAsync();
-            if(item is not null)
+            var item = await (from produto in _context.Produtos
+                              where produto.Id == carrinhoItemAdicionaDto.ProdutoId
+                              select new CarrinhoItem
+                              {
+                                  CarrinhoId = carrinhoItemAdicionaDto.CarrinhoId,
+                                  ProdutoId = carrinhoItemAdicionaDto.ProdutoId,
+                                  Quantidade = carrinhoItemAdicionaDto.Quantidade
+                              }).SingleOrDefaultAsync();
+            if (item is not null)
             {
                 var resultado = await _context.CarrinhoItem.AddAsync(item);
                 await _context.SaveChangesAsync();
                 return resultado.Entity;
             }
         }
-        return null;
-        
+        throw new KeyNotFoundException("NÃO FOI POSSIVEL ADICIONAR AO CARRINHO");
+
     }
 
     private async Task<bool> CarrinhoItemJaExiste(int carrinhoId, int produtoId)
     {
-        return await _context.CarrinhoItem.AnyAsync(c=> c.CarrinhoId == carrinhoId && c.ProdutoId == produtoId);
+        return await _context.CarrinhoItem.AnyAsync(c => c.CarrinhoId == carrinhoId && c.ProdutoId == produtoId);
     }
 
     public async Task<CarrinhoItem> AtualizaQuantidade(int id, CarrinhoItemAtualizaQuantidadeDto carrinhoItemAtulizaQuantidadeDto)
@@ -52,12 +52,12 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
 
         if (carrinhoItem is not null)
         {
-           
+
             carrinhoItem.Quantidade = carrinhoItemAtulizaQuantidadeDto.Quantidade;
             await _context.SaveChangesAsync();
             return carrinhoItem;
         }
-        throw new NullReferenceException("Erro");
+        throw new KeyNotFoundException("Erro");
     }
 
     public async Task<CarrinhoItem> DeleteItem(int id)
