@@ -1,6 +1,6 @@
 ﻿using BlazorShop.Api.Mappings;
 using BlazorShop.Api.Repositories.Interfaces;
-using BlazorShop.Models.DTOs;
+using BlazorShop.Models.DTOs.ProdutoDtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorShop.Api.Controllers;

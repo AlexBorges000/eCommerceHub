@@ -1,7 +1,6 @@
-﻿using BlazorShop.Api.Entities;
-using BlazorShop.Api.Mappings;
+﻿using BlazorShop.Api.Mappings;
 using BlazorShop.Api.Repositories.Interfaces;
-using BlazorShop.Models.DTOs;
+using BlazorShop.Models.DTOs.CarrinhoDtos;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorShop.Api.Controllers;
@@ -12,7 +11,6 @@ public class CarrinhoCompraController : ControllerBase
 {
     private readonly ICarrinhoCompraRepository _carrinhoCompraRepository;
     private readonly IProdutoRepository _produtoRepository;
-
     private ILogger<CarrinhoCompraController> _logger;
 
     public CarrinhoCompraController(ICarrinhoCompraRepository carrinhoCompraRepository
@@ -49,8 +47,9 @@ public class CarrinhoCompraController : ControllerBase
             return StatusCode(500, "Ocorreu um erro ao processar sua solicitação." + ex.Message);
         }
     }
+
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<CarrinhoItemDto>> GetItem(int id) 
+    public async Task<ActionResult<CarrinhoItemDto>> GetItem(int id)
     {
         try
         {
@@ -72,7 +71,7 @@ public class CarrinhoCompraController : ControllerBase
         {
             _logger.LogError(ex, "Erro ao obter item do carrinho com ID {Id}", id);
             return StatusCode(500, "Ocorreu um erro ao processar sua solicitação." + ex.Message);
-            
+
         }
     }
 
@@ -82,7 +81,7 @@ public class CarrinhoCompraController : ControllerBase
         try
         {
             var novoCarrinhoItem = await _carrinhoCompraRepository.AdicionaItem(carrinhoItemAdicionaDto);
-            if(novoCarrinhoItem == null)
+            if (novoCarrinhoItem == null)
             {
                 return NoContent();
             }
@@ -109,17 +108,17 @@ public class CarrinhoCompraController : ControllerBase
             var carrinhoItem = await _carrinhoCompraRepository.GetItem(id);
             if (carrinhoItem == null)
             {
-                return NotFound(); 
+                return NotFound();
             }
             var produto = await _produtoRepository.GetItem(carrinhoItem.ProdutoId);
-            
+
             if (produto == null)
                 return NotFound();
             await _carrinhoCompraRepository.DeleteItem(carrinhoItem.Id);
             var carrinhoItemDto = carrinhoItem.ConverterCarrinhoItemParaDto(produto);
             return Ok(carrinhoItemDto);
         }
-        catch (Exception ex) 
+        catch (Exception ex)
         {
             return StatusCode(500, "Ocorreu um erro ao processar sua solicitação." + ex.Message);
         }

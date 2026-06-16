@@ -1,5 +1,5 @@
 ﻿using BlazorShop.Api.Entities;
-using BlazorShop.Models.DTOs;
+using BlazorShop.Models.DTOs.CarrinhoDtos;
 
 namespace BlazorShop.Api.Repositories.Interfaces;
 

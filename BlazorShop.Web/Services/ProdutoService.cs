@@ -1,6 +1,6 @@
 ﻿using BlazorShop.Models.Commons;
 using BlazorShop.Models.Config;
-using BlazorShop.Models.DTOs;
+using BlazorShop.Models.DTOs.ProdutoDtos;
 using BlazorShop.Web.Services.Interfaces;
 using System.Net;
 

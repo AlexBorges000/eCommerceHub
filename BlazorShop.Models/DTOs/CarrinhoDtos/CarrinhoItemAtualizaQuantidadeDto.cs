@@ -1,4 +1,4 @@
-﻿namespace BlazorShop.Models.DTOs;
+﻿namespace BlazorShop.Models.DTOs.CarrinhoDtos;
 
 public class CarrinhoItemAtualizaQuantidadeDto
 {

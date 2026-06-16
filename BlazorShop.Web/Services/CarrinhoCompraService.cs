@@ -1,6 +1,6 @@
 ﻿using BlazorShop.Models.Commons;
 using BlazorShop.Models.Config;
-using BlazorShop.Models.DTOs;
+using BlazorShop.Models.DTOs.CarrinhoDtos;
 using BlazorShop.Web.Services.Interfaces;
 using System.Net;
 using System.Text;
