@@ -4,7 +4,6 @@ namespace BlazorShop.Models.DTOs.CarrinhoDtos;
 
 public class CarrinhoItemAdicionaDto
 {
-    public int Id { get; set; }
     [Required]
     public int CarrinhoId { get; set; }
     [Required]

@@ -23,7 +23,6 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
                               where produto.Id == carrinhoItemAdicionaDto.ProdutoId
                               select new CarrinhoItem
                               {
-                                  Id = carrinhoItemAdicionaDto.Id,
                                   CarrinhoId = carrinhoItemAdicionaDto.CarrinhoId,
                                   ProdutoId = carrinhoItemAdicionaDto.ProdutoId,
                                   Quantidade = carrinhoItemAdicionaDto.Quantidade
@@ -40,7 +39,7 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
 
             var carrinho = await _context.CarrinhoItem.Where(c => c.CarrinhoId == carrinhoItemAdicionaDto.CarrinhoId &&
                 c.ProdutoId == carrinhoItemAdicionaDto.ProdutoId).FirstOrDefaultAsync();
-            if (carrinho != null)
+            if (carrinho is not null)
             {
                 var carrinhoItemAtualizaQuantidadeDto = new CarrinhoItemAtualizaQuantidadeDto()
                 {
@@ -82,7 +81,7 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
             _context.CarrinhoItem.Remove(item);
             await _context.SaveChangesAsync();
         }
-        return item;
+        throw new KeyNotFoundException("ITEM NÃO ENCONTRADO PARA DELETAR");
     }
 
     public async Task<CarrinhoItem?> GetItem(int id)
