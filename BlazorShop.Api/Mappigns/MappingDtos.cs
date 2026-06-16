@@ -1,14 +1,16 @@
 ﻿using BlazorShop.Api.Entities;
-using BlazorShop.Models.DTOs;
+using BlazorShop.Models.DTOs.CarrinhoDtos;
+using BlazorShop.Models.DTOs.ProdutoDtos;
+using BlazorShop.Models.DTOs.UsuarioDtos;
 namespace BlazorShop.Api.Mappings;
 
 public static class MappingDtos
 {
-    public static IEnumerable<CategoriaDto> ConverterCategoriaParaDto(this IEnumerable<Categoria> categorias)
+    public static IEnumerable<ResponseProdutoCategoriaDto> ConverterCategoriaParaDto(this IEnumerable<Categoria> categorias)
     {
 
         return (from categoria in categorias
-                select new CategoriaDto
+                select new ResponseProdutoCategoriaDto
                 {
                     Id = categoria.Id,
                     Nome = categoria.Nome,
@@ -79,6 +81,25 @@ public static class MappingDtos
             CarrinhoId = carrinhoItem.CarrinhoId,
             Quantidade = carrinhoItem.Quantidade,
             PrecoTotal = produto.Preco * carrinhoItem.Quantidade
+        };
+    }
+
+    public static CadastroUsuarioDto ConverterUsuarioParaDto(this Usuario usuario)
+    {
+        return new CadastroUsuarioDto
+        {
+            Email = usuario.Email,
+            Endereco = usuario.Endereco,
+            Telefone = usuario.Telefone,
+            Senha = usuario.Senha,
+            Nome = usuario.Nome,
+            CPF = usuario.CPF,
+            CNPJ = usuario.CNPJ,
+            NomeFantasia = usuario.NomeFantasia,
+            ResponsavelCompra = usuario.ResponsavelCompra,
+            InscricaoEstadual = usuario.InscricaoEstadual,
+            RazaoSocial = usuario.RazaoSocial,
+
         };
     }
 

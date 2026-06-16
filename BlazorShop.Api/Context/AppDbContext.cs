@@ -1,4 +1,5 @@
 ﻿using BlazorShop.Api.Entities;
+using BlazorShop.Api.Entities.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlazorShop.Api.Context;
@@ -16,6 +17,20 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<Usuario>()
+            .HasIndex(x => x.CPF).IsUnique();
+
+        modelBuilder.Entity<Usuario>()
+            .HasIndex(x => x.CNPJ).IsUnique();
+
+        modelBuilder.Entity<Usuario>()
+            .HasOne(x => x.Carrinho)
+            .WithOne(x => x.Usuario)
+            .HasForeignKey<Carrinho>(x => x.UsuarioId);
+
+        modelBuilder.Entity<Usuario>()
+            .HasIndex(x => x.Email).IsUnique();
 
         modelBuilder.Entity<Produto>().HasData(new Produto
         {
@@ -265,14 +280,34 @@ public class AppDbContext : DbContext
         //Add users
         modelBuilder.Entity<Usuario>().HasData(new Usuario
         {
+
             Id = 1,
-            Name = "Macoratti"
+            TipoPessoa = TipoPessoa.Fisica,
+
+            Email = "alex@email.com",
+            Endereco = "Rua das Flores, 123",
+            Telefone = "11999999999",
+            Senha = "123456",
+
+            Nome = "Alex Borges",
+            CPF = "12345678901"
 
         });
         modelBuilder.Entity<Usuario>().HasData(new Usuario
         {
             Id = 2,
-            Name = "Janice"
+            TipoPessoa = TipoPessoa.Juridica,
+
+            Email = "compras@empresa.com.br",
+            Endereco = "Av. Paulista, 1000",
+            Telefone = "1133334444",
+            Senha = "123456",
+
+            NomeFantasia = "Empresa XPTO",
+            RazaoSocial = "Empresa XPTO Comércio LTDA",
+            ResponsavelCompra = "João Silva",
+            InscricaoEstadual = "123456789",
+            CNPJ = "12345678000199"
 
         });
 

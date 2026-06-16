@@ -1,11 +1,8 @@
 ﻿using BlazorShop.Api.Context;
 using BlazorShop.Api.Entities;
 using BlazorShop.Api.Repositories.Interfaces;
-using BlazorShop.Models.DTOs;
-using Microsoft.AspNetCore.Http.HttpResults;
+using BlazorShop.Models.DTOs.CarrinhoDtos;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Migrations.Operations;
-using System.Security.AccessControl;
 
 namespace BlazorShop.Api.Repositories;
 
@@ -26,6 +23,7 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
                               where produto.Id == carrinhoItemAdicionaDto.ProdutoId
                               select new CarrinhoItem
                               {
+                                  Id = carrinhoItemAdicionaDto.Id,
                                   CarrinhoId = carrinhoItemAdicionaDto.CarrinhoId,
                                   ProdutoId = carrinhoItemAdicionaDto.ProdutoId,
                                   Quantidade = carrinhoItemAdicionaDto.Quantidade
@@ -36,6 +34,22 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
                 await _context.SaveChangesAsync();
                 return resultado.Entity;
             }
+        }
+        else
+        {
+
+            var carrinho = await _context.CarrinhoItem.Where(c => c.CarrinhoId == carrinhoItemAdicionaDto.CarrinhoId &&
+                c.ProdutoId == carrinhoItemAdicionaDto.ProdutoId).FirstOrDefaultAsync();
+            if (carrinho != null)
+            {
+                var carrinhoItemAtualizaQuantidadeDto = new CarrinhoItemAtualizaQuantidadeDto()
+                {
+                    CarrinhoItemId = carrinho.Id,
+                    Quantidade = (carrinho.Quantidade + carrinhoItemAdicionaDto.Quantidade)
+                };
+                return await AtualizaQuantidade(carrinhoItemAtualizaQuantidadeDto.CarrinhoItemId, carrinhoItemAtualizaQuantidadeDto);
+            }
+            throw new KeyNotFoundException("NÃO FOI POSSIVEL ENCONTRAR O CARRINHO");
         }
         throw new KeyNotFoundException("NÃO FOI POSSIVEL ADICIONAR AO CARRINHO");
 

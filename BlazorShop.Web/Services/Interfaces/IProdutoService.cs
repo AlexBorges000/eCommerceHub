@@ -1,5 +1,5 @@
 ﻿using BlazorShop.Models.Commons;
-using BlazorShop.Models.DTOs;
+using BlazorShop.Models.DTOs.ProdutoDtos;
 
 namespace BlazorShop.Web.Services.Interfaces;
 
