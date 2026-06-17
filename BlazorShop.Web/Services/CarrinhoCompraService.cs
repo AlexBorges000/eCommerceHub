@@ -70,17 +70,16 @@ public class CarrinhoCompraService : ICarrinhoCompraService
         try
         {
             var response = await _httpClient.GetAsync($"CarrinhoCompra/{usuarioId}/GetItens");
-
             if (response.IsSuccessStatusCode)
             {
                 if (response.StatusCode == HttpStatusCode.NoContent)
                 {
                     return OperationResult<List<CarrinhoItemDto>>.Ok(new List<CarrinhoItemDto>());
                 }
-                var carrinhos = await response.Content.ReadFromJsonAsync<List<CarrinhoItemDto>>();
-                if (carrinhos != null)
+                var carrinhos = await response.Content.ReadFromJsonAsync<OperationResult<List<CarrinhoItemDto>>>();
+                if (carrinhos is not null)
                 {
-                    return OperationResult<List<CarrinhoItemDto>>.Ok(carrinhos);
+                    return OperationResult<List<CarrinhoItemDto>>.Ok(carrinhos.Value);
                 }
                 return OperationResult<List<CarrinhoItemDto>>.Fail("NÃO ENCONTRADO NENHUM VALOR");
             }

@@ -1,6 +1,7 @@
 ﻿using BlazorShop.Api.Context;
 using BlazorShop.Api.Entities;
 using BlazorShop.Api.Repositories.Interfaces;
+using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.CarrinhoDtos;
 using Microsoft.EntityFrameworkCore;
 
@@ -15,7 +16,7 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
         _context = context;
     }
 
-    public async Task<CarrinhoItem> AdicionaItem(CarrinhoItemAdicionaDto carrinhoItemAdicionaDto)
+    public async Task<OperationResult<CarrinhoItem>> AdicionaItem(CarrinhoItemAdicionaDto carrinhoItemAdicionaDto)
     {
         if (await CarrinhoItemJaExiste(carrinhoItemAdicionaDto.CarrinhoId, carrinhoItemAdicionaDto.ProdutoId) == false)
         {
@@ -31,7 +32,7 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
             {
                 var resultado = await _context.CarrinhoItem.AddAsync(item);
                 await _context.SaveChangesAsync();
-                return resultado.Entity;
+                return  OperationResult<CarrinhoItem>.Ok(resultado.Entity);
             }
         }
         else
@@ -46,11 +47,12 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
                     CarrinhoItemId = carrinho.Id,
                     Quantidade = (carrinho.Quantidade + carrinhoItemAdicionaDto.Quantidade)
                 };
-                return await AtualizaQuantidade(carrinhoItemAtualizaQuantidadeDto.CarrinhoItemId, carrinhoItemAtualizaQuantidadeDto);
+                var atualizaCarrinho = await AtualizaQuantidade(carrinhoItemAtualizaQuantidadeDto.CarrinhoItemId, carrinhoItemAtualizaQuantidadeDto);
+                return (OperationResult<CarrinhoItem>.Ok(atualizaCarrinho.Value));
             }
-            throw new KeyNotFoundException("NÃO FOI POSSIVEL ENCONTRAR O CARRINHO");
+            return (OperationResult<CarrinhoItem>.Fail("Item não encontrado!"));
         }
-        throw new KeyNotFoundException("NÃO FOI POSSIVEL ADICIONAR AO CARRINHO");
+        return (OperationResult<CarrinhoItem>.Fail("Item não encontrado!"));
 
     }
 
@@ -59,7 +61,7 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
         return await _context.CarrinhoItem.AnyAsync(c => c.CarrinhoId == carrinhoId && c.ProdutoId == produtoId);
     }
 
-    public async Task<CarrinhoItem> AtualizaQuantidade(int id, CarrinhoItemAtualizaQuantidadeDto carrinhoItemAtulizaQuantidadeDto)
+    public async Task<OperationResult<CarrinhoItem>> AtualizaQuantidade(int id, CarrinhoItemAtualizaQuantidadeDto carrinhoItemAtulizaQuantidadeDto)
     {
         var carrinhoItem = await _context.CarrinhoItem.FindAsync(id);
 
@@ -68,12 +70,12 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
 
             carrinhoItem.Quantidade = carrinhoItemAtulizaQuantidadeDto.Quantidade;
             await _context.SaveChangesAsync();
-            return carrinhoItem;
+            return OperationResult<CarrinhoItem>.Ok(carrinhoItem);
         }
-        throw new KeyNotFoundException("Erro");
+        return OperationResult<CarrinhoItem>.Fail("Item não ENCONTRADO PARA ADICIONAR AO CARRINHO");
     }
 
-    public async Task<CarrinhoItem> DeleteItem(int id)
+    public async Task<OperationResult<CarrinhoItem>> DeleteItem(int id)
     {
         var item = await _context.CarrinhoItem.FindAsync(id);
         if (item is not null)
@@ -81,13 +83,13 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
             _context.CarrinhoItem.Remove(item);
             await _context.SaveChangesAsync();
         }
-        throw new KeyNotFoundException("ITEM NÃO ENCONTRADO PARA DELETAR");
+        return OperationResult<CarrinhoItem>.Fail("Item não encontrado para deletar");
     }
 
-    public async Task<CarrinhoItem?> GetItem(int id)
+    public async Task<OperationResult<CarrinhoItem>> GetItem(int id)
     {
 
-        return await (from carrinho in _context.Carrinho
+        var item = await (from carrinho in _context.Carrinho
                       join carrinhoItem in _context.CarrinhoItem
                       on carrinho.Id equals carrinhoItem.CarrinhoId
                       where carrinhoItem.Id == id
@@ -98,12 +100,19 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
                           ProdutoId = carrinhoItem.ProdutoId,
                           Quantidade = carrinhoItem.Quantidade
                       }).SingleOrDefaultAsync();
-
+        if (item is not null)
+        {
+            return OperationResult<CarrinhoItem>.Ok(item);
+        }
+        else
+        {
+            return OperationResult<CarrinhoItem>.Fail("Item não encontado!");
+        }
     }
 
-    public async Task<IEnumerable<CarrinhoItem>> GetItens(int usuarioId)
+    public async Task<OperationResult<IEnumerable<CarrinhoItem>>> GetItens(int usuarioId)
     {
-        return await (from carrinho in _context.Carrinho
+        var item =  await (from carrinho in _context.Carrinho
                       join carrinhoItem in _context.CarrinhoItem
                       on carrinho.Id equals carrinhoItem.CarrinhoId
                       where carrinho.UsuarioId == usuarioId
@@ -114,5 +123,13 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
                           ProdutoId = carrinhoItem.ProdutoId,
                           Quantidade = carrinhoItem.Quantidade
                       }).ToListAsync();
+        if (item is not null)
+        {
+            return OperationResult<IEnumerable<CarrinhoItem>>.Ok(item);
+        }
+        else
+        {
+            return OperationResult<IEnumerable<CarrinhoItem>>.Fail("ITENS NÃO ENCONTRADOS");
+        }
     }
 }

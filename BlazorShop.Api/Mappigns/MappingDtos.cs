@@ -1,4 +1,5 @@
 ﻿using BlazorShop.Api.Entities;
+using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.CarrinhoDtos;
 using BlazorShop.Models.DTOs.ProdutoDtos;
 using BlazorShop.Models.DTOs.UsuarioDtos;
@@ -49,9 +50,9 @@ public static class MappingDtos
         };
     }
 
-    public static IEnumerable<CarrinhoItemDto> ConverterCarrinhoItemParaDto(this IEnumerable<CarrinhoItem> carrinhoItens, IEnumerable<Produto> produtos)
+    public static OperationResult<IEnumerable<CarrinhoItemDto>> ConverterCarrinhoItemParaDto(this IEnumerable<CarrinhoItem> carrinhoItens, IEnumerable<Produto> produtos)
     {  
-        return (from carrinhoItem in carrinhoItens 
+        var carrinho =  (from carrinhoItem in carrinhoItens 
                 join produto in produtos 
                 on carrinhoItem.ProdutoId equals produto.Id
                 select new CarrinhoItemDto
@@ -66,11 +67,19 @@ public static class MappingDtos
                     Preco = produto.Preco,
                     PrecoTotal = produto.Preco * carrinhoItem.Quantidade
                 }).ToList();
+        if (carrinho is not null)
+        {
+            return OperationResult<IEnumerable<CarrinhoItemDto>>.Ok(carrinho);
+        }
+        else
+        {
+            return OperationResult<IEnumerable<CarrinhoItemDto>>.Fail("ERRO INTERNO AO MOSTRAR OS CARRINHOS");
+        }
     }
 
-    public static CarrinhoItemDto ConverterCarrinhoItemParaDto(this CarrinhoItem carrinhoItem, Produto produto)
+    public static OperationResult<CarrinhoItemDto> ConverterCarrinhoItemParaDto(this CarrinhoItem carrinhoItem, Produto produto)
     {
-        return new CarrinhoItemDto
+        var carrinho =  new CarrinhoItemDto
         {
             Id = carrinhoItem.Id,
             ProdutoId = carrinhoItem.ProdutoId,
@@ -82,6 +91,14 @@ public static class MappingDtos
             Quantidade = carrinhoItem.Quantidade,
             PrecoTotal = produto.Preco * carrinhoItem.Quantidade
         };
+        if(carrinho is not null)
+        {
+            return OperationResult<CarrinhoItemDto>.Ok(carrinho);
+        }
+        else
+        {
+            return OperationResult<CarrinhoItemDto>.Fail("ERRO INTERNO AO MOSTRAR OS CARRINHOS");
+        }
     }
 
     public static CadastroUsuarioDto ConverterUsuarioParaDto(this Usuario usuario)

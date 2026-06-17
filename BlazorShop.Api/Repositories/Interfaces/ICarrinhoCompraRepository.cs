@@ -1,13 +1,15 @@
 ﻿using BlazorShop.Api.Entities;
+using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.CarrinhoDtos;
+using System.ClientModel.Primitives;
 
 namespace BlazorShop.Api.Repositories.Interfaces;
 
 public interface ICarrinhoCompraRepository
 {
-    Task<CarrinhoItem> AdicionaItem(CarrinhoItemAdicionaDto carrinhoItemAdicionaDto);
-    Task<CarrinhoItem> AtualizaQuantidade(int id, CarrinhoItemAtualizaQuantidadeDto carrinhoItemAtulizaQuantidadeDto);
-    Task<CarrinhoItem> DeleteItem(int id);
-    Task<CarrinhoItem> GetItem(int id);
-    Task<IEnumerable<CarrinhoItem>> GetItens(int usuarioId);
+    Task<OperationResult<CarrinhoItem>> AdicionaItem(CarrinhoItemAdicionaDto carrinhoItemAdicionaDto);
+    Task<OperationResult<CarrinhoItem>> AtualizaQuantidade(int id, CarrinhoItemAtualizaQuantidadeDto carrinhoItemAtulizaQuantidadeDto);
+    Task<OperationResult<CarrinhoItem>> DeleteItem(int id);
+    Task<OperationResult<CarrinhoItem>> GetItem(int id);
+    Task<OperationResult<IEnumerable<CarrinhoItem>>> GetItens(int usuarioId);
 }

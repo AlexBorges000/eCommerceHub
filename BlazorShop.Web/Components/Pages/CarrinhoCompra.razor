@@ -64,7 +64,7 @@ else
             MensagemErro = result.Message;
             return;
         }
-        CarrinhoCompraItens = result.Value ?? new List<CarrinhoItemDto>();
+        CarrinhoCompraItens = result.Value;
     }
 
     protected async Task DeleteCarrinhoItem_Click(int id)
