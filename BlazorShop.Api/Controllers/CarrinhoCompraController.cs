@@ -30,17 +30,17 @@ public class CarrinhoCompraController : ControllerBase
         try
         {
             var carrinhoItens = await _carrinhoCompraRepository.GetItens(usuarioId);
-            if (carrinhoItens == null)
+            if (!carrinhoItens.Success)
             {
-                return OperationResult<IEnumerable<CarrinhoItemDto>>.Fail("NENHUM ITEM ENCONTRADO");
+                return NotFound(OperationResult<IEnumerable<CarrinhoItemDto>>.Fail("NENHUM ITEM ENCONTRADO"));
             }
             var produtos = await _produtoRepository.GetItens();
-            if (produtos == null)
+            if (produtos is null)
             {
-                return OperationResult<IEnumerable<CarrinhoItemDto>>.Fail("NENHUM ITEM ENCONTRADO");
+                return NotFound(OperationResult<IEnumerable<CarrinhoItemDto>>.Fail("NENHUM ITEM ENCONTRADO"));
             }
-            var carrinhoItensDto = carrinhoItens.Value.ConverterCarrinhoItemParaDto(produtos);
-            return Ok(OperationResult<IEnumerable<CarrinhoItemDto>>.Ok(carrinhoItensDto.Value));
+            var carrinhoItensDto = carrinhoItens.Value.ConverterCarrinhoItemParaDto(produtos.Value);
+            return Ok(carrinhoItensDto.Value);
         }
         catch (Exception ex)
         {
@@ -50,49 +50,47 @@ public class CarrinhoCompraController : ControllerBase
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<CarrinhoItemDto>> GetItem(int id)
+    public async Task<ActionResult<OperationResult<CarrinhoItemDto>>> GetItem(int id)
     {
         try
         {
             var carrinhoItem = await _carrinhoCompraRepository.GetItem(id);
-            if (carrinhoItem == null)
+            if (!carrinhoItem.Success)
             {
-                return NotFound("Item não encontrado.");
+                return NotFound(OperationResult<CarrinhoItemDto>.Fail($"Erro ao encontrar o carrinho do ID: {id}"));
             }
             var produto = await _produtoRepository.GetItem(carrinhoItem.Value.ProdutoId);
-            if (produto == null)
+            if (produto is null)
             {
-                return NotFound("Produto não encontrado.");
+                return NotFound(OperationResult<CarrinhoItemDto>.Fail("NENHUM PRODUTO ENCONTRADO"));
             }
-            var carrinhoItemDto = carrinhoItem.Value.ConverterCarrinhoItemParaDto(produto);
-            return Ok(carrinhoItemDto);
-
+            var carrinhoItemDto = carrinhoItem.Value.ConverterCarrinhoItemParaDto(produto.Value);
+            return Ok(carrinhoItemDto.Value);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Erro ao obter item do carrinho com ID {Id}", id);
             return StatusCode(500, "Ocorreu um erro ao processar sua solicitação." + ex.Message);
-
         }
     }
 
     [HttpPost]
-    public async Task<ActionResult<CarrinhoItemDto>> PostItem([FromBody] CarrinhoItemAdicionaDto carrinhoItemAdicionaDto)
+    public async Task<ActionResult<OperationResult<CarrinhoItemDto>>> PostItem([FromBody] CarrinhoItemAdicionaDto carrinhoItemAdicionaDto)
     {
         try
         {
             var novoCarrinhoItem = await _carrinhoCompraRepository.AdicionaItem(carrinhoItemAdicionaDto);
-            if (novoCarrinhoItem == null)
+            if (!novoCarrinhoItem.Success)
             {
                 return NoContent();
             }
             var produto = await _produtoRepository.GetItem(novoCarrinhoItem.Value.ProdutoId);
-            if (produto == null)
+            if (produto is null)
             {
-                throw new Exception($"Produto com ID {novoCarrinhoItem.Value.ProdutoId} não encontrado.");
+                return NotFound(OperationResult<CarrinhoItemDto>.Fail($"Produto com ID {novoCarrinhoItem.Value.ProdutoId} não encontrado."));
             }
-            var carrinhoItemDto = novoCarrinhoItem.Value.ConverterCarrinhoItemParaDto(produto);
-            return CreatedAtAction(nameof(GetItem), new { id = carrinhoItemDto.Value.Id }, carrinhoItemDto);
+            var carrinhoItemDto = novoCarrinhoItem.Value.ConverterCarrinhoItemParaDto(produto.Value);
+            return CreatedAtAction(nameof(GetItem), new { id = carrinhoItemDto.Value.Id }, carrinhoItemDto.Value);
         }
         catch (Exception ex)
         {
@@ -102,22 +100,23 @@ public class CarrinhoCompraController : ControllerBase
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<ActionResult<CarrinhoItemDto>> DeleteItem(int id)
+    public async Task<ActionResult<OperationResult<CarrinhoItemDto>>> DeleteItem(int id)
     {
         try
         {
             var carrinhoItem = await _carrinhoCompraRepository.GetItem(id);
-            if (carrinhoItem == null)
+            if (!carrinhoItem.Success)
             {
-                return NotFound();
+                return NotFound(OperationResult<CarrinhoItemDto>.Fail("PRODUTO PARA DELETAR NÃO ENCONTRADO"));
             }
             var produto = await _produtoRepository.GetItem(carrinhoItem.Value.ProdutoId);
 
-            if (produto == null)
-                return NotFound();
+            if (produto is null)
+                return NotFound(OperationResult<CarrinhoItemDto>.Fail("PRODUTO PARA DELETAR NÃO ENCONTRADO"));
+
             await _carrinhoCompraRepository.DeleteItem(carrinhoItem.Value.Id);
-            var carrinhoItemDto = carrinhoItem.Value.ConverterCarrinhoItemParaDto(produto);
-            return Ok(carrinhoItemDto);
+            var carrinhoItemDto = carrinhoItem.Value.ConverterCarrinhoItemParaDto(produto.Value);
+            return Ok(carrinhoItemDto.Value);
         }
         catch (Exception ex)
         {
@@ -126,7 +125,7 @@ public class CarrinhoCompraController : ControllerBase
     }
 
     [HttpPatch("{id:int}")]
-    public async Task<ActionResult<CarrinhoItemDto>> AtualizaQuantidade(int id, CarrinhoItemAtualizaQuantidadeDto carrinhoItemAtualizaQuantidadeDto)
+    public async Task<ActionResult<OperationResult<CarrinhoItemDto>>> AtualizaQuantidade(int id, CarrinhoItemAtualizaQuantidadeDto carrinhoItemAtualizaQuantidadeDto)
     {
 
         try
@@ -134,14 +133,13 @@ public class CarrinhoCompraController : ControllerBase
 
             var carrinhoItem = await _carrinhoCompraRepository.AtualizaQuantidade(id,
                                    carrinhoItemAtualizaQuantidadeDto);
-
-            if (carrinhoItem == null)
+            if (!carrinhoItem.Success)
             {
-                return NotFound();
+                return NotFound(OperationResult<CarrinhoItemDto>.Fail("PRODUTO NÃO ENCONTRADO PARA ATULIZAR A QUANTIDADE NO CARRINHO"));
             }
             var produto = await _produtoRepository.GetItem(carrinhoItem.Value.ProdutoId);
-            var carrinhoItemDto = carrinhoItem.Value.ConverterCarrinhoItemParaDto(produto);
-            return Ok(carrinhoItemDto);
+            var carrinhoItemDto = carrinhoItem.Value.ConverterCarrinhoItemParaDto(produto.Value);
+            return Ok(carrinhoItemDto.Value);
 
         }
         catch (Exception ex)

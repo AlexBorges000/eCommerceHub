@@ -1,5 +1,6 @@
 ﻿using BlazorShop.Models.Commons;
 using BlazorShop.Models.Config;
+using BlazorShop.Models.DTOs.CarrinhoDtos;
 using BlazorShop.Models.DTOs.ProdutoDtos;
 using BlazorShop.Web.Services.Interfaces;
 using System.Net;
@@ -22,11 +23,14 @@ public class ProdutoService : IProdutoService
         try
         {
             var produtosDto = await _httpClient.
-            GetFromJsonAsync<IEnumerable<ProdutoDto>>("produtos");
-            if (produtosDto != null)
+            GetAsync("Produtos");
+
+            var produtos = await produtosDto.Content.ReadFromJsonAsync<IEnumerable<ProdutoDto>>();
+            if (produtos is not null)
             {
-                return OperationResult<IEnumerable<ProdutoDto>>.Ok(produtosDto);
+                return OperationResult<IEnumerable<ProdutoDto>>.Ok(produtos);
             }
+            
             return OperationResult<IEnumerable<ProdutoDto>>.Fail("NENHUM PRODUTO ENCONTRADO");
         }
         catch (Exception)
@@ -40,15 +44,15 @@ public class ProdutoService : IProdutoService
     {
         try
         {
-            var response = await _httpClient.GetAsync($"produtos/{id}");
+            var response = await _httpClient.GetAsync($"Produtos/{id}");
             if (response.IsSuccessStatusCode)
             {
                 if (response.StatusCode == HttpStatusCode.NoContent)
                 {
                     return OperationResult<ProdutoDto>.Ok(new ProdutoDto());
                 }
-                var produto = await _httpClient.GetFromJsonAsync<ProdutoDto>($"produtos/{id}");
-                if (produto != null)
+                var produto = await response.Content.ReadFromJsonAsync<ProdutoDto>();
+                if (produto is not null)
                 {
                     return OperationResult<ProdutoDto>.Ok(produto);
                 }

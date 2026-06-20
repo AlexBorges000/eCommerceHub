@@ -53,7 +53,7 @@ else
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await CarrinhoCompraService.GetItensReturnsResult(UsuarioLogado.CarrinhoId);
+        var result = await CarrinhoCompraService.GetItens(UsuarioLogado.CarrinhoId);
         if (result is null)
         {
             MensagemErro = "Carrinho Nulo";
