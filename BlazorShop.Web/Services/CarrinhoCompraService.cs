@@ -2,6 +2,7 @@
 using BlazorShop.Models.Config;
 using BlazorShop.Models.DTOs.CarrinhoDtos;
 using BlazorShop.Web.Services.Interfaces;
+using Microsoft.Extensions.Options;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -65,36 +66,6 @@ public class CarrinhoCompraService : ICarrinhoCompraService
 
     }
 
-    public async Task<OperationResult<List<CarrinhoItemDto>>> GetItensReturnsResult(int usuarioId)
-    {
-        try
-        {
-            var response = await _httpClient.GetAsync($"CarrinhoCompra/{usuarioId}/GetItens");
-            if (response.IsSuccessStatusCode)
-            {
-                if (response.StatusCode == HttpStatusCode.NoContent)
-                {
-                    return OperationResult<List<CarrinhoItemDto>>.Ok(new List<CarrinhoItemDto>());
-                }
-                var carrinhos = await response.Content.ReadFromJsonAsync<OperationResult<List<CarrinhoItemDto>>>();
-                if (carrinhos is not null)
-                {
-                    return OperationResult<List<CarrinhoItemDto>>.Ok(carrinhos.Value);
-                }
-                return OperationResult<List<CarrinhoItemDto>>.Fail("NÃO ENCONTRADO NENHUM VALOR");
-            }
-            else
-            {
-                var message = await response.Content.ReadAsStringAsync();
-                throw new Exception($"Http Status Code: {response.StatusCode}, Message: {message}");
-            }
-        }
-        catch (Exception ex)
-        {
-            return OperationResult<List<CarrinhoItemDto>>.Fail("ERRO INTERNO! CONTATE O SUPORTE DE SISTEMA!" + ex.Message);
-        }
-    }
-
     public async Task<OperationResult<List<CarrinhoItemDto>>> GetItens(int usuarioId)
     {
         try
@@ -110,7 +81,7 @@ public class CarrinhoCompraService : ICarrinhoCompraService
                 var carrinhos = await response.Content.ReadFromJsonAsync<List<CarrinhoItemDto>>();
                 if (carrinhos != null)
                 {
-                    return OperationResult<List<CarrinhoItemDto>>.Ok(new List<CarrinhoItemDto>());
+                    return OperationResult<List<CarrinhoItemDto>>.Ok(carrinhos);
                 }
                 return OperationResult<List<CarrinhoItemDto>>.Fail("NÃO ENCONTRADO NENHUM VALOR");
 

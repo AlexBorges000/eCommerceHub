@@ -1,7 +1,5 @@
 ﻿@page "/produtos"
-@inject IProdutoService produtoService
-
-@if (Produtos == null)
+@if (Produtos is null)
 {
     <ExibirSpinner />
 }
@@ -26,6 +24,8 @@ else
 }
 
 @code {
+    [Inject]
+    IProdutoService produtoService { get; set; }
     public IEnumerable<ProdutoDto>? Produtos { get; set; }
     public string? MensagemErro { get; set; }
     protected override async Task OnInitializedAsync()

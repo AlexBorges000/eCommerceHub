@@ -19,9 +19,9 @@ public static class MappingDtos
                 }).ToList();
     }
 
-    public static IEnumerable<ProdutoDto> ConverterProdutosParaDto(this IEnumerable<Produto> produtos)
+    public static OperationResult<IEnumerable<ProdutoDto>> ConverterProdutosParaDto(this IEnumerable<Produto> produtos)
     {
-        return (from produto in produtos
+        var itens = (from produto in produtos
                 select new ProdutoDto
                 {
                     Id = produto.Id,
@@ -33,11 +33,12 @@ public static class MappingDtos
                     CategoriaId = produto.CategoriaId,
                     CategoriaNome = produto.Categoria.Nome
                 }).ToList();
+        return OperationResult<IEnumerable<ProdutoDto>>.Ok(itens);
     }
 
-    public static ProdutoDto ConverterProdutoParaDto(this Produto produto)
+    public static OperationResult<ProdutoDto> ConverterProdutoParaDto(this Produto produto)
     {
-        return new ProdutoDto
+        var item = new ProdutoDto
         {
             Id = produto.Id,
             Nome = produto.Nome,
@@ -48,6 +49,7 @@ public static class MappingDtos
             CategoriaId = produto.CategoriaId,
             CategoriaNome = produto.Categoria.Nome
         };
+        return OperationResult<ProdutoDto>.Ok(item);
     }
 
     public static OperationResult<IEnumerable<CarrinhoItemDto>> ConverterCarrinhoItemParaDto(this IEnumerable<CarrinhoItem> carrinhoItens, IEnumerable<Produto> produtos)
