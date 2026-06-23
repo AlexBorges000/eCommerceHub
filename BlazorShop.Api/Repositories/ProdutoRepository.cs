@@ -1,5 +1,4 @@
-﻿using Azure;
-using BlazorShop.Api.Context;
+﻿using BlazorShop.Api.Context;
 using BlazorShop.Api.Entities;
 using BlazorShop.Api.Repositories.Interfaces;
 using BlazorShop.Models.Commons;
@@ -21,6 +20,10 @@ public class ProdutoRepository : IProdutoRepository
             .Include(c => c.Categoria)
             .SingleOrDefaultAsync(c => c.Id == id);
 
+        if (produto is null)
+        {
+            return OperationResult<Produto>.Fail( "PRODUTO NÃO ENCONTRADO");
+        }
         return OperationResult<Produto>.Ok(produto);
     }
 
@@ -30,6 +33,10 @@ public class ProdutoRepository : IProdutoRepository
              .Include(c => c.Categoria)
              .ToListAsync();
 
+        if (produtos is null)
+        {
+            return OperationResult<IEnumerable<Produto>>.Fail("PRODUTOS NÃO ENCONTRADO");
+        }
         return OperationResult<IEnumerable<Produto>>.Ok(produtos);
     }
 
@@ -40,6 +47,10 @@ public class ProdutoRepository : IProdutoRepository
              .Where(c => c.CategoriaId == id)
              .ToListAsync();
 
+        if ( produtos is null)
+        {
+            return OperationResult<IEnumerable<Produto>>.Fail("PRODUTOS NÃO ENCONTRADO");
+        }
         return OperationResult<IEnumerable<Produto>>.Ok(produtos);
     }
 }

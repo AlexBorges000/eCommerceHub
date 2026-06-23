@@ -1,4 +1,5 @@
 using BlazorShop.Api.Context;
+using BlazorShop.Api.Middlewares;
 using BlazorShop.Api.Repositories;
 using BlazorShop.Api.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -30,15 +31,11 @@ if (app.Environment.IsDevelopment())
     app.MapOpenApi();
 }
 
-app.UseCors(policy => policy.WithOrigins("https://localhost:7279, https://localhost:7279")
-.AllowAnyMethod()
-.AllowAnyHeader()
-.WithHeaders(HeaderNames.ContentType));
-
+app.UseMiddleware<GlobalExceptionMiddleware>();
 app.UseHttpsRedirection();
-
+app.UseCors(policy => policy.WithOrigins("https://localhost:7279")
+                            .AllowAnyMethod()
+                            .AllowAnyHeader());
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();
