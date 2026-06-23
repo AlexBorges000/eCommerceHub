@@ -4,6 +4,7 @@ using BlazorShop.Models.DTOs.CarrinhoDtos;
 using BlazorShop.Models.DTOs.ProdutoDtos;
 using BlazorShop.Web.Services.Interfaces;
 using System.Net;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BlazorShop.Web.Services;
 
@@ -22,21 +23,32 @@ public class ProdutoService : IProdutoService
     {
         try
         {
-            var produtosDto = await _httpClient.
-            GetAsync("Produtos");
+            var response = await _httpClient.GetAsync("Produtos");
 
-            var produtos = await produtosDto.Content.ReadFromJsonAsync<IEnumerable<ProdutoDto>>();
-            if (produtos is not null)
+            if (!response.IsSuccessStatusCode)
             {
-                return OperationResult<IEnumerable<ProdutoDto>>.Ok(produtos);
+                var erro = await response.Content
+                    .ReadFromJsonAsync<OperationResult<IEnumerable<ProdutoDto>>>();
+
+                return erro ?? OperationResult<IEnumerable<ProdutoDto>>
+                    .Fail("Erro desconhecido na API");
             }
-            
-            return OperationResult<IEnumerable<ProdutoDto>>.Fail("NENHUM PRODUTO ENCONTRADO");
+            var produtos = await response.Content
+                .ReadFromJsonAsync<IEnumerable<ProdutoDto>>();
+            if (produtos is null || !produtos.Any())
+            {
+                return OperationResult<IEnumerable<ProdutoDto>>
+                    .Fail("Nenhum produto encontrado");
+            }
+
+            return OperationResult<IEnumerable<ProdutoDto>>.Ok(produtos);
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            _logger.LogError("Erro ao obter os produtos ou acessar a API");
-            throw;
+            _logger.LogError(ex, "Erro ao obter os produtos ou acessar a API");
+
+            return OperationResult<IEnumerable<ProdutoDto>>
+                .Fail("Erro inesperado ao chamar a API");
         }
     }
 

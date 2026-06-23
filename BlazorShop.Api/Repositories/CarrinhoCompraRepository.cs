@@ -82,6 +82,7 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
         {
             _context.CarrinhoItem.Remove(item);
             await _context.SaveChangesAsync();
+            return OperationResult<CarrinhoItem>.Ok(item);
         }
         return OperationResult<CarrinhoItem>.Fail("Item não encontrado para deletar");
     }
@@ -123,7 +124,7 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
                           ProdutoId = carrinhoItem.ProdutoId,
                           Quantidade = carrinhoItem.Quantidade
                       }).ToListAsync();
-        if (item is not null)
+        if (item.Any())
         {
             return OperationResult<IEnumerable<CarrinhoItem>>.Ok(item);
         }
