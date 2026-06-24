@@ -1,7 +1,6 @@
 ﻿using BlazorShop.Api.Entities;
 using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.CarrinhoDtos;
-using System.ClientModel.Primitives;
 
 namespace BlazorShop.Api.Repositories.Interfaces;
 

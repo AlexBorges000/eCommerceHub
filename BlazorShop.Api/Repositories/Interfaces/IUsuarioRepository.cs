@@ -1,12 +1,13 @@
 ﻿using BlazorShop.Api.Entities;
+using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.UsuarioDtos;
 
 namespace BlazorShop.Api.Repositories.Interfaces;
 
 public interface IUsuarioRepository
-{
-    public Task<Usuario> InsertUsurio(CadastroUsuarioDto cadastroUsuario);
-    public Task<Usuario> UpdateUsuario(UpdateCadastroUsuarioDto updateCadastroUsuario);
-    public Task<Usuario> GetUsuario(int id);
+{   
+    Task<OperationResult<Usuario>> InsertUsuario(CadastroUsuarioDto cadastroUsuario);
+    Task<OperationResult<Usuario>> UpdateUsuario(int id, UpdateCadastroUsuarioDto updateCadastroUsuario);
+    Task<OperationResult<Usuario>> GetUsuario(int id);
 
 }

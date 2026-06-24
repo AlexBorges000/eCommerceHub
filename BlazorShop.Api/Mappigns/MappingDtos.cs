@@ -22,17 +22,17 @@ public static class MappingDtos
     public static OperationResult<IEnumerable<ProdutoDto>> ConverterProdutosParaDto(this IEnumerable<Produto> produtos)
     {
         var itens = (from produto in produtos
-                select new ProdutoDto
-                {
-                    Id = produto.Id,
-                    Nome = produto.Nome,
-                    Descricao = produto.Descricao,
-                    Preco = produto.Preco,
-                    ImagemUrl = produto.ImagemUrl,
-                    Quantidade = produto.Quantidade,
-                    CategoriaId = produto.CategoriaId,
-                    CategoriaNome = produto.Categoria.Nome
-                }).ToList();
+                     select new ProdutoDto
+                     {
+                         Id = produto.Id,
+                         Nome = produto.Nome,
+                         Descricao = produto.Descricao,
+                         Preco = produto.Preco,
+                         ImagemUrl = produto.ImagemUrl,
+                         Quantidade = produto.Quantidade,
+                         CategoriaId = produto.CategoriaId,
+                         CategoriaNome = produto.Categoria.Nome
+                     }).ToList();
         return OperationResult<IEnumerable<ProdutoDto>>.Ok(itens);
     }
 
@@ -53,22 +53,22 @@ public static class MappingDtos
     }
 
     public static OperationResult<IEnumerable<CarrinhoItemDto>> ConverterCarrinhoItemParaDto(this IEnumerable<CarrinhoItem> carrinhoItens, IEnumerable<Produto> produtos)
-    {  
-        var carrinho =  (from carrinhoItem in carrinhoItens 
-                join produto in produtos 
-                on carrinhoItem.ProdutoId equals produto.Id
-                select new CarrinhoItemDto
-                {
-                    Id = carrinhoItem.Id,
-                    CarrinhoId = carrinhoItem.CarrinhoId,
-                    ProdutoId = carrinhoItem.ProdutoId,
-                    Quantidade = carrinhoItem.Quantidade,
-                    ProdutoNome = produto.Nome,
-                    ProdutoDescricao = produto.Descricao,
-                    ProdutoImagemURL = produto.ImagemUrl,
-                    Preco = produto.Preco,
-                    PrecoTotal = produto.Preco * carrinhoItem.Quantidade
-                }).ToList();
+    {
+        var carrinho = (from carrinhoItem in carrinhoItens
+                        join produto in produtos
+                        on carrinhoItem.ProdutoId equals produto.Id
+                        select new CarrinhoItemDto
+                        {
+                            Id = carrinhoItem.Id,
+                            CarrinhoId = carrinhoItem.CarrinhoId,
+                            ProdutoId = carrinhoItem.ProdutoId,
+                            Quantidade = carrinhoItem.Quantidade,
+                            ProdutoNome = produto.Nome,
+                            ProdutoDescricao = produto.Descricao,
+                            ProdutoImagemURL = produto.ImagemUrl,
+                            Preco = produto.Preco,
+                            PrecoTotal = produto.Preco * carrinhoItem.Quantidade
+                        }).ToList();
         if (carrinho is not null)
         {
             return OperationResult<IEnumerable<CarrinhoItemDto>>.Ok(carrinho);
@@ -81,7 +81,7 @@ public static class MappingDtos
 
     public static OperationResult<CarrinhoItemDto> ConverterCarrinhoItemParaDto(this CarrinhoItem carrinhoItem, Produto produto)
     {
-        var carrinho =  new CarrinhoItemDto
+        var carrinho = new CarrinhoItemDto
         {
             Id = carrinhoItem.Id,
             ProdutoId = carrinhoItem.ProdutoId,
@@ -93,7 +93,7 @@ public static class MappingDtos
             Quantidade = carrinhoItem.Quantidade,
             PrecoTotal = produto.Preco * carrinhoItem.Quantidade
         };
-        if(carrinho is not null)
+        if (carrinho is not null)
         {
             return OperationResult<CarrinhoItemDto>.Ok(carrinho);
         }
@@ -103,9 +103,9 @@ public static class MappingDtos
         }
     }
 
-    public static CadastroUsuarioDto ConverterUsuarioParaDto(this Usuario usuario)
+    public static OperationResult<CadastroUsuarioDto> ConverterUsuarioParaDto(this Usuario usuario)
     {
-        return new CadastroUsuarioDto
+        var user = new CadastroUsuarioDto
         {
             Email = usuario.Email,
             Endereco = usuario.Endereco,
@@ -120,6 +120,11 @@ public static class MappingDtos
             RazaoSocial = usuario.RazaoSocial,
 
         };
+        if (usuario is not null)
+        {
+            return OperationResult<CadastroUsuarioDto>.Ok(user);
+        }
+        return OperationResult<CadastroUsuarioDto>.Fail("Erro ao cadastrar usuario");
     }
 
 }

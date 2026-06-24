@@ -22,7 +22,7 @@ public class ProdutoRepository : IProdutoRepository
 
         if (produto is null)
         {
-            return OperationResult<Produto>.Fail( "PRODUTO NÃO ENCONTRADO");
+            return OperationResult<Produto>.Fail("PRODUTO NÃO ENCONTRADO");
         }
         return OperationResult<Produto>.Ok(produto);
     }
