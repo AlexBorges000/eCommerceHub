@@ -1,10 +1,12 @@
 using BlazorShop.Web;
 using BlazorShop.Web.Components;
+using MudBlazor.Services;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddMudServices();
 
 builder.Services.WebRazorDepencies(builder.Configuration);
 

@@ -127,4 +127,28 @@ public static class MappingDtos
         return OperationResult<CadastroUsuarioDto>.Fail("Erro ao cadastrar usuario");
     }
 
+    public static OperationResult<ResponseGetUsuarioDto> GetUsuarioParaDto(this Usuario usuario)
+    {
+        var user = new ResponseGetUsuarioDto
+        {
+            Email = usuario.Email,
+            Endereco = usuario.Endereco,
+            Telefone = usuario.Telefone,
+            Senha = usuario.Senha,
+            Nome = usuario.Nome,
+            CPF = usuario.CPF,
+            CNPJ = usuario.CNPJ,
+            NomeFantasia = usuario.NomeFantasia,
+            ResponsavelCompra = usuario.ResponsavelCompra,
+            InscricaoEstadual = usuario.InscricaoEstadual,
+            RazaoSocial = usuario.RazaoSocial,
+
+        };
+        if (usuario is not null)
+        {
+            return OperationResult<ResponseGetUsuarioDto>.Ok(user);
+        }
+        return OperationResult<ResponseGetUsuarioDto>.Fail("Erro ao cadastrar usuario");
+    }
+
 }

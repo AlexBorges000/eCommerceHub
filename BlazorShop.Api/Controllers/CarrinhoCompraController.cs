@@ -8,6 +8,7 @@ namespace BlazorShop.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Tags("CarrinhoCompras")]
 public class CarrinhoCompraController : ControllerBase
 {
     private readonly ICarrinhoCompraRepository _carrinhoCompraRepository;
@@ -23,7 +24,6 @@ public class CarrinhoCompraController : ControllerBase
         _logger = logger;
     }
 
-   
 
     [HttpGet]
     [Route("{usuarioId}/GetItens")]
@@ -108,4 +108,5 @@ public class CarrinhoCompraController : ControllerBase
         var carrinhoItemDto = carrinhoItem.Value.ConverterCarrinhoItemParaDto(produto.Value);
         return Ok(carrinhoItemDto.Value);
     }
+
 }

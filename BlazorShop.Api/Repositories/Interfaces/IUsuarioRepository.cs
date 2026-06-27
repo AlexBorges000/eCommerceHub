@@ -9,5 +9,5 @@ public interface IUsuarioRepository
     Task<OperationResult<Usuario>> InsertUsuario(CadastroUsuarioDto cadastroUsuario);
     Task<OperationResult<Usuario>> UpdateUsuario(int id, UpdateCadastroUsuarioDto updateCadastroUsuario);
     Task<OperationResult<Usuario>> GetUsuario(int id);
-
+    Task<OperationResult<Usuario>> ChangePassword(int id, UpdateSenhaUsuarioDto updateSenhaUsuarioDto);
 }

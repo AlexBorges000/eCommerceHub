@@ -8,6 +8,7 @@ namespace BlazorShop.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Tags("Produtos")]
 public class ProdutosController : ControllerBase
 {
     private readonly IProdutoRepository _produtoRepository;
@@ -20,8 +21,6 @@ public class ProdutosController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<OperationResult<IEnumerable<ProdutoDto>>>> GetItens()
     {
-
-
         var produtos = await _produtoRepository.GetItens();
         if (!produtos.Success)
         {
@@ -38,7 +37,6 @@ public class ProdutosController : ControllerBase
     [HttpGet("{id:int}")]
     public async Task<ActionResult<OperationResult<ProdutoDto>>> GetItem(int id)
     {
-
         var produto = await _produtoRepository.GetItem(id);
         if (!produto.Success)
         {
@@ -55,7 +53,6 @@ public class ProdutosController : ControllerBase
     [Route("GetItemByCategoria/{categoriaId:int}")]
     public async Task<ActionResult<IEnumerable<ProdutoDto>>> GetItemByCategoria(int categoriaId)
     {
-
         var produtos = await _produtoRepository.GetItensPorCategoria(categoriaId);
         var produtosDto = produtos.Value.ConverterProdutosParaDto();
         return Ok(OperationResult<IEnumerable<ProdutoDto>>.Ok(produtosDto.Value));

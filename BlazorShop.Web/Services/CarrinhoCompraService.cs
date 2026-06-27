@@ -2,7 +2,6 @@
 using BlazorShop.Models.Config;
 using BlazorShop.Models.DTOs.CarrinhoDtos;
 using BlazorShop.Web.Services.Interfaces;
-using Microsoft.Extensions.Options;
 using System.Net;
 using System.Text;
 using System.Text.Json;
@@ -25,7 +24,7 @@ public class CarrinhoCompraService : ICarrinhoCompraService
                 .PostAsJsonAsync<CarrinhoItemAdicionaDto>("CarrinhoCompra", carrinhoItemAdicionaDto);
             if (response.IsSuccessStatusCode)
             {
-                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                if (response.StatusCode == HttpStatusCode.NoContent)
                 {
                     return OperationResult<CarrinhoItemDto>.Ok(new CarrinhoItemDto());
                 }

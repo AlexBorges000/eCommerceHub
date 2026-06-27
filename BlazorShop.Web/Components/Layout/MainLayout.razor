@@ -1,25 +1,33 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
-    </div>
+<MudThemeProvider />
+<MudPopoverProvider />
+<MudDialogProvider />
+<MudSnackbarProvider />
 
-    <main>
-        <div class="top-row px-4">
-            <a href="/CarrinhoCompra" target="_self">
-                <i class="bi bi-cart"></i>
-            </a>
-        </div>
+<MudLayout>
+    <MudAppBar>
+        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => DrawerToggle())" />
+        ecommerce
 
-        <article class="content px-4">
-            @Body
-        </article>
-    </main>
-</div>
-
-<div id="blazor-error-ui" data-nosnippet>
-    An unhandled error has occurred.
-    <a href="." class="reload">Reload</a>
-    <span class="dismiss">🗙</span>
-</div>
+    </MudAppBar>
+    <MudDrawer @bind-Open="_drawerOpen"
+               Variant="DrawerVariant.Responsive"
+               Elevation="1">
+        <NavMenu/>
+    </MudDrawer>
+    <MudMainContent>
+        @Body
+    </MudMainContent>
+    <MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" />
+</MudLayout>
+@code {
+    bool _drawerOpen = true;
+    private bool _isDarkMode = true;
+    private MudThemeProvider _mudThemeProvider;
+    
+    void DrawerToggle()
+    {
+        _drawerOpen = !_drawerOpen;
+    }
+}

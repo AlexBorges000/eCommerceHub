@@ -1,10 +1,8 @@
 ﻿using BlazorShop.Models.Commons;
 using BlazorShop.Models.Config;
-using BlazorShop.Models.DTOs.CarrinhoDtos;
 using BlazorShop.Models.DTOs.ProdutoDtos;
 using BlazorShop.Web.Services.Interfaces;
 using System.Net;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace BlazorShop.Web.Services;
 
