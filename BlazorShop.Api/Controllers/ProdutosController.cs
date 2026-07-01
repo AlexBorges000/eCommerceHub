@@ -8,6 +8,7 @@ namespace BlazorShop.Api.Controllers;
 
 [Route("api/[controller]")]
 [ApiController]
+[Tags("Produtos")]
 public class ProdutosController : ControllerBase
 {
     private readonly IProdutoRepository _produtoRepository;
@@ -18,14 +19,12 @@ public class ProdutosController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<OperationResult<IEnumerable<ProdutoDto>>>> GetItens()
+    public async Task<ActionResult<OperationResult<IEnumerable<RequestGetProdutoDto>>>> GetItens()
     {
-
-
         var produtos = await _produtoRepository.GetItens();
         if (!produtos.Success)
         {
-            return NotFound(OperationResult<IEnumerable<ProdutoDto>>.Fail("FALHA AO ENCONTRAR OS PRODUTOS"));
+            return NotFound(OperationResult<IEnumerable<RequestGetProdutoDto>>.Fail("FALHA AO ENCONTRAR OS PRODUTOS"));
         }
         else
         {
@@ -36,13 +35,12 @@ public class ProdutosController : ControllerBase
 
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<OperationResult<ProdutoDto>>> GetItem(int id)
+    public async Task<ActionResult<OperationResult<RequestGetProdutoDto>>> GetItem(int id)
     {
-
         var produto = await _produtoRepository.GetItem(id);
         if (!produto.Success)
         {
-            return NotFound(OperationResult<IEnumerable<ProdutoDto>>.Fail($"FALHA AO ENCONTRAR O PRODUTO DE ID: {id} "));
+            return NotFound(OperationResult<IEnumerable<RequestGetProdutoDto>>.Fail($"FALHA AO ENCONTRAR O PRODUTO DE ID: {id} "));
         }
         else
         {
@@ -53,12 +51,11 @@ public class ProdutosController : ControllerBase
 
     [HttpGet]
     [Route("GetItemByCategoria/{categoriaId:int}")]
-    public async Task<ActionResult<IEnumerable<ProdutoDto>>> GetItemByCategoria(int categoriaId)
+    public async Task<ActionResult<IEnumerable<RequestGetProdutoDto>>> GetItemByCategoria(int categoriaId)
     {
-
         var produtos = await _produtoRepository.GetItensPorCategoria(categoriaId);
         var produtosDto = produtos.Value.ConverterProdutosParaDto();
-        return Ok(OperationResult<IEnumerable<ProdutoDto>>.Ok(produtosDto.Value));
+        return Ok(OperationResult<IEnumerable<RequestGetProdutoDto>>.Ok(produtosDto.Value));
     }
 
 }

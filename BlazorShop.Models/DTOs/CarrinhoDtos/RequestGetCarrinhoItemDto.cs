@@ -1,6 +1,6 @@
 ﻿namespace BlazorShop.Models.DTOs.CarrinhoDtos;
 
-public class CarrinhoItemDto
+public class RequestGetCarrinhoItemDto
 {
     public int Id { get; set; }
     public int CarrinhoId { get; set; }

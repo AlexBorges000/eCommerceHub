@@ -26,11 +26,11 @@ else
 @code {
     [Inject]
     IProdutoService produtoService { get; set; }
-    public IEnumerable<ProdutoDto>? Produtos { get; set; }
+    public IEnumerable<RequestGetProdutoDto>? Produtos { get; set; }
     public string? MensagemErro { get; set; }
     protected override async Task OnInitializedAsync()
     {
-        OperationResult<IEnumerable<ProdutoDto>> produtos = await produtoService.GetItens();
+        OperationResult<IEnumerable<RequestGetProdutoDto>> produtos = await produtoService.GetItens();
         if (produtos.Success)
         {
             Produtos = produtos.Value;

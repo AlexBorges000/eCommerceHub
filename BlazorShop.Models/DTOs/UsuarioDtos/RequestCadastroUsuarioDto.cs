@@ -1,7 +1,7 @@
 ﻿
 namespace BlazorShop.Models.DTOs.UsuarioDtos;
 
-public class CadastroUsuarioDto
+public class RequestCadastroUsuarioDto
 {
     public int TipoPessoa { get; set; }
 
@@ -9,7 +9,7 @@ public class CadastroUsuarioDto
     public string Endereco { get; set; } = string.Empty;
     public string Telefone { get; set; } = string.Empty;
     public string Senha { get; set; } = string.Empty;
-
+    public string ConfirmaSenha {  get; set; } = string.Empty;
     // PF
     public string? Nome { get; set; }
     public string? CPF { get; set; }

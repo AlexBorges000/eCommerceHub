@@ -1,0 +1,75 @@
+﻿<MudGrid Class="mb-3">
+    <MudItem xs="12" md="3">
+        <MudImage Src="@Item.ProdutoImagemURL"
+                  Width="250"
+                  Class="img-thumbnail" />
+    </MudItem>
+
+    <MudItem xs="12" md="9">
+        <MudText Typo="Typo.h5">
+            @Item.ProdutoNome
+        </MudText>
+
+        <MudText Class="mb-4">
+            @Item.ProdutoDescricao
+        </MudText>
+
+        <MudText Typo="Typo.body1">
+            Quantidade:
+        </MudText>
+        <MudNumericField T="int"
+                         Min="1"
+                         Immediate="true"
+                         Max="Quantidade"
+                         @bind-value="@Item.Quantidade"
+                         @bind-value:after="UpdateQuantidade" 
+                         Style="max-width:50px;"/>
+
+        <br />
+
+        <MudText>
+            Valor Total:
+            <b>@(Item.Preco * Item.Quantidade)</b>
+        </MudText>
+
+        <MudIconButton Icon="@Icons.Material.Filled.Delete"
+                       Color="Color.Error"
+                       OnClick="@Delete" />
+    </MudItem>
+</MudGrid>
+@code{
+    [Inject]
+    public IProdutoService ProdutoService { get; set; } = null!;
+    [Parameter]
+    public RequestGetCarrinhoItemDto Item { get; set; } = null!;
+    [Parameter]
+    public EventCallback<int> OnDelete { get; set; }
+    [Parameter]
+    public EventCallback<int> OnInput { get; set; }
+    [Parameter]
+    public int id { get; set; }
+    public RequestGetProdutoDto Produto { get; set; } = null!;
+    public int Quantidade { get; set; } = int.MaxValue;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        OperationResult<RequestGetProdutoDto> resultado = await ProdutoService.GetItem(id);
+        if (resultado.Success)
+        {
+            Produto = resultado.Value!;
+            Quantidade = Produto.Quantidade;
+        }
+    }
+
+    private async Task Delete()
+    {
+        await OnDelete.InvokeAsync(Item.Id);
+    }
+
+    private async Task UpdateQuantidade()
+    {
+        Console.WriteLine("UpdateQuantidade chamado");
+        await OnInput.InvokeAsync(Item.Id);
+    }
+
+}

@@ -1,6 +1,6 @@
 ﻿namespace BlazorShop.Models.DTOs.ProdutoDtos;
 
-public class ProdutoDto
+public class RequestGetProdutoDto
 {
     public int Id { get; set; }
     public string? Nome { get; set; }
