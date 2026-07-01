@@ -3,6 +3,7 @@ using BlazorShop.Api.Repositories.Interfaces;
 using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.UsuarioDtos;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace BlazorShop.Api.Controllers;
 
@@ -20,35 +21,34 @@ public class UsuarioController : ControllerBase
         _logger = logger;
     }
 
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<OperationResult<ResponseGetUsuarioDto>>> GetUsuario(int id)
+    [HttpGet]
+    public async Task<ActionResult<OperationResult<ResponseGetUsuarioDto>>> GetUsuario([FromQuery] string email)
     {
-        var usuario = await _usuarioRepository.GetUsuario(id);
+        var usuario = await _usuarioRepository.GetUsuario(email);
         if (!usuario.Success)
         {
             return NotFound();
         }
         if (usuario.Value is not null)
         {
-            var usuarioDto = usuario.Value.GetUsuarioParaDto();
-            return Ok(OperationResult<ResponseGetUsuarioDto>.Ok(usuarioDto.Value));
+            return Ok(usuario.Value);
         }
         return NoContent();
     }
 
     [HttpPatch("{id:int}/senha")]
-    public async Task<ActionResult<OperationResult<UpdateSenhaUsuarioDto>>> ChangePassword(int id, UpdateSenhaUsuarioDto updateSenhaUsuarioDto)
+    public async Task<ActionResult<OperationResult<RequestUpdateSenhaUsuarioDto>>> ChangePassword(int id, RequestUpdateSenhaUsuarioDto updateSenhaUsuarioDto)
     {
         var response = await _usuarioRepository.ChangePassword(id, updateSenhaUsuarioDto);
         if (!response.Success)
         {
-            return BadRequest(OperationResult<UpdateCadastroUsuarioDto>.Fail(response.Message));
+            return BadRequest(OperationResult<RequestUpdateCadastroUsuarioDto>.Fail(response.Message));
         }
         return Ok(response);
     }
 
     [HttpPatch("{id:int}")]
-    public async Task<ActionResult<OperationResult<UpdateCadastroUsuarioDto>>> UpdateUser(int id, UpdateCadastroUsuarioDto updateCadastroUsuarioDto)
+    public async Task<ActionResult<OperationResult<RequestUpdateCadastroUsuarioDto>>> UpdateUser(int id, RequestUpdateCadastroUsuarioDto updateCadastroUsuarioDto)
     {
         var user = await _usuarioRepository.UpdateUsuario(id, updateCadastroUsuarioDto);
         if (!user.Success)
@@ -60,17 +60,17 @@ public class UsuarioController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<OperationResult<CadastroUsuarioDto>>> InsertUsuario(CadastroUsuarioDto cadastroUsuarioDto)
+    public async Task<ActionResult<OperationResult<RequestCadastroUsuarioDto>>> InsertUsuario(RequestCadastroUsuarioDto cadastroUsuarioDto)
     { 
         var usuario = await _usuarioRepository.InsertUsuario(cadastroUsuarioDto);
         if (cadastroUsuarioDto is null)
         {
-            return BadRequest(OperationResult<CadastroUsuarioDto>.Fail("Dados inválidos"));
+            return BadRequest(OperationResult<RequestCadastroUsuarioDto>.Fail("Dados inválidos"));
         }
         if (!usuario.Success)
         {
-            return BadRequest(OperationResult<CadastroUsuarioDto>.Fail(usuario.Message));
+            return BadRequest(OperationResult<RequestCadastroUsuarioDto>.Fail(usuario.Message));
         }
-        return Ok(OperationResult<CadastroUsuarioDto>.Ok(cadastroUsuarioDto));
+        return Ok(OperationResult<RequestCadastroUsuarioDto>.Ok(cadastroUsuarioDto));
     }
 }

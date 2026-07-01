@@ -5,7 +5,7 @@ using System.Text;
 
 namespace BlazorShop.Models.DTOs.UsuarioDtos;
 
-public class UpdateCadastroUsuarioDto
+public class RequestUpdateCadastroUsuarioDto
 {
     public string? NomeFantasia { get; set; }
     public string? RazaoSocial { get; set; }

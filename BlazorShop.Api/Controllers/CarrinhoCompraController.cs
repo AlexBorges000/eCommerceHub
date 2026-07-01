@@ -27,41 +27,41 @@ public class CarrinhoCompraController : ControllerBase
 
     [HttpGet]
     [Route("{usuarioId}/GetItens")]
-    public async Task<ActionResult<OperationResult<IEnumerable<CarrinhoItemDto>>>> GetItens(int usuarioId)
+    public async Task<ActionResult<OperationResult<IEnumerable<RequestGetCarrinhoItemDto>>>> GetItens(int usuarioId)
     {
         var carrinhoItens = await _carrinhoCompraRepository.GetItens(usuarioId);
         if (!carrinhoItens.Success)
         {
-            return NotFound(OperationResult<IEnumerable<CarrinhoItemDto>>.Fail("NENHUM ITEM ENCONTRADO"));
+            return NotFound(OperationResult<IEnumerable<RequestGetCarrinhoItemDto>>.Fail("NENHUM ITEM ENCONTRADO"));
         }
         var produtos = await _produtoRepository.GetItens();
         if (!produtos.Success)
         {
-            return NotFound(OperationResult<IEnumerable<CarrinhoItemDto>>.Fail("NENHUM ITEM ENCONTRADO"));
+            return NotFound(OperationResult<IEnumerable<RequestGetCarrinhoItemDto>>.Fail("NENHUM ITEM ENCONTRADO"));
         }
         var carrinhoItensDto = carrinhoItens.Value.ConverterCarrinhoItemParaDto(produtos.Value);
         return Ok(carrinhoItensDto.Value);
     }
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<OperationResult<CarrinhoItemDto>>> GetItem(int id)
+    public async Task<ActionResult<OperationResult<RequestGetCarrinhoItemDto>>> GetItem(int id)
     {
         var carrinhoItem = await _carrinhoCompraRepository.GetItem(id);
         if (!carrinhoItem.Success)
         {
-            return NotFound(OperationResult<CarrinhoItemDto>.Fail($"Erro ao encontrar o carrinho do ID: {id}"));
+            return NotFound(OperationResult<RequestGetCarrinhoItemDto>.Fail($"Erro ao encontrar o carrinho do ID: {id}"));
         }
         var produto = await _produtoRepository.GetItem(carrinhoItem.Value.ProdutoId);
         if (produto is null)
         {
-            return NotFound(OperationResult<CarrinhoItemDto>.Fail("NENHUM PRODUTO ENCONTRADO"));
+            return NotFound(OperationResult<RequestGetCarrinhoItemDto>.Fail("NENHUM PRODUTO ENCONTRADO"));
         }
         var carrinhoItemDto = carrinhoItem.Value.ConverterCarrinhoItemParaDto(produto.Value);
         return Ok(carrinhoItemDto.Value);
     }
 
     [HttpPost]
-    public async Task<ActionResult<OperationResult<CarrinhoItemDto>>> PostItem([FromBody] CarrinhoItemAdicionaDto carrinhoItemAdicionaDto)
+    public async Task<ActionResult<OperationResult<RequestGetCarrinhoItemDto>>> PostItem([FromBody] RequestCarrinhoItemAdicionaDto carrinhoItemAdicionaDto)
     {
         var novoCarrinhoItem = await _carrinhoCompraRepository.AdicionaItem(carrinhoItemAdicionaDto);
         if (!novoCarrinhoItem.Success)
@@ -71,24 +71,24 @@ public class CarrinhoCompraController : ControllerBase
         var produto = await _produtoRepository.GetItem(novoCarrinhoItem.Value.ProdutoId);
         if (produto is null)
         {
-            return NotFound(OperationResult<CarrinhoItemDto>.Fail($"Produto com ID {novoCarrinhoItem.Value.ProdutoId} não encontrado."));
+            return NotFound(OperationResult<RequestGetCarrinhoItemDto>.Fail($"Produto com ID {novoCarrinhoItem.Value.ProdutoId} não encontrado."));
         }
         var carrinhoItemDto = novoCarrinhoItem.Value.ConverterCarrinhoItemParaDto(produto.Value);
         return CreatedAtAction(nameof(GetItem), new { id = carrinhoItemDto.Value.Id }, carrinhoItemDto);
     }
 
     [HttpDelete("{id:int}")]
-    public async Task<ActionResult<OperationResult<CarrinhoItemDto>>> DeleteItem(int id)
+    public async Task<ActionResult<OperationResult<RequestGetCarrinhoItemDto>>> DeleteItem(int id)
     {
         var carrinhoItem = await _carrinhoCompraRepository.GetItem(id);
         if (!carrinhoItem.Success)
         {
-            return NotFound(OperationResult<CarrinhoItemDto>.Fail("PRODUTO PARA DELETAR NÃO ENCONTRADO"));
+            return NotFound(OperationResult<RequestGetCarrinhoItemDto>.Fail("PRODUTO PARA DELETAR NÃO ENCONTRADO"));
         }
         var produto = await _produtoRepository.GetItem(carrinhoItem.Value.ProdutoId);
 
         if (produto is null)
-            return NotFound(OperationResult<CarrinhoItemDto>.Fail("PRODUTO PARA DELETAR NÃO ENCONTRADO"));
+            return NotFound(OperationResult<RequestGetCarrinhoItemDto>.Fail("PRODUTO PARA DELETAR NÃO ENCONTRADO"));
 
         await _carrinhoCompraRepository.DeleteItem(carrinhoItem.Value.Id);
         var carrinhoItemDto = carrinhoItem.Value.ConverterCarrinhoItemParaDto(produto.Value);
@@ -96,13 +96,13 @@ public class CarrinhoCompraController : ControllerBase
     }
 
     [HttpPatch("{id:int}")]
-    public async Task<ActionResult<OperationResult<CarrinhoItemDto>>> AtualizaQuantidade(int id, CarrinhoItemAtualizaQuantidadeDto carrinhoItemAtualizaQuantidadeDto)
+    public async Task<ActionResult<OperationResult<RequestGetCarrinhoItemDto>>> AtualizaQuantidade(int id, RequestCarrinhoItemAtualizaQuantidadeDto carrinhoItemAtualizaQuantidadeDto)
     {
         var carrinhoItem = await _carrinhoCompraRepository.AtualizaQuantidade(id,
                                carrinhoItemAtualizaQuantidadeDto);
         if (!carrinhoItem.Success)
         {
-            return NotFound(OperationResult<CarrinhoItemDto>.Fail("PRODUTO NÃO ENCONTRADO PARA ATULIZAR A QUANTIDADE NO CARRINHO"));
+            return NotFound(OperationResult<RequestGetCarrinhoItemDto>.Fail("PRODUTO NÃO ENCONTRADO PARA ATULIZAR A QUANTIDADE NO CARRINHO"));
         }
         var produto = await _produtoRepository.GetItem(carrinhoItem.Value.ProdutoId);
         var carrinhoItemDto = carrinhoItem.Value.ConverterCarrinhoItemParaDto(produto.Value);

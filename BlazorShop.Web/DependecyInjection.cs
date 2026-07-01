@@ -10,6 +10,7 @@ public static class DependecyInjection
     {
         services.AddScoped<IProdutoService, ProdutoService>();
         services.AddScoped<ICarrinhoCompraService, CarrinhoCompraService>();
+        services.AddScoped<IUsuarioService, UsuarioService>();
         ConfigureAddHttpClient(services);
         return services;
     }

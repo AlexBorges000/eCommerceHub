@@ -10,7 +10,6 @@ public class ResponseGetUsuarioDto
     public string Email { get; set; } = string.Empty;
     public string Endereco { get; set; } = string.Empty;
     public string Telefone { get; set; } = string.Empty;
-    public string Senha { get; set; } = string.Empty;
     public string? Nome { get; set; }
     public string? CPF { get; set; }
     public string? NomeFantasia { get; set; }

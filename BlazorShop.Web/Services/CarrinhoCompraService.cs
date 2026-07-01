@@ -16,24 +16,24 @@ public class CarrinhoCompraService : ICarrinhoCompraService
         _httpClient = factory.CreateClient(HttpConfiguration.Compras);
     }
 
-    public async Task<OperationResult<CarrinhoItemDto>> AdicionaItem(CarrinhoItemAdicionaDto carrinhoItemAdicionaDto)
+    public async Task<OperationResult<RequestGetCarrinhoItemDto>> AdicionaItem(RequestCarrinhoItemAdicionaDto carrinhoItemAdicionaDto)
     {
         try
         {
             var response = await _httpClient
-                .PostAsJsonAsync<CarrinhoItemAdicionaDto>("CarrinhoCompra", carrinhoItemAdicionaDto);
+                .PostAsJsonAsync<RequestCarrinhoItemAdicionaDto>("CarrinhoCompra", carrinhoItemAdicionaDto);
             if (response.IsSuccessStatusCode)
             {
                 if (response.StatusCode == HttpStatusCode.NoContent)
                 {
-                    return OperationResult<CarrinhoItemDto>.Ok(new CarrinhoItemDto());
+                    return OperationResult<RequestGetCarrinhoItemDto>.Ok(new RequestGetCarrinhoItemDto());
                 }
-                var postProduto = await response.Content.ReadFromJsonAsync<CarrinhoItemDto>();
+                var postProduto = await response.Content.ReadFromJsonAsync<RequestGetCarrinhoItemDto>();
                 if (postProduto != null)
                 {
-                    return OperationResult<CarrinhoItemDto>.Ok(new CarrinhoItemDto());
+                    return OperationResult<RequestGetCarrinhoItemDto>.Ok(new RequestGetCarrinhoItemDto());
                 }
-                return OperationResult<CarrinhoItemDto>.Fail("NENHUM ITEM ENCONTRADO");
+                return OperationResult<RequestGetCarrinhoItemDto>.Fail("NENHUM ITEM ENCONTRADO");
             }
             else
             {
@@ -43,29 +43,29 @@ public class CarrinhoCompraService : ICarrinhoCompraService
         }
         catch (Exception ex)
         {
-            return OperationResult<CarrinhoItemDto>.Fail("ERRO INTERNO! CONTATE O SUPORTE DE SISTEMA!" + ex.Message);
+            return OperationResult<RequestGetCarrinhoItemDto>.Fail("ERRO INTERNO! CONTATE O SUPORTE DE SISTEMA!" + ex.Message);
         }
     }
 
-    public async Task<OperationResult<CarrinhoItemDto>> DeleteItem(int id)
+    public async Task<OperationResult<RequestGetCarrinhoItemDto>> DeleteItem(int id)
     {
         try
         {
             var response = await _httpClient.DeleteAsync($"CarrinhoCompra/{id}");
             if (response.IsSuccessStatusCode)
             {
-                return OperationResult<CarrinhoItemDto>.Ok(new CarrinhoItemDto());
+                return OperationResult<RequestGetCarrinhoItemDto>.Ok(new RequestGetCarrinhoItemDto());
             }
-            return OperationResult<CarrinhoItemDto>.Ok(new CarrinhoItemDto());
+            return OperationResult<RequestGetCarrinhoItemDto>.Ok(new RequestGetCarrinhoItemDto());
         }
         catch (Exception ex)
         {
-            return OperationResult<CarrinhoItemDto>.Fail("ERRO INTERNO! CONTATE O SUPORTE DE SISTEMA!" + ex.Message);
+            return OperationResult<RequestGetCarrinhoItemDto>.Fail("ERRO INTERNO! CONTATE O SUPORTE DE SISTEMA!" + ex.Message);
         }
 
     }
 
-    public async Task<OperationResult<List<CarrinhoItemDto>>> GetItens(int usuarioId)
+    public async Task<OperationResult<List<RequestGetCarrinhoItemDto>>> GetItens(int usuarioId)
     {
         try
         {
@@ -75,14 +75,14 @@ public class CarrinhoCompraService : ICarrinhoCompraService
             {
                 if (response.StatusCode == HttpStatusCode.NoContent)
                 {
-                    return OperationResult<List<CarrinhoItemDto>>.Ok(new List<CarrinhoItemDto>());
+                    return OperationResult<List<RequestGetCarrinhoItemDto>>.Ok(new List<RequestGetCarrinhoItemDto>());
                 }
-                var carrinhos = await response.Content.ReadFromJsonAsync<List<CarrinhoItemDto>>();
+                var carrinhos = await response.Content.ReadFromJsonAsync<List<RequestGetCarrinhoItemDto>>();
                 if (carrinhos != null)
                 {
-                    return OperationResult<List<CarrinhoItemDto>>.Ok(carrinhos);
+                    return OperationResult<List<RequestGetCarrinhoItemDto>>.Ok(carrinhos);
                 }
-                return OperationResult<List<CarrinhoItemDto>>.Fail("NÃO ENCONTRADO NENHUM VALOR");
+                return OperationResult<List<RequestGetCarrinhoItemDto>>.Fail("NÃO ENCONTRADO NENHUM VALOR");
 
             }
             else
@@ -94,11 +94,11 @@ public class CarrinhoCompraService : ICarrinhoCompraService
         }
         catch (Exception ex)
         {
-            return OperationResult<List<CarrinhoItemDto>>.Fail("ERRO INTERNO CONTATAR O SUPORTE" + ex.Message); ;
+            return OperationResult<List<RequestGetCarrinhoItemDto>>.Fail("ERRO INTERNO CONTATAR O SUPORTE" + ex.Message); ;
         }
     }
 
-    public async Task<OperationResult<CarrinhoItemDto>> AtualizaQuantidade(CarrinhoItemAtualizaQuantidadeDto
+    public async Task<OperationResult<RequestGetCarrinhoItemDto>> AtualizaQuantidade(RequestCarrinhoItemAtualizaQuantidadeDto
                                                 carrinhoItemAtualizaQuantidadeDto)
     {
         try
@@ -109,9 +109,10 @@ public class CarrinhoCompraService : ICarrinhoCompraService
 
             if (response.IsSuccessStatusCode)
             {
-                return await response.Content.ReadFromJsonAsync<OperationResult<CarrinhoItemDto>>();
+                return await response.Content.ReadFromJsonAsync<OperationResult<RequestGetCarrinhoItemDto>>()
+                             ?? OperationResult<RequestGetCarrinhoItemDto>.Fail("não encotrado!");
             }
-            return OperationResult<CarrinhoItemDto>.Fail("Ocorreu Um Erro" + response.RequestMessage);
+            return OperationResult<RequestGetCarrinhoItemDto>.Fail("Ocorreu Um Erro" + response.RequestMessage);
         }
         catch (Exception)
         {

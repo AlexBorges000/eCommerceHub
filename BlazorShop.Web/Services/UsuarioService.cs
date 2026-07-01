@@ -2,8 +2,6 @@
 using BlazorShop.Models.Config;
 using BlazorShop.Models.DTOs.UsuarioDtos;
 using BlazorShop.Web.Services.Interfaces;
-using Microsoft.AspNet.Identity;
-using Microsoft.AspNetCore.Identity;
 using System.Net;
 
 namespace BlazorShop.Web.Services;
@@ -11,59 +9,54 @@ namespace BlazorShop.Web.Services;
 public class UsuarioService : IUsuarioService
 {
     public HttpClient _httpClient;
-    private readonly ILogger<ProdutoService> _logger;
+    private readonly ILogger<UsuarioService> _logger;
 
-    public UsuarioService(IHttpClientFactory factory, ILogger<ProdutoService> logger)
+    public UsuarioService(IHttpClientFactory factory, ILogger<UsuarioService> logger)
     {
         _httpClient = factory.CreateClient(HttpConfiguration.Usuario);
         _logger = logger;
     }
 
-    public async Task<OperationResult<UpdateSenhaUsuarioDto>> ChangePassword(int id, UpdateSenhaUsuarioDto updateSenhaUsuarioDto)
+    public async Task<OperationResult<RequestUpdateSenhaUsuarioDto>> ChangePassword(int id, RequestUpdateSenhaUsuarioDto updateSenhaUsuarioDto)
     {
-        //TODO: fazer o Hash da senha, tambem fazer a criptografia de dados sensiveis
+
         if (updateSenhaUsuarioDto.NewPassword != updateSenhaUsuarioDto.ConfirmedPassword)
         {
-            return OperationResult<UpdateSenhaUsuarioDto>.Fail("As senhas não conhecidem, confira e tente novamente!");
+            return OperationResult<RequestUpdateSenhaUsuarioDto>.Fail("As senhas não conhecidem, confira e tente novamente!");
         }
         var response = await _httpClient.GetAsync($"Usuarios/{id}");
         if (!(response.IsSuccessStatusCode || response.StatusCode == HttpStatusCode.NoContent))
         {
-            return OperationResult<UpdateSenhaUsuarioDto>.Fail("Falha ao encontrar usuario!");
+            return OperationResult<RequestUpdateSenhaUsuarioDto>.Fail("Usuario não encontrado!");
         }
-        var usuario = await response.Content.ReadFromJsonAsync<OperationResult<UpdateSenhaUsuarioDto>>();
-        if (usuario.Value.OldPassword != updateSenhaUsuarioDto.OldPassword)
-        {
-            return OperationResult<UpdateSenhaUsuarioDto>.Fail("Erro ao verificar a senha atual!");
-        }
-
+        var usuario = await response.Content.ReadFromJsonAsync<OperationResult<RequestUpdateSenhaUsuarioDto>>();
         var updatePassword = await _httpClient.PatchAsJsonAsync($"Usuarios/{id}/senha", updateSenhaUsuarioDto);
-        var result = await updatePassword.Content.ReadFromJsonAsync<OperationResult<UpdateSenhaUsuarioDto>>();
-        return OperationResult<UpdateSenhaUsuarioDto>.Ok(result.Value);
+        var result = await updatePassword.Content.ReadFromJsonAsync<OperationResult<RequestUpdateSenhaUsuarioDto>>()
+                                    ?? OperationResult<RequestUpdateSenhaUsuarioDto>.Fail("Não encontrado");
 
+        return result;
     }
 
-    public Task<OperationResult<ResponseGetUsuarioDto>> GetUsuario(string id)
+    public async Task<OperationResult<ResponseGetUsuarioDto>> GetUsuario(string email)
     {
+        var response = await _httpClient.GetAsync($"Usuarios?email={Uri.EscapeDataString(email)}");
+        if (response.IsSuccessStatusCode && !(response.StatusCode == HttpStatusCode.NoContent))
+        {
+            var usuario = await response.Content.ReadFromJsonAsync<ResponseGetUsuarioDto>();
+            if (usuario is not null)
+                return OperationResult<ResponseGetUsuarioDto>.Ok(usuario);
+            return OperationResult<ResponseGetUsuarioDto>.Fail("Usuario não cadastrado");
+        }
+        return OperationResult<ResponseGetUsuarioDto>.Fail("Usuario não cadastrado");
+    }
+
+    public async Task<OperationResult<RequestCadastroUsuarioDto>> InsertUsuario(RequestCadastroUsuarioDto cadastroUsuarioDto)
+    {
+
         throw new NotImplementedException();
     }
 
-    public Task<OperationResult<ResponseGetUsuarioDto>> GetUsuario(int id)
-    {
-        throw new NotImplementedException();
-    }
-
-    public async Task<OperationResult<CadastroUsuarioDto>> InsertUsuario(CadastroUsuarioDto cadastroUsuarioDto)
-    {
-
-        throw new NotImplementedException();
-    }
-
-    public Task<OperationResult<UpdateCadastroUsuarioDto>> UpdateUsuario(int id, UpdateCadastroUsuarioDto updateCadastroUsuarioDto)
-    {
-        throw new NotImplementedException();
-    }
-    public string HashPassword(string password, string confirmPassword)
+    public Task<OperationResult<RequestUpdateCadastroUsuarioDto>> UpdateUsuario(int id, RequestUpdateCadastroUsuarioDto updateCadastroUsuarioDto)
     {
         throw new NotImplementedException();
     }

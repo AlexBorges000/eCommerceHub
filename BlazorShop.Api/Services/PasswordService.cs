@@ -1,14 +1,14 @@
 ﻿using BlazorShop.Api.Entities;
-using BlazorShop.Api.Repositories.Interfaces;
+using BlazorShop.Api.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 
-namespace BlazorShop.Api.Repositories;
+namespace BlazorShop.Api.Services;
 
-public class PasswordRepository : IPasswordRepository
+public class PasswordService : IPasswordService
 {
     private readonly PasswordHasher<Usuario> _hasher;
 
-    public PasswordRepository()
+    public PasswordService()
     {
         _hasher = new PasswordHasher<Usuario>();
     }

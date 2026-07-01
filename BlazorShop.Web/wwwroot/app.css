@@ -1,6 +1,5 @@
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-    background-color: #ffffff;
 }
 
 a, .btn-link {
@@ -17,6 +16,31 @@ a, .btn-link {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
+.produtos-grid .produto-card {
+    overflow: hidden;
+    transition: transform .3s ease, box-shadow .3s ease;
+}
+
+    .produtos-grid .produto-card:hover {
+        transform: scale(1.03);
+        box-shadow: 0 4px 8px rgba(0,0,0,.2), 0 6px 20px rgba(0,0,0,.19);
+    }
+
+.produtos-grid .produto-imagem-container {
+    overflow: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 200px;
+}
+
+.produtos-grid .produto-imagem {
+    transition: transform .5s ease;
+}
+
+.produtos-grid .produto-card:hover .produto-imagem {
+    transform: scale(1.1);
+}
 .content {
     padding-top: 1.1rem;
 }

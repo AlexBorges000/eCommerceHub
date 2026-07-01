@@ -1,6 +1,6 @@
 ﻿namespace BlazorShop.Models.DTOs.UsuarioDtos;
 
-public class UpdateSenhaUsuarioDto
+public class RequestUpdateSenhaUsuarioDto
 {
     public string OldPassword {  get; set; } = string.Empty;
     public string NewPassword { get; set; } = string.Empty;

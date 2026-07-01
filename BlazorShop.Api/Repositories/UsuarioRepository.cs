@@ -2,26 +2,28 @@
 using BlazorShop.Api.Entities;
 using BlazorShop.Api.Entities.Enums;
 using BlazorShop.Api.Repositories.Interfaces;
+using BlazorShop.Api.Services.Interfaces;
 using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.UsuarioDtos;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlazorShop.Api.Repositories;
 
 public class UsuarioRepository : IUsuarioRepository
 {
     private readonly AppDbContext _context;
-    private readonly IPasswordRepository _passwordHasher;
-    public UsuarioRepository(AppDbContext context, IPasswordRepository passwordRepository)
+    private readonly IPasswordService _passwordHasher;
+    public UsuarioRepository(AppDbContext context, IPasswordService passwordRepository)
     {
         _context = context;
         _passwordHasher = passwordRepository;
     }
 
-    public async Task<OperationResult<Usuario>> ChangePassword(int id, UpdateSenhaUsuarioDto updateSenhaUsuarioDto)
+    public async Task<OperationResult<Usuario>> ChangePassword(int id, RequestUpdateSenhaUsuarioDto updateSenhaUsuarioDto)
     {
         if (updateSenhaUsuarioDto.ConfirmedPassword != updateSenhaUsuarioDto.NewPassword)
         {
-            return OperationResult<Usuario>.Fail("As senhas não conhecidem");
+            return OperationResult<Usuario>.Fail("As senhas não coincidem");
         }
 
         var response = await _context.Usuarios.FindAsync(id);
@@ -42,18 +44,13 @@ public class UsuarioRepository : IUsuarioRepository
         return OperationResult<Usuario>.Fail("A senha antiga esta errada");
     }
 
-    public async Task<OperationResult<Usuario>> GetUsuario(int id)
-    {
-        var usuario = await _context.Usuarios.FindAsync(id);
-        if (usuario is null)
-        {
-            return OperationResult<Usuario>.Fail("Usuario não encontrado");
-        }
-
-        return OperationResult<Usuario>.Ok(usuario);
+    public async Task<Usuario?> GetUsuario(string email)
+    { 
+        return await _context.Usuarios
+                              .SingleOrDefaultAsync(u => u.Email == email);
     }
 
-    public async Task<OperationResult<Usuario>> InsertUsuario(CadastroUsuarioDto cadastroUsuario)
+    public async Task<OperationResult<Usuario>> InsertUsuario(RequestCadastroUsuarioDto cadastroUsuario)
     {
         var tipoPessoa = (TipoPessoa)cadastroUsuario.TipoPessoa;
         if (cadastroUsuario.Senha != cadastroUsuario.ConfirmaSenha)
@@ -76,6 +73,7 @@ public class UsuarioRepository : IUsuarioRepository
             TipoPessoa = tipoPessoa,
 
         };
+        usuario.Carrinho = new Carrinho();
         var hashPassword = _passwordHasher.HashedPassword(usuario, cadastroUsuario.Senha);
         usuario.Senha = hashPassword;
         var resultado = await _context.Usuarios.AddAsync(usuario);
@@ -83,7 +81,7 @@ public class UsuarioRepository : IUsuarioRepository
         return OperationResult<Usuario>.Ok(resultado.Entity);
     }
 
-    public async Task<OperationResult<Usuario>> UpdateUsuario(int id, UpdateCadastroUsuarioDto updateCadastroUsuario)
+    public async Task<OperationResult<Usuario>> UpdateUsuario(int id, RequestUpdateCadastroUsuarioDto updateCadastroUsuario)
     {
         var usuario = await _context.Usuarios.FindAsync(id);
         if (usuario is null)

@@ -17,7 +17,7 @@ public class ProdutoService : IProdutoService
         _logger = logger;
     }
 
-    public async Task<OperationResult<IEnumerable<ProdutoDto>>> GetItens()
+    public async Task<OperationResult<IEnumerable<RequestGetProdutoDto>>> GetItens()
     {
         try
         {
@@ -26,31 +26,31 @@ public class ProdutoService : IProdutoService
             if (!response.IsSuccessStatusCode)
             {
                 var erro = await response.Content
-                    .ReadFromJsonAsync<OperationResult<IEnumerable<ProdutoDto>>>();
+                    .ReadFromJsonAsync<OperationResult<IEnumerable<RequestGetProdutoDto>>>();
 
-                return erro ?? OperationResult<IEnumerable<ProdutoDto>>
+                return erro ?? OperationResult<IEnumerable<RequestGetProdutoDto>>
                     .Fail("Erro desconhecido na API");
             }
             var produtos = await response.Content
-                .ReadFromJsonAsync<IEnumerable<ProdutoDto>>();
+                .ReadFromJsonAsync<IEnumerable<RequestGetProdutoDto>>();
             if (produtos is null || !produtos.Any())
             {
-                return OperationResult<IEnumerable<ProdutoDto>>
+                return OperationResult<IEnumerable<RequestGetProdutoDto>>
                     .Fail("Nenhum produto encontrado");
             }
 
-            return OperationResult<IEnumerable<ProdutoDto>>.Ok(produtos);
+            return OperationResult<IEnumerable<RequestGetProdutoDto>>.Ok(produtos);
         }
         catch (Exception ex)
         {
             _logger.LogError(ex, "Erro ao obter os produtos ou acessar a API");
 
-            return OperationResult<IEnumerable<ProdutoDto>>
+            return OperationResult<IEnumerable<RequestGetProdutoDto>>
                 .Fail("Erro inesperado ao chamar a API");
         }
     }
 
-    public async Task<OperationResult<ProdutoDto>> GetItem(int id)
+    public async Task<OperationResult<RequestGetProdutoDto>> GetItem(int id)
     {
         try
         {
@@ -59,14 +59,14 @@ public class ProdutoService : IProdutoService
             {
                 if (response.StatusCode == HttpStatusCode.NoContent)
                 {
-                    return OperationResult<ProdutoDto>.Ok(new ProdutoDto());
+                    return OperationResult<RequestGetProdutoDto>.Ok(new RequestGetProdutoDto());
                 }
-                var produto = await response.Content.ReadFromJsonAsync<ProdutoDto>();
+                var produto = await response.Content.ReadFromJsonAsync<RequestGetProdutoDto>();
                 if (produto is not null)
                 {
-                    return OperationResult<ProdutoDto>.Ok(produto);
+                    return OperationResult<RequestGetProdutoDto>.Ok(produto);
                 }
-                return OperationResult<ProdutoDto>.Fail("Produto não encontrado");
+                return OperationResult<RequestGetProdutoDto>.Fail("Produto não encontrado");
 
             }
             else
@@ -79,7 +79,7 @@ public class ProdutoService : IProdutoService
         }
         catch (Exception ex)
         {
-            return OperationResult<ProdutoDto>.Fail("ERRO INTERNO CONTATAR O SUPORTE, OU TENTE MAIS TARDE!"+ex.Message);
+            return OperationResult<RequestGetProdutoDto>.Fail("ERRO INTERNO CONTATAR O SUPORTE, OU TENTE MAIS TARDE!"+ex.Message);
         }
     }
 }

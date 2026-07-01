@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject IDialogService DialogService
 
 <MudThemeProvider />
 <MudPopoverProvider />
@@ -7,27 +8,46 @@
 
 <MudLayout>
     <MudAppBar>
-        <MudIconButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => DrawerToggle())" />
+        <MudButton Icon="@Icons.Material.Filled.Menu" Color="Color.Inherit" Edge="Edge.Start" OnClick="@(() => DrawerToggle())" />
         ecommerce
+        <MudSpacer />
 
+        <MudMenu Icon="@Icons.Material.Filled.AccountCircle">
+            <ChildContent>
+                <MudMenuItem Href="/login">
+                    Login
+                </MudMenuItem>
+
+                <MudMenuItem OnClick="OpenDialogAsync" FullWidth="true">
+                    Cadastrar
+                </MudMenuItem>
+            </ChildContent>
+        </MudMenu>
     </MudAppBar>
     <MudDrawer @bind-Open="_drawerOpen"
                Variant="DrawerVariant.Responsive"
                Elevation="1">
-        <NavMenu/>
+        <NavMenu />
+
     </MudDrawer>
     <MudMainContent>
         @Body
     </MudMainContent>
     <MudThemeProvider @ref="_mudThemeProvider" @bind-IsDarkMode="_isDarkMode" />
 </MudLayout>
+
 @code {
+    private readonly DialogOptions _topCenter = new() { Position = DialogPosition.TopRight, BackdropClick = false, MaxWidth = MaxWidth.Large };
     bool _drawerOpen = true;
     private bool _isDarkMode = true;
     private MudThemeProvider _mudThemeProvider;
-    
+
     void DrawerToggle()
     {
         _drawerOpen = !_drawerOpen;
+    }
+    private Task OpenDialogAsync()
+    {
+        return DialogService.ShowAsync<VerifyUsuarioDialog>("Cadastro", _topCenter);
     }
 }

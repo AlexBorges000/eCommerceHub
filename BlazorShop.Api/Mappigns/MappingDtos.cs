@@ -19,10 +19,10 @@ public static class MappingDtos
                 }).ToList();
     }
 
-    public static OperationResult<IEnumerable<ProdutoDto>> ConverterProdutosParaDto(this IEnumerable<Produto> produtos)
+    public static OperationResult<IEnumerable<RequestGetProdutoDto>> ConverterProdutosParaDto(this IEnumerable<Produto> produtos)
     {
         var itens = (from produto in produtos
-                     select new ProdutoDto
+                     select new RequestGetProdutoDto
                      {
                          Id = produto.Id,
                          Nome = produto.Nome,
@@ -33,12 +33,12 @@ public static class MappingDtos
                          CategoriaId = produto.CategoriaId,
                          CategoriaNome = produto.Categoria.Nome
                      }).ToList();
-        return OperationResult<IEnumerable<ProdutoDto>>.Ok(itens);
+        return OperationResult<IEnumerable<RequestGetProdutoDto>>.Ok(itens);
     }
 
-    public static OperationResult<ProdutoDto> ConverterProdutoParaDto(this Produto produto)
+    public static OperationResult<RequestGetProdutoDto> ConverterProdutoParaDto(this Produto produto)
     {
-        var item = new ProdutoDto
+        var item = new RequestGetProdutoDto
         {
             Id = produto.Id,
             Nome = produto.Nome,
@@ -49,15 +49,15 @@ public static class MappingDtos
             CategoriaId = produto.CategoriaId,
             CategoriaNome = produto.Categoria.Nome
         };
-        return OperationResult<ProdutoDto>.Ok(item);
+        return OperationResult<RequestGetProdutoDto>.Ok(item);
     }
 
-    public static OperationResult<IEnumerable<CarrinhoItemDto>> ConverterCarrinhoItemParaDto(this IEnumerable<CarrinhoItem> carrinhoItens, IEnumerable<Produto> produtos)
+    public static OperationResult<IEnumerable<RequestGetCarrinhoItemDto>> ConverterCarrinhoItemParaDto(this IEnumerable<CarrinhoItem> carrinhoItens, IEnumerable<Produto> produtos)
     {
         var carrinho = (from carrinhoItem in carrinhoItens
                         join produto in produtos
                         on carrinhoItem.ProdutoId equals produto.Id
-                        select new CarrinhoItemDto
+                        select new RequestGetCarrinhoItemDto
                         {
                             Id = carrinhoItem.Id,
                             CarrinhoId = carrinhoItem.CarrinhoId,
@@ -71,17 +71,17 @@ public static class MappingDtos
                         }).ToList();
         if (carrinho is not null)
         {
-            return OperationResult<IEnumerable<CarrinhoItemDto>>.Ok(carrinho);
+            return OperationResult<IEnumerable<RequestGetCarrinhoItemDto>>.Ok(carrinho);
         }
         else
         {
-            return OperationResult<IEnumerable<CarrinhoItemDto>>.Fail("ERRO INTERNO AO MOSTRAR OS CARRINHOS");
+            return OperationResult<IEnumerable<RequestGetCarrinhoItemDto>>.Fail("ERRO INTERNO AO MOSTRAR OS CARRINHOS");
         }
     }
 
-    public static OperationResult<CarrinhoItemDto> ConverterCarrinhoItemParaDto(this CarrinhoItem carrinhoItem, Produto produto)
+    public static OperationResult<RequestGetCarrinhoItemDto> ConverterCarrinhoItemParaDto(this CarrinhoItem carrinhoItem, Produto produto)
     {
-        var carrinho = new CarrinhoItemDto
+        var carrinho = new RequestGetCarrinhoItemDto
         {
             Id = carrinhoItem.Id,
             ProdutoId = carrinhoItem.ProdutoId,
@@ -95,17 +95,17 @@ public static class MappingDtos
         };
         if (carrinho is not null)
         {
-            return OperationResult<CarrinhoItemDto>.Ok(carrinho);
+            return OperationResult<RequestGetCarrinhoItemDto>.Ok(carrinho);
         }
         else
         {
-            return OperationResult<CarrinhoItemDto>.Fail("ERRO INTERNO AO MOSTRAR OS CARRINHOS");
+            return OperationResult<RequestGetCarrinhoItemDto>.Fail("ERRO INTERNO AO MOSTRAR OS CARRINHOS");
         }
     }
 
-    public static OperationResult<CadastroUsuarioDto> ConverterUsuarioParaDto(this Usuario usuario)
+    public static OperationResult<RequestCadastroUsuarioDto> ConverterUsuarioParaDto(this Usuario usuario)
     {
-        var user = new CadastroUsuarioDto
+        var user = new RequestCadastroUsuarioDto
         {
             Email = usuario.Email,
             Endereco = usuario.Endereco,
@@ -122,9 +122,9 @@ public static class MappingDtos
         };
         if (usuario is not null)
         {
-            return OperationResult<CadastroUsuarioDto>.Ok(user);
+            return OperationResult<RequestCadastroUsuarioDto>.Ok(user);
         }
-        return OperationResult<CadastroUsuarioDto>.Fail("Erro ao cadastrar usuario");
+        return OperationResult<RequestCadastroUsuarioDto>.Fail("Erro ao cadastrar usuario");
     }
 
     public static OperationResult<ResponseGetUsuarioDto> GetUsuarioParaDto(this Usuario usuario)
@@ -134,7 +134,6 @@ public static class MappingDtos
             Email = usuario.Email,
             Endereco = usuario.Endereco,
             Telefone = usuario.Telefone,
-            Senha = usuario.Senha,
             Nome = usuario.Nome,
             CPF = usuario.CPF,
             CNPJ = usuario.CNPJ,

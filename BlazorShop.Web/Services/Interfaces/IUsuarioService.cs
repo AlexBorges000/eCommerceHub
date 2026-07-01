@@ -5,8 +5,8 @@ namespace BlazorShop.Web.Services.Interfaces;
 
 public interface IUsuarioService
 {
-    Task<OperationResult<CadastroUsuarioDto>> InsertUsuario(CadastroUsuarioDto cadastroUsuarioDto);
-    Task<OperationResult<UpdateCadastroUsuarioDto>> UpdateUsuario(int id, UpdateCadastroUsuarioDto updateCadastroUsuarioDto);
-    Task<OperationResult<ResponseGetUsuarioDto>> GetUsuario(int id);
-    Task<OperationResult<UpdateSenhaUsuarioDto>> ChangePassword(int id, UpdateSenhaUsuarioDto updateSenhaUsuarioDto);
+    Task<OperationResult<RequestCadastroUsuarioDto>> InsertUsuario(RequestCadastroUsuarioDto cadastroUsuarioDto);
+    Task<OperationResult<RequestUpdateCadastroUsuarioDto>> UpdateUsuario(int id, RequestUpdateCadastroUsuarioDto updateCadastroUsuarioDto);
+    Task<OperationResult<ResponseGetUsuarioDto>> GetUsuario(string email);
+    Task<OperationResult<RequestUpdateSenhaUsuarioDto>> ChangePassword(int id, RequestUpdateSenhaUsuarioDto updateSenhaUsuarioDto);
 }

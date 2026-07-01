@@ -1,7 +1,7 @@
 ﻿
 namespace BlazorShop.Models.DTOs.UsuarioDtos;
 
-public class CadastroUsuarioDto
+public class RequestCadastroUsuarioDto
 {
     public int TipoPessoa { get; set; }
 

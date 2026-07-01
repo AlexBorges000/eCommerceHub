@@ -5,8 +5,8 @@ namespace BlazorShop.Web.Services.Interfaces;
 
 public interface ICarrinhoCompraService
 {
-    Task<OperationResult<List<CarrinhoItemDto>>> GetItens(int usuarioId);
-    Task<OperationResult<CarrinhoItemDto>> AdicionaItem(CarrinhoItemAdicionaDto carrinhoItemAdicionaDto);
-    Task<OperationResult<CarrinhoItemDto>> DeleteItem(int id);
-    Task<OperationResult<CarrinhoItemDto>> AtualizaQuantidade(CarrinhoItemAtualizaQuantidadeDto carrinhoItemAtualizaQuantidadeDto);
+    Task<OperationResult<List<RequestGetCarrinhoItemDto>>> GetItens(int usuarioId);
+    Task<OperationResult<RequestGetCarrinhoItemDto>> AdicionaItem(RequestCarrinhoItemAdicionaDto carrinhoItemAdicionaDto);
+    Task<OperationResult<RequestGetCarrinhoItemDto>> DeleteItem(int id);
+    Task<OperationResult<RequestGetCarrinhoItemDto>> AtualizaQuantidade(RequestCarrinhoItemAtualizaQuantidadeDto carrinhoItemAtualizaQuantidadeDto);
 }
