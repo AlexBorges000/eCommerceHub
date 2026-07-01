@@ -98,7 +98,6 @@ Este projeto tem como objetivo consolidar conhecimentos em desenvolvimento de ap
 
 Além das funcionalidades de negócio, o foco está na aplicação de conceitos como:
 
-* Arquitetura limpa
 * Boas práticas de desenvolvimento
 * Escalabilidade
 * Manutenibilidade
