@@ -60,7 +60,7 @@ BlazorShop
 
 * Blazor
 * Razor Components
-* Bootstrap
+* MudBlazor
 
 ### Ferramentas
 
