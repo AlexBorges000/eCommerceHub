@@ -2,7 +2,7 @@
 
 namespace BlazorShop.Models.DTOs.CarrinhoDtos;
 
-public class CarrinhoItemAdicionaDto
+public class RequestCarrinhoItemAdicionaDto
 {
     [Required]
     public int CarrinhoId { get; set; }

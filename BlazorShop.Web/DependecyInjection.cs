@@ -10,6 +10,7 @@ public static class DependecyInjection
     {
         services.AddScoped<IProdutoService, ProdutoService>();
         services.AddScoped<ICarrinhoCompraService, CarrinhoCompraService>();
+        services.AddScoped<IUsuarioService, UsuarioService>();
         ConfigureAddHttpClient(services);
         return services;
     }
@@ -27,5 +28,9 @@ public static class DependecyInjection
             opts.BaseAddress = new Uri(HttpConfiguration.BaseUrl);
             opts.Timeout = TimeSpan.FromSeconds(100);
         });
+        services.AddHttpClient(HttpConfiguration.Usuario, opts => {
+            opts.BaseAddress = new Uri(HttpConfiguration.BaseUrl);
+            opts.Timeout = TimeSpan.FromSeconds(100);
+            });
     }
 }

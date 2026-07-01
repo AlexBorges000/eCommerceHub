@@ -16,7 +16,7 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
         _context = context;
     }
 
-    public async Task<OperationResult<CarrinhoItem>> AdicionaItem(CarrinhoItemAdicionaDto carrinhoItemAdicionaDto)
+    public async Task<OperationResult<CarrinhoItem>> AdicionaItem(RequestCarrinhoItemAdicionaDto carrinhoItemAdicionaDto)
     {
         if (await CarrinhoItemJaExiste(carrinhoItemAdicionaDto.CarrinhoId, carrinhoItemAdicionaDto.ProdutoId) == false)
         {
@@ -42,7 +42,7 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
                 c.ProdutoId == carrinhoItemAdicionaDto.ProdutoId).FirstOrDefaultAsync();
             if (carrinho is not null)
             {
-                var carrinhoItemAtualizaQuantidadeDto = new CarrinhoItemAtualizaQuantidadeDto()
+                var carrinhoItemAtualizaQuantidadeDto = new RequestCarrinhoItemAtualizaQuantidadeDto()
                 {
                     CarrinhoItemId = carrinho.Id,
                     Quantidade = (carrinho.Quantidade + carrinhoItemAdicionaDto.Quantidade)
@@ -61,7 +61,7 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
         return await _context.CarrinhoItem.AnyAsync(c => c.CarrinhoId == carrinhoId && c.ProdutoId == produtoId);
     }
 
-    public async Task<OperationResult<CarrinhoItem>> AtualizaQuantidade(int id, CarrinhoItemAtualizaQuantidadeDto carrinhoItemAtulizaQuantidadeDto)
+    public async Task<OperationResult<CarrinhoItem>> AtualizaQuantidade(int id, RequestCarrinhoItemAtualizaQuantidadeDto carrinhoItemAtulizaQuantidadeDto)
     {
         var carrinhoItem = await _context.CarrinhoItem.FindAsync(id);
 

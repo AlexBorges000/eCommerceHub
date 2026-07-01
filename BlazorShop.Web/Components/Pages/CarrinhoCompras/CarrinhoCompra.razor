@@ -14,20 +14,21 @@ else
     <h3 class="mb-5">Carrinho</h3>
     @if (CarrinhoCompraItens != null)
     {
-        <div class="row mb-5">
-            <div class="col-md-9">
+        <MudGrid Class="mb-5">
+            <MudItem xs="12" md="9">
                 @foreach (var item in CarrinhoCompraItens)
                 {
                     <ExibirCarrinho Item="item"
                                     OnDelete="DeleteCarrinhoItem_Click"
-                                    OnInput="OnInput" 
-                                    id="@item.ProdutoId"/>
+                                    OnInput="OnInput"
+                                    id="item.ProdutoId" />
                 }
-            </div>
-            <div class="col-md-3">
+            </MudItem>
+
+            <MudItem xs="12" md="3">
                 <FecharCarrinho Total="ValorFinal()" />
-            </div>
-        </div>
+            </MudItem>
+        </MudGrid>
     }
     else
     {
@@ -44,10 +45,10 @@ else
     public ICarrinhoCompraService CarrinhoCompraService { get; set; } = null!;
 
     [Parameter]
-    public IEnumerable<ProdutoDto>? Produtos { get; set; }
+    public IEnumerable<RequestGetProdutoDto>? Produtos { get; set; }
 
-    public List<CarrinhoItemDto> CarrinhoCompraItens { get; set; } = null!;
-    public CarrinhoItemAtualizaQuantidadeDto carrinhoItemAtualizaQuantidadeDtos { get; set; } = null!;
+    public List<RequestGetCarrinhoItemDto> CarrinhoCompraItens { get; set; } = null!;
+    public RequestCarrinhoItemAdicionaDto carrinhoItemAtualizaQuantidadeDtos { get; set; } = null!;
     public string? MensagemErro { get; set; }
     private readonly Dictionary<int, CancellationTokenSource> _tokens = [];
 
@@ -74,7 +75,7 @@ else
         await RemoveCarrinhoItem(id);
     }
 
-    private CarrinhoItemDto GetCarrinhoItem(int id)
+    private RequestGetCarrinhoItemDto GetCarrinhoItem(int id)
     {
         var produtos = CarrinhoCompraItens.SingleOrDefault(x => x.Id == id)
         ?? throw new Exception("Item não encontrado no carrinho");
@@ -93,13 +94,11 @@ else
             .SingleOrDefault(x => x.Id == id);
         if (produto is not null)
         {
-            var carrinhodto = new CarrinhoItemAtualizaQuantidadeDto
+            var carrinhodto = new RequestCarrinhoItemAtualizaQuantidadeDto
                 {
                     CarrinhoItemId = id,
                     Quantidade = produto.Quantidade
                 };
-
-
 
             if (carrinhodto.Quantidade > 0)
             {
@@ -133,7 +132,7 @@ else
 
         try
         {
-            await Task.Delay(TimeSpan.FromSeconds(1), cts.Token);
+            await Task.Delay(TimeSpan.FromSeconds(50), cts.Token);
             await UpdateQuantidade(id);
         }
         catch (TaskCanceledException)
