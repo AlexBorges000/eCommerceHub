@@ -20,12 +20,14 @@ public class PasswordService : IPasswordService
 
     public bool IsInvalidPassword(Usuario usuario, string hashedPassword, string password)
     {
+     
         return _hasher.VerifyHashedPassword(usuario,
         hashedPassword,
         password) == PasswordVerificationResult.Failed;
     }
 
-    public bool IsStrongPassword(string password)
+    //verificvar
+    private bool IsStrongPassword(string password)
     {
         if (string.IsNullOrWhiteSpace(password))
             return false;

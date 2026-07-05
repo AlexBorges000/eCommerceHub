@@ -6,10 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace BlazorShop.Api.Controllers;
 
 [Route("api/usuario/[controller]")]
-public class AuthController(IConfiguration configuration,
-    IAuthService authService) : ControllerBase
+public class AuthController(IAuthService authService) : ControllerBase
 {
-    private readonly IConfiguration _configuration = configuration;
     private readonly IAuthService _authService = authService;
 
     [AllowAnonymous]
@@ -27,4 +25,6 @@ public class AuthController(IConfiguration configuration,
         }
         return Ok(response.Value);
     }
+
+
 }

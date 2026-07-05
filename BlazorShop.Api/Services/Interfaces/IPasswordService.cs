@@ -6,5 +6,4 @@ public interface IPasswordService
 {
     string HashedPassword(Usuario usuario, string password);
     bool IsInvalidPassword(Usuario usuario, string hashedPassword, string password);
-    bool IsStrongPassword(string password);
 }

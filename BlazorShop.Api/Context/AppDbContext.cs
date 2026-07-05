@@ -13,6 +13,7 @@ public class AppDbContext : DbContext
     public DbSet<Produto> Produtos { get; set; } = null!;
     public DbSet<Categoria> Categorias { get; set; } = null!;
     public DbSet<Usuario> Usuarios { get; set; } = null!;
+    public DbSet<RefreshTokens> RefreshTokens { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -31,6 +32,14 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Usuario>()
             .HasIndex(x => x.Email).IsUnique();
+
+        modelBuilder.Entity<RefreshTokens>()
+            .HasOne(x => x.Usuario)
+            .WithMany(x => x.RefreshTokens)
+            .HasForeignKey(x => x.UsuarioId);
+
+        modelBuilder.Entity<RefreshTokens>()
+            .HasIndex(x=>x.Id).IsUnique();
 
         modelBuilder.Entity<Produto>().HasData(new Produto
         {
