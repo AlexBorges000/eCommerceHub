@@ -2,8 +2,8 @@
 using BlazorShop.Api.Repositories.Interfaces;
 using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.UsuarioDtos;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 
 namespace BlazorShop.Api.Controllers;
 
@@ -25,13 +25,17 @@ public class UsuarioController : ControllerBase
     public async Task<ActionResult<OperationResult<ResponseGetUsuarioDto>>> GetUsuario([FromQuery] string email)
     {
         var usuario = await _usuarioRepository.GetUsuario(email);
-        if (usuario is null)
+        if (!usuario.Success)
         {
             return NotFound();
         }
-        return Ok(usuario);
+        if (usuario.Value is not null)
+        {
+            return Ok(usuario.Value);
+        }
+        return NoContent();
     }
-    [Authorize]
+
     [HttpPatch("{id:int}/senha")]
     public async Task<ActionResult<OperationResult<RequestUpdateSenhaUsuarioDto>>> ChangePassword(int id, RequestUpdateSenhaUsuarioDto updateSenhaUsuarioDto)
     {
@@ -57,7 +61,7 @@ public class UsuarioController : ControllerBase
 
     [HttpPost]
     public async Task<ActionResult<OperationResult<RequestCadastroUsuarioDto>>> InsertUsuario(RequestCadastroUsuarioDto cadastroUsuarioDto)
-    {
+    { 
         var usuario = await _usuarioRepository.InsertUsuario(cadastroUsuarioDto);
         if (cadastroUsuarioDto is null)
         {
