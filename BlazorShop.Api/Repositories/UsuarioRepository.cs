@@ -32,7 +32,7 @@ public class UsuarioRepository : IUsuarioRepository
         {
             return OperationResult<Usuario>.Fail("Usuario Não encontrado");
         }
-        if (_passwordHasher.IsInvalidPassword(response,
+        if (_passwordHasher.VerifyPassword(response,
             hashedPassword: response.Senha,
             password:updateSenhaUsuarioDto.OldPassword))
         {
