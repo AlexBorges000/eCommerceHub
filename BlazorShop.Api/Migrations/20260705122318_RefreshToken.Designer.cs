@@ -4,6 +4,7 @@ using BlazorShop.Api.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorShop.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260705122318_RefreshToken")]
+    partial class RefreshToken
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -398,7 +401,7 @@ namespace BlazorShop.Api.Migrations
                         });
                 });
 
-            modelBuilder.Entity("BlazorShop.Api.Entities.RefreshTokens", b =>
+            modelBuilder.Entity("BlazorShop.Api.Entities.RefreshToken", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -426,7 +429,7 @@ namespace BlazorShop.Api.Migrations
 
                     b.HasIndex("UsuarioId");
 
-                    b.ToTable("RefreshTokens");
+                    b.ToTable("RefreshToken");
                 });
 
             modelBuilder.Entity("BlazorShop.Api.Entities.Usuario", b =>
@@ -572,7 +575,7 @@ namespace BlazorShop.Api.Migrations
                     b.Navigation("Categoria");
                 });
 
-            modelBuilder.Entity("BlazorShop.Api.Entities.RefreshTokens", b =>
+            modelBuilder.Entity("BlazorShop.Api.Entities.RefreshToken", b =>
                 {
                     b.HasOne("BlazorShop.Api.Entities.Usuario", "Usuario")
                         .WithMany("RefreshTokens")

@@ -32,7 +32,7 @@ public class UsuarioRepository : IUsuarioRepository
         {
             return OperationResult<Usuario>.Fail("Usuario Não encontrado");
         }
-        if (_passwordHasher.VerifyPassword(response,
+        if (_passwordHasher.IsInvalidPassword(response,
             hashedPassword: response.Senha,
             password:updateSenhaUsuarioDto.OldPassword))
         {
@@ -44,13 +44,18 @@ public class UsuarioRepository : IUsuarioRepository
         return OperationResult<Usuario>.Fail("A senha antiga esta errada");
     }
 
-    public async Task<Usuario?> GetUsuario(string email)
-    { 
+    public async Task<Usuario?> GetAsync(string email)
+    {
         return await _context.Usuarios
                               .SingleOrDefaultAsync(u => u.Email == email);
     }
+    public async Task<Usuario?> GetAsync(int id)
+    {
+        return await _context.Usuarios
+            .FirstOrDefaultAsync(x => x.Id == id);
+    }
 
-    public async Task<OperationResult<Usuario>> InsertUsuario(RequestCadastroUsuarioDto cadastroUsuario)
+    public async Task<OperationResult<Usuario>> AddAsync(RequestCadastroUsuarioDto cadastroUsuario)
     {
         var tipoPessoa = (TipoPessoa)cadastroUsuario.TipoPessoa;
         if (cadastroUsuario.Senha != cadastroUsuario.ConfirmaSenha)
@@ -81,7 +86,7 @@ public class UsuarioRepository : IUsuarioRepository
         return OperationResult<Usuario>.Ok(resultado.Entity);
     }
 
-    public async Task<OperationResult<Usuario>> UpdateUsuario(int id, RequestUpdateCadastroUsuarioDto updateCadastroUsuario)
+    public async Task<OperationResult<Usuario>> UpdateAsync(int id, RequestUpdateCadastroUsuarioDto updateCadastroUsuario)
     {
         var usuario = await _context.Usuarios.FindAsync(id);
         if (usuario is null)

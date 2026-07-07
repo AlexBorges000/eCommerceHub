@@ -6,8 +6,9 @@ namespace BlazorShop.Api.Repositories.Interfaces;
 
 public interface IUsuarioRepository
 {   
-    Task<OperationResult<Usuario>> InsertUsuario(RequestCadastroUsuarioDto cadastroUsuario);
-    Task<OperationResult<Usuario>> UpdateUsuario(int id, RequestUpdateCadastroUsuarioDto updateCadastroUsuario);
-    Task<Usuario?> GetUsuario(string email);
+    Task<OperationResult<Usuario>> AddAsync(RequestCadastroUsuarioDto cadastroUsuario);
+    Task<OperationResult<Usuario>> UpdateAsync(int id, RequestUpdateCadastroUsuarioDto updateCadastroUsuario);
+    Task<Usuario?> GetAsync(string email);
     Task<OperationResult<Usuario>> ChangePassword(int id, RequestUpdateSenhaUsuarioDto updateSenhaUsuarioDto);
+    Task<Usuario?> GetAsync(int id);
 }

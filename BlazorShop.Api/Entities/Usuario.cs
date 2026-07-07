@@ -40,4 +40,5 @@ public class Usuario
     [MaxLength(250)]
     public string? CNPJ { get; set; }
     public Carrinho? Carrinho { get; set; }
+    public ICollection<RefreshTokens> RefreshTokens { get; set; } = [];
 }
