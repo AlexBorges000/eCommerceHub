@@ -24,7 +24,7 @@ public class UsuarioController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<OperationResult<ResponseGetUsuarioDto>>> GetUsuario([FromQuery] string email)
     {
-        var usuario = await _usuarioRepository.GetUsuario(email);
+        var usuario = await _usuarioRepository.GetAsync(email);
         if (usuario is null)
         {
             return NotFound();
@@ -46,7 +46,7 @@ public class UsuarioController : ControllerBase
     [HttpPatch("{id:int}")]
     public async Task<ActionResult<OperationResult<RequestUpdateCadastroUsuarioDto>>> UpdateUser(int id, RequestUpdateCadastroUsuarioDto updateCadastroUsuarioDto)
     {
-        var user = await _usuarioRepository.UpdateUsuario(id, updateCadastroUsuarioDto);
+        var user = await _usuarioRepository.UpdateAsync(id, updateCadastroUsuarioDto);
         if (!user.Success)
         {
             return BadRequest();
@@ -58,7 +58,7 @@ public class UsuarioController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<OperationResult<RequestCadastroUsuarioDto>>> InsertUsuario(RequestCadastroUsuarioDto cadastroUsuarioDto)
     {
-        var usuario = await _usuarioRepository.InsertUsuario(cadastroUsuarioDto);
+        var usuario = await _usuarioRepository.AddAsync(cadastroUsuarioDto);
         if (cadastroUsuarioDto is null)
         {
             return BadRequest(OperationResult<RequestCadastroUsuarioDto>.Fail("Dados inválidos"));

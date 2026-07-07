@@ -1,4 +1,5 @@
 ﻿using BlazorShop.Api.Services.Interfaces;
+using BlazorShop.Models.DTOs.TokenDto;
 using BlazorShop.Models.DTOs.UsuarioDtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -25,6 +26,13 @@ public class AuthController(IAuthService authService) : ControllerBase
         }
         return Ok(response.Value);
     }
-
-
+    [Authorize]
+    [HttpPost("Refresh")]
+    public async Task<IActionResult> RefreshToken(RequestRefreshTokenDto requestRefreshTokenDto)
+    {
+        var response = await _authService.RefreshAsync(requestRefreshTokenDto.RefreshToken);
+        if (!response.Success)
+            return Unauthorized(response);
+        return Ok(response);
+    }
 }

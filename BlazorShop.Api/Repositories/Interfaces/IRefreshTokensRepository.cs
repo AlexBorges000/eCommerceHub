@@ -8,5 +8,5 @@ public interface IRefreshTokensRepository
 {
     Task<RefreshTokens> AddAsync(RefreshTokens refreshToken);
     Task<RefreshTokens?> RevokeAsync(string token);
-    Task<RefreshTokens> RefreshAsync(string token);
+    Task<RefreshTokens?> GetByTokenAsync(string token);
 }

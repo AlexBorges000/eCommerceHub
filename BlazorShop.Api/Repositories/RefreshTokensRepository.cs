@@ -16,20 +16,21 @@ public class RefreshTokensRepository(AppDbContext context) : IRefreshTokensRepos
         return refreshToken;
     }
 
-    public async Task<RefreshTokens> RefreshAsync(string token)
+    public async Task<RefreshTokens?> GetByTokenAsync(string token)
     {
-        throw new NotImplementedException();
+        return await _context.RefreshTokens
+            .FirstOrDefaultAsync(x => x.Token == token);
     }
 
     public async Task<RefreshTokens?> RevokeAsync(string token)
     {
-        var findToken = await _context.RefreshTokens.FirstOrDefaultAsync(x=> x.Token == token);
-        if (findToken is null) 
+        var foundToken = await _context.RefreshTokens.FirstOrDefaultAsync(x=> x.Token == token);
+        if (foundToken is null) 
         {
             return null;
         }
-        findToken.IsRevoked = true;
+        foundToken.IsRevoked = true;
         await _context.SaveChangesAsync();
-        return findToken;
+        return foundToken;
     }
 }
