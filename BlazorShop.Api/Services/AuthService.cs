@@ -1,10 +1,7 @@
-﻿using BlazorShop.Api.Context;
-using BlazorShop.Api.Entities;
-using BlazorShop.Api.Migrations;
+﻿using BlazorShop.Api.Entities;
 using BlazorShop.Api.Repositories.Interfaces;
 using BlazorShop.Api.Services.Interfaces;
 using BlazorShop.Models.Commons;
-using BlazorShop.Models.DTOs.TokenDto;
 using BlazorShop.Models.DTOs.TokensDto;
 using BlazorShop.Models.DTOs.UsuarioDtos;
 using Microsoft.IdentityModel.Tokens;
@@ -108,8 +105,8 @@ public class AuthService(IUsuarioRepository usuarioRepository,
             await _refreshTokensRepo.RevokeAsync(refreshToken);
             return OperationResult<ResponseLoginDto>.Fail("Token expirado!");
         }
-        var usuario = await _usuarioRepository.GetAsync(storedToken.UsuarioId); 
-        if(usuario is null)
+        var usuario = await _usuarioRepository.GetByIdAsync(storedToken.UsuarioId);
+        if (usuario is null)
         {
             return OperationResult<ResponseLoginDto>.Fail("Usuario não encontrado!");
         }

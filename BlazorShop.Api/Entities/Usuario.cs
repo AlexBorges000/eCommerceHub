@@ -39,6 +39,8 @@ public class Usuario
     public string? InscricaoEstadual { get; set; }
     [MaxLength(250)]
     public string? CNPJ { get; set; }
-    public Carrinho? Carrinho { get; set; }
+    public Carrinho Carrinho { get; set; } = null!;
     public ICollection<RefreshTokens> RefreshTokens { get; set; } = [];
+    public Role Role { get; set; } = null!;
+    public int RoleId { get; set; }
 }

@@ -1,6 +1,4 @@
-﻿using BlazorShop.Api.Mappings;
-using BlazorShop.Api.Repositories.Interfaces;
-using BlazorShop.Models.Commons;
+﻿using BlazorShop.Api.Services.Interfaces;
 using BlazorShop.Models.DTOs.UsuarioDtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,61 +10,62 @@ namespace BlazorShop.Api.Controllers;
 [Tags("Usuarios")]
 public class UsuarioController : ControllerBase
 {
-    private readonly IUsuarioRepository _usuarioRepository;
-    private ILogger<UsuarioController> _logger;
+    private readonly IUsuarioService _usuarioService;
 
-    public UsuarioController(IUsuarioRepository usuarioRepository, ILogger<UsuarioController> logger)
+    public UsuarioController(IUsuarioService usuarioService)
     {
-        _usuarioRepository = usuarioRepository;
-        _logger = logger;
+        _usuarioService = usuarioService;
     }
 
     [HttpGet]
-    public async Task<ActionResult<OperationResult<ResponseGetUsuarioDto>>> GetUsuario([FromQuery] string email)
+    public async Task<ActionResult<RequestUpdateSenhaUsuarioDto>> GetUsuario([FromQuery] string email)
     {
-        var usuario = await _usuarioRepository.GetAsync(email);
-        if (usuario is null)
+        var usuario = await _usuarioService.GetAsync(email);
+        if (!usuario.Success)
         {
-            return NotFound();
+            return NotFound(usuario.Message);
         }
-        return Ok(usuario);
-    }
-    [Authorize]
-    [HttpPatch("{id:int}/senha")]
-    public async Task<ActionResult<OperationResult<RequestUpdateSenhaUsuarioDto>>> ChangePassword(int id, RequestUpdateSenhaUsuarioDto updateSenhaUsuarioDto)
-    {
-        var response = await _usuarioRepository.ChangePassword(id, updateSenhaUsuarioDto);
-        if (!response.Success)
-        {
-            return BadRequest(OperationResult<RequestUpdateCadastroUsuarioDto>.Fail(response.Message));
-        }
-        return Ok(response);
+        return Ok(usuario.Value);
     }
 
-    [HttpPatch("{id:int}")]
-    public async Task<ActionResult<OperationResult<RequestUpdateCadastroUsuarioDto>>> UpdateUser(int id, RequestUpdateCadastroUsuarioDto updateCadastroUsuarioDto)
+    [Authorize]
+    [HttpPatch("{id:int}/senha")]
+    public async Task<ActionResult> ChangePassword(int id, RequestUpdateSenhaUsuarioDto updateSenhaUsuarioDto)
     {
-        var user = await _usuarioRepository.UpdateAsync(id, updateCadastroUsuarioDto);
+        var response = await _usuarioService.ChangePassword(id, updateSenhaUsuarioDto);
+        if (!response.Success)
+        {
+            return BadRequest(response.Message);
+        }
+        return Ok();
+    }
+
+    [Authorize]
+    [HttpPatch("{id:int}")]
+    public async Task<ActionResult> UpdateUser(int id, RequestUpdateCadastroUsuarioDto updateCadastroUsuarioDto)
+    {
+        var user = await _usuarioService.UpdateAsync(id, updateCadastroUsuarioDto);
         if (!user.Success)
         {
             return BadRequest();
         }
-        var userDto = user.Value.ConverterUsuarioParaDto();
-        return Ok(userDto.Value);
+        return Ok(user.Value);
     }
 
     [HttpPost]
-    public async Task<ActionResult<OperationResult<RequestCadastroUsuarioDto>>> InsertUsuario(RequestCadastroUsuarioDto cadastroUsuarioDto)
+    public async Task<ActionResult> InsertUsuario(RequestCadastroUsuarioDto cadastroUsuarioDto)
     {
-        var usuario = await _usuarioRepository.AddAsync(cadastroUsuarioDto);
-        if (cadastroUsuarioDto is null)
-        {
-            return BadRequest(OperationResult<RequestCadastroUsuarioDto>.Fail("Dados inválidos"));
-        }
+        var usuario = await _usuarioService.InsertAsync(cadastroUsuarioDto);
         if (!usuario.Success)
         {
-            return BadRequest(OperationResult<RequestCadastroUsuarioDto>.Fail(usuario.Message));
+            return BadRequest(usuario.Message);
         }
-        return Ok(OperationResult<RequestCadastroUsuarioDto>.Ok(cadastroUsuarioDto));
+        return Ok(cadastroUsuarioDto);
+    }
+
+    [HttpGet("teste/{id:int}")]
+    public async Task<ActionResult<RequestUpdateSenhaUsuarioDto>> GetUsuario2(int id)
+    {
+        throw new Exception("teste");
     }
 }

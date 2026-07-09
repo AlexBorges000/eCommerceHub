@@ -17,6 +17,6 @@ public class Produto
     public int Quantidade { get; set; }
     public int CategoriaId { get; set; }
     public Categoria? Categoria { get; set; }
-    public ICollection<CarrinhoItem> Carrinho { get; set; }
+    public ICollection<CarrinhoItem> CarrinhoItens { get; set; }
             = new List<CarrinhoItem>();
 }

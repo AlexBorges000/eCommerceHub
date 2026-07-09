@@ -14,6 +14,7 @@ public class AppDbContext : DbContext
     public DbSet<Categoria> Categorias { get; set; } = null!;
     public DbSet<Usuario> Usuarios { get; set; } = null!;
     public DbSet<RefreshTokens> RefreshTokens { get; set; } = null!;
+    public DbSet<Role> Role { get; set; } = null!;
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -31,6 +32,11 @@ public class AppDbContext : DbContext
             .HasForeignKey<Carrinho>(x => x.UsuarioId);
 
         modelBuilder.Entity<Usuario>()
+            .HasOne(x => x.Role)
+            .WithMany(x => x.Usuario)
+            .HasForeignKey(x => x.RoleId);
+
+        modelBuilder.Entity<Usuario>()
             .HasIndex(x => x.Email).IsUnique();
 
         modelBuilder.Entity<RefreshTokens>()
@@ -39,7 +45,22 @@ public class AppDbContext : DbContext
             .HasForeignKey(x => x.UsuarioId);
 
         modelBuilder.Entity<RefreshTokens>()
-            .HasIndex(x=>x.Id).IsUnique();
+            .HasIndex(x => x.Id).IsUnique();
+
+        modelBuilder.Entity<Role>()
+            .HasIndex(x => x.Name).IsUnique();
+
+        modelBuilder.Entity<Role>().HasData(new Role
+        {
+            Id = 1,
+            Name = "Cliente"
+        });
+
+        modelBuilder.Entity<Role>().HasData(new Role
+        {
+            Id = 2,
+            Name = "Administrador"
+        });
 
         modelBuilder.Entity<Produto>().HasData(new Produto
         {
@@ -52,6 +73,7 @@ public class AppDbContext : DbContext
             CategoriaId = 1
 
         });
+
         modelBuilder.Entity<Produto>().HasData(new Produto
         {
             Id = 2,
@@ -297,7 +319,7 @@ public class AppDbContext : DbContext
             Endereco = "Rua das Flores, 123",
             Telefone = "11999999999",
             Senha = "123456",
-
+            RoleId = 1,
             Nome = "Alex Borges",
             CPF = "12345678901"
 
@@ -311,7 +333,7 @@ public class AppDbContext : DbContext
             Endereco = "Av. Paulista, 1000",
             Telefone = "1133334444",
             Senha = "123456",
-
+            RoleId = 2,
             NomeFantasia = "Empresa XPTO",
             RazaoSocial = "Empresa XPTO Comércio LTDA",
             ResponsavelCompra = "João Silva",
