@@ -26,7 +26,7 @@ public class AuthController(IAuthService authService) : ControllerBase
         }
         return Ok(response.Value);
     }
-    [Authorize]
+    [AllowAnonymous]
     [HttpPost("Refresh")]
     public async Task<IActionResult> RefreshToken(RequestRefreshTokenDto requestRefreshTokenDto)
     {

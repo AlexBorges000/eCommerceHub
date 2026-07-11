@@ -1,4 +1,5 @@
-﻿using BlazorShop.Api.Mappings;
+﻿using BlazorShop.Api.Entities;
+using BlazorShop.Api.Mappings;
 using BlazorShop.Api.Repositories.Interfaces;
 using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.ProdutoDtos;
@@ -19,12 +20,16 @@ public class ProdutosController : ControllerBase
     }
 
     [HttpGet]
-    public async Task<ActionResult<OperationResult<IEnumerable<RequestGetProdutoDto>>>> GetItens()
+    public async Task<ActionResult<IEnumerable<RequestGetProdutoDto>>> GetItens()
     {
         var produtos = await _produtoRepository.GetItens();
         if (!produtos.Success)
         {
-            return NotFound(OperationResult<IEnumerable<RequestGetProdutoDto>>.Fail("FALHA AO ENCONTRAR OS PRODUTOS"));
+            return BadRequest("FALHA AO ENCONTRAR OS PRODUTOS");
+        }
+        if (produtos.Value is null)
+        {
+            return NotFound("Produto não encontrado");
         }
         else
         {
@@ -35,18 +40,20 @@ public class ProdutosController : ControllerBase
 
 
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<OperationResult<RequestGetProdutoDto>>> GetItem(int id)
+    public async Task<ActionResult<RequestGetProdutoDto>> GetItem(int id)
     {
         var produto = await _produtoRepository.GetItem(id);
         if (!produto.Success)
         {
-            return NotFound(OperationResult<IEnumerable<RequestGetProdutoDto>>.Fail($"FALHA AO ENCONTRAR O PRODUTO DE ID: {id} "));
+            return BadRequest("FALHA AO ENCONTRAR O PRODUTO");
         }
-        else
+        if (produto.Value is null)
         {
-            var produtosDto = produto.Value.ConverterProdutoParaDto();
-            return Ok(produtosDto.Value);
+            return NotFound("Produto não encontrado");
         }
+        var produtosDto = produto.Value.ConverterProdutoParaDto();
+        return Ok(produtosDto.Value);
+
     }
 
     [HttpGet]
@@ -54,8 +61,16 @@ public class ProdutosController : ControllerBase
     public async Task<ActionResult<IEnumerable<RequestGetProdutoDto>>> GetItemByCategoria(int categoriaId)
     {
         var produtos = await _produtoRepository.GetItensPorCategoria(categoriaId);
+        if (!produtos.Success)
+        {
+            return BadRequest("FALHA AO ENCONTRAR OS PRODUTOS");
+        }
+        if (produtos.Value is null)
+        {
+            return NotFound("Produtos não encontrados");
+        }
         var produtosDto = produtos.Value.ConverterProdutosParaDto();
-        return Ok(OperationResult<IEnumerable<RequestGetProdutoDto>>.Ok(produtosDto.Value));
+        return Ok(produtosDto.Value);
     }
 
 }

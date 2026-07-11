@@ -1,10 +1,6 @@
 ﻿using BlazorShop.Api.Context;
 using BlazorShop.Api.Entities;
-using BlazorShop.Api.Entities.Enums;
 using BlazorShop.Api.Repositories.Interfaces;
-using BlazorShop.Api.Services.Interfaces;
-using BlazorShop.Models.Commons;
-using BlazorShop.Models.DTOs.UsuarioDtos;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlazorShop.Api.Repositories;
@@ -12,11 +8,10 @@ namespace BlazorShop.Api.Repositories;
 public class UsuarioRepository : IUsuarioRepository
 {
     private readonly AppDbContext _context;
-    private readonly IPasswordService _passwordHasher;
-    public UsuarioRepository(AppDbContext context, IPasswordService passwordRepository)
+
+    public UsuarioRepository(AppDbContext context)
     {
         _context = context;
-        _passwordHasher = passwordRepository;
     }
 
     public async Task<Usuario?> GetAsync(string email)
@@ -26,16 +21,14 @@ public class UsuarioRepository : IUsuarioRepository
     }
     public async Task<Usuario?> GetByIdAsync(int id)
     {
-        return await _context.Usuarios
-            .FirstOrDefaultAsync(x => x.Id == id);
+        return await _context.Usuarios.FindAsync(id);
     }
 
     public async Task AddAsync(Usuario usuario)
     {
-        
+
         await _context.Usuarios.AddAsync(usuario);
         await _context.SaveChangesAsync();
-         
     }
 
     public async Task UpdateAsync(Usuario usuario)
@@ -44,4 +37,9 @@ public class UsuarioRepository : IUsuarioRepository
         await _context.SaveChangesAsync();
     }
 
+    public async Task DeleteUsuarioAsync(Usuario usuario)
+    {
+        _context.Usuarios.Remove(usuario);
+        await _context.SaveChangesAsync();
+    }
 }

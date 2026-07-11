@@ -8,4 +8,5 @@ public interface IUsuarioRepository
     Task UpdateAsync(Usuario usuario);
     Task<Usuario?> GetAsync(string email);
     Task<Usuario?> GetByIdAsync(int id);
+    Task DeleteUsuarioAsync(Usuario usuario);
 }

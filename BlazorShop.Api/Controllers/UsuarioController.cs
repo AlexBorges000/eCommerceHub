@@ -1,4 +1,6 @@
-﻿using BlazorShop.Api.Services.Interfaces;
+﻿using BlazorShop.Api.Services;
+using BlazorShop.Api.Services.Interfaces;
+using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.UsuarioDtos;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,8 +19,9 @@ public class UsuarioController : ControllerBase
         _usuarioService = usuarioService;
     }
 
+    [AllowAnonymous]
     [HttpGet]
-    public async Task<ActionResult<RequestUpdateSenhaUsuarioDto>> GetUsuario([FromQuery] string email)
+    public async Task<ActionResult<RequestLoginDto>> GetUsuario([FromQuery] string email)
     {
         var usuario = await _usuarioService.GetAsync(email);
         if (!usuario.Success)
@@ -62,10 +65,16 @@ public class UsuarioController : ControllerBase
         }
         return Ok(cadastroUsuarioDto);
     }
-
-    [HttpGet("teste/{id:int}")]
-    public async Task<ActionResult<RequestUpdateSenhaUsuarioDto>> GetUsuario2(int id)
+    [Authorize]
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> DeleteUsuario(int id) 
     {
-        throw new Exception("teste");
+        var usuario = await _usuarioService.DeleteUsuarioAsync(id);
+        if (!usuario.Success)
+        {
+            return BadRequest(usuario.Message);
+        }
+        return Ok(usuario.Message);
     }
+
 }
