@@ -15,23 +15,29 @@ namespace BlazorShop.Api.Services;
 public class AuthService(IUsuarioRepository usuarioRepository,
                          IPasswordService passwordService,
                          IConfiguration configuration,
-                         IRefreshTokensRepository refreshTokensRepository) : IAuthService
+                         IRefreshTokensRepository refreshTokensRepository,
+                         IRoleService roleService) : IAuthService
 {
     private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
     private readonly IPasswordService _passwordService = passwordService;
     private readonly IConfiguration _configuration = configuration;
     private readonly IRefreshTokensRepository _refreshTokensRepo = refreshTokensRepository;
+    private readonly IRoleService _roleService = roleService;
 
     public async Task<OperationResult<ResponseLoginDto>> LoginAsync(RequestLoginDto loginDto)
     {
         var usuario = await _usuarioRepository.GetAsync(loginDto.Email);
         if (usuario is null)
             return OperationResult<ResponseLoginDto>.Fail("EMAIL OU SENHA INVALIDOS");
-        if (_passwordService.IsInvalidPassword(usuario: usuario, hashedPassword: usuario.Senha, password: loginDto.Senha))
+
+        if (_passwordService
+            .IsInvalidPassword(usuario: usuario,
+            hashedPassword: usuario.Senha,
+            password: loginDto.Senha))
         {
             return OperationResult<ResponseLoginDto>.Fail("EMAIL OU SENHA INVALIDOS");
         }
-
+        var role = await FindRole(usuario.RoleId);
         var refreshToken = CreateRefreshToken(usuario.Id);
 
         var saveRefreshToken = await _refreshTokensRepo.AddAsync(refreshToken);
@@ -41,19 +47,31 @@ public class AuthService(IUsuarioRepository usuarioRepository,
         }
         var response = new ResponseLoginDto
         {
-            Token = GenerateJwt(usuario),
+            Token = GenerateJwt(usuario, role),
             RefreshToken = refreshToken.Token
         };
+
         return OperationResult<ResponseLoginDto>.Ok(response, message: "Usuario Autentificado!");
     }
 
-    private string GenerateJwt(Usuario usuario)
+    private async Task<string> FindRole(int roleId)
+    {
+        var role = await _roleService.GetRoleAsync(roleId);
+
+        if (role.Value is null)
+        {
+            throw new InvalidOperationException("A role  não foi encontrada.");
+        }
+        return role.Value.Name;
+    }
+
+    private string GenerateJwt(Usuario usuario, string roleName)
     {
         var claims = new[]
         {
             new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
             new Claim(ClaimTypes.Name, usuario.Email),
-            new Claim(ClaimTypes.Role, "user")
+            new Claim(ClaimTypes.Role, roleName)
         };
 
         var key = new SymmetricSecurityKey(
@@ -111,11 +129,12 @@ public class AuthService(IUsuarioRepository usuarioRepository,
             return OperationResult<ResponseLoginDto>.Fail("Usuario não encontrado!");
         }
 
-        var jwt = GenerateJwt(usuario);
-        await _refreshTokensRepo.RevokeAsync(storedToken.Token);
+        var role = await FindRole(usuario.RoleId);
+        var jwt = GenerateJwt(usuario, role);
 
         var newRefreshToken = CreateRefreshToken(usuario.Id);
         await _refreshTokensRepo.AddAsync(newRefreshToken);
+        await _refreshTokensRepo.RevokeAsync(storedToken.Token);
 
         var responseLogin = new ResponseLoginDto
         {
