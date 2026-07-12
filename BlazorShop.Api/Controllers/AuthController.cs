@@ -1,6 +1,6 @@
-﻿using BlazorShop.Api.Services.Interfaces;
+﻿using BlazorShop.Api.Services.Auth.Interfaces;
 using BlazorShop.Models.DTOs.TokenDto;
-using BlazorShop.Models.DTOs.UsuarioDtos;
+using BlazorShop.Models.DTOs.UsuarioDtos.Login;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

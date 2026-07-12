@@ -30,14 +30,14 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
                               }).SingleOrDefaultAsync();
             if (item is not null)
             {
-                var resultado = await _context.CarrinhoItem.AddAsync(item);
+                var resultado = await _context.CarrinhoItens.AddAsync(item);
                 await _context.SaveChangesAsync();
                 return OperationResult<CarrinhoItem>.Ok(resultado.Entity);
             }
         }
         else
         {
-            var carrinho = await _context.CarrinhoItem.Where(c => c.CarrinhoId == carrinhoItemAdicionaDto.CarrinhoId &&
+            var carrinho = await _context.CarrinhoItens.Where(c => c.CarrinhoId == carrinhoItemAdicionaDto.CarrinhoId &&
                 c.ProdutoId == carrinhoItemAdicionaDto.ProdutoId).FirstOrDefaultAsync();
             if (carrinho is not null)
             {
@@ -57,12 +57,12 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
 
     private async Task<bool> CarrinhoItemJaExiste(int carrinhoId, int produtoId)
     {
-        return await _context.CarrinhoItem.AnyAsync(c => c.CarrinhoId == carrinhoId && c.ProdutoId == produtoId);
+        return await _context.CarrinhoItens.AnyAsync(c => c.CarrinhoId == carrinhoId && c.ProdutoId == produtoId);
     }
 
     public async Task<OperationResult<CarrinhoItem>> AtualizaQuantidade(int id, RequestCarrinhoItemAtualizaQuantidadeDto carrinhoItemAtulizaQuantidadeDto)
     {
-        var carrinhoItem = await _context.CarrinhoItem.FindAsync(id);
+        var carrinhoItem = await _context.CarrinhoItens.FindAsync(id);
 
         if (carrinhoItem is not null)
         {
@@ -76,10 +76,10 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
 
     public async Task<OperationResult<CarrinhoItem>> DeleteItem(int id)
     {
-        var item = await _context.CarrinhoItem.FindAsync(id);
+        var item = await _context.CarrinhoItens.FindAsync(id);
         if (item is not null)
         {
-            _context.CarrinhoItem.Remove(item);
+            _context.CarrinhoItens.Remove(item);
             await _context.SaveChangesAsync();
             return OperationResult<CarrinhoItem>.Ok(item);
         }
@@ -89,8 +89,8 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
     public async Task<OperationResult<CarrinhoItem>> GetItem(int id)
     {
 
-        var item = await (from carrinho in _context.Carrinho
-                          join carrinhoItem in _context.CarrinhoItem
+        var item = await (from carrinho in _context.Carrinhos
+                          join carrinhoItem in _context.CarrinhoItens
                           on carrinho.Id equals carrinhoItem.CarrinhoId
                           where carrinhoItem.Id == id
                           select new CarrinhoItem
@@ -111,8 +111,8 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
 
     public async Task<OperationResult<IEnumerable<CarrinhoItem>>> GetItens(int usuarioId)
     {
-        var item = await (from carrinho in _context.Carrinho
-                          join carrinhoItem in _context.CarrinhoItem
+        var item = await (from carrinho in _context.Carrinhos
+                          join carrinhoItem in _context.CarrinhoItens
                           on carrinho.Id equals carrinhoItem.CarrinhoId
                           where carrinho.UsuarioId == usuarioId
                           select new CarrinhoItem

@@ -2,7 +2,8 @@
 using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.CarrinhoDtos;
 using BlazorShop.Models.DTOs.ProdutoDtos;
-using BlazorShop.Models.DTOs.UsuarioDtos;
+using BlazorShop.Models.DTOs.UsuarioDtos.Cadastro;
+using BlazorShop.Models.DTOs.UsuarioDtos.Login;
 namespace BlazorShop.Api.Mappings;
 
 public static class MappingDtos
@@ -103,16 +104,17 @@ public static class MappingDtos
         }
     }
 
-    public static OperationResult<RequestCadastroUsuarioDto> ConverterUsuarioParaDto(this Usuario usuario)
+    /*
+    public static OperationResult<RequestCadastroUsuarioPjDto> ConverterUsuarioParaDto(this Usuario usuario)
     {
-        var user = new RequestCadastroUsuarioDto
+        var user = new RequestCadastroUsuarioPjDto
         {
             Email = usuario.Email,
             Endereco = usuario.Endereco,
             Telefone = usuario.Telefone,
             Senha = usuario.Senha,
             Nome = usuario.Nome,
-            CPF = usuario.CPF,
+            CPF = usuario.EncryptCpf,
             CNPJ = usuario.CNPJ,
             NomeFantasia = usuario.NomeFantasia,
             ResponsavelCompra = usuario.ResponsavelCompra,
@@ -122,10 +124,11 @@ public static class MappingDtos
         };
         if (usuario is not null)
         {
-            return OperationResult<RequestCadastroUsuarioDto>.Ok(user);
+            return OperationResult<RequestCadastroUsuarioPjDto>.Ok(user);
         }
-        return OperationResult<RequestCadastroUsuarioDto>.Fail("Erro ao cadastrar usuario");
+        return OperationResult<RequestCadastroUsuarioPjDto>.Fail("Erro ao cadastrar usuario");
     }
+    
 
     public static OperationResult<ResponseGetUsuarioDto> GetUsuarioParaDto(this Usuario usuario)
     {
@@ -135,7 +138,7 @@ public static class MappingDtos
             Endereco = usuario.Endereco,
             Telefone = usuario.Telefone,
             Nome = usuario.Nome,
-            CPF = usuario.CPF,
+            CPF = usuario.EncryptCpf,
             CNPJ = usuario.CNPJ,
             NomeFantasia = usuario.NomeFantasia,
             ResponsavelCompra = usuario.ResponsavelCompra,
@@ -149,5 +152,5 @@ public static class MappingDtos
         }
         return OperationResult<ResponseGetUsuarioDto>.Fail("Erro ao cadastrar usuario");
     }
-
+    */
 }

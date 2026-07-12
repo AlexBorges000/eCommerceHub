@@ -1,6 +1,6 @@
 ﻿using BlazorShop.Api.Entities;
 
-namespace BlazorShop.Api.Services.Interfaces;
+namespace BlazorShop.Api.Services.Security.Interfaces;
 
 public interface IPasswordService
 {

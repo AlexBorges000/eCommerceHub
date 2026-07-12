@@ -1,4 +1,4 @@
-﻿namespace BlazorShop.Models.DTOs.UsuarioDtos;
+﻿namespace BlazorShop.Models.DTOs.UsuarioDtos.Login;
 
 public class RequestLoginDto
 {

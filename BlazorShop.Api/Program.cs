@@ -2,8 +2,12 @@ using BlazorShop.Api.Context;
 using BlazorShop.Api.ExceptionsHandler;
 using BlazorShop.Api.Repositories;
 using BlazorShop.Api.Repositories.Interfaces;
-using BlazorShop.Api.Services;
-using BlazorShop.Api.Services.Interfaces;
+using BlazorShop.Api.Services.Auth;
+using BlazorShop.Api.Services.Auth.Interfaces;
+using BlazorShop.Api.Services.Security;
+using BlazorShop.Api.Services.Security.Interfaces;
+using BlazorShop.Api.Services.Usuarios;
+using BlazorShop.Api.Services.Usuarios.Interfaces;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -35,6 +39,10 @@ builder.Services.AddScoped<IPasswordService, PasswordService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IRoleService, RoleService>();
+builder.Services.AddScoped<IAesService, AesService>();
+builder.Services.AddScoped<IHashService, HashService>();
+builder.Services.AddScoped<IUsuarioJuridicoService, UsuarioJuridicoService>();
+builder.Services.AddScoped<IUsuarioFisicoService, UsuarioFisicoService>();
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>

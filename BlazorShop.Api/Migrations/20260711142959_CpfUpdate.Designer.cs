@@ -4,6 +4,7 @@ using BlazorShop.Api.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorShop.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260711142959_CpfUpdate")]
+    partial class CpfUpdate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,7 +41,7 @@ namespace BlazorShop.Api.Migrations
                     b.HasIndex("UsuarioId")
                         .IsUnique();
 
-                    b.ToTable("Carrinhos");
+                    b.ToTable("Carrinho");
 
                     b.HasData(
                         new
@@ -76,7 +79,7 @@ namespace BlazorShop.Api.Migrations
 
                     b.HasIndex("ProdutoId");
 
-                    b.ToTable("CarrinhoItens");
+                    b.ToTable("CarrinhoItem");
                 });
 
             modelBuilder.Entity("BlazorShop.Api.Entities.Categoria", b =>
@@ -163,9 +166,6 @@ namespace BlazorShop.Api.Migrations
 
                     b.HasIndex("CategoriaId");
 
-                    b.HasIndex("Nome")
-                        .IsUnique();
-
                     b.ToTable("Produtos");
 
                     b.HasData(
@@ -176,16 +176,6 @@ namespace BlazorShop.Api.Migrations
                             Descricao = "Um kit fornecido pela Natura, contendo produtos para cuidados com a pele",
                             ImagemUrl = "/Imagens/Beleza/Beleza1.png",
                             Nome = "Glossier - Beleza Kit",
-                            Preco = 100m,
-                            Quantidade = 100
-                        },
-                        new
-                        {
-                            Id = 54,
-                            CategoriaId = 1,
-                            Descricao = "Teste",
-                            ImagemUrl = "Teste",
-                            Nome = "Teste",
                             Preco = 100m,
                             Quantidade = 100
                         },
@@ -434,6 +424,9 @@ namespace BlazorShop.Api.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("Id")
+                        .IsUnique();
+
                     b.HasIndex("UsuarioId");
 
                     b.ToTable("RefreshTokens");
@@ -456,7 +449,7 @@ namespace BlazorShop.Api.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("Roles");
+                    b.ToTable("Role");
 
                     b.HasData(
                         new
@@ -479,8 +472,16 @@ namespace BlazorShop.Api.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("CNPJ")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
                     b.Property<string>("Email")
                         .IsRequired()
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("EncryptCpf")
                         .HasMaxLength(250)
                         .HasColumnType("nvarchar(250)");
 
@@ -488,6 +489,30 @@ namespace BlazorShop.Api.Migrations
                         .IsRequired()
                         .HasMaxLength(200)
                         .HasColumnType("nvarchar(200)");
+
+                    b.Property<string>("HashCpf")
+                        .HasMaxLength(250)
+                        .HasColumnType("nvarchar(250)");
+
+                    b.Property<string>("InscricaoEstadual")
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Nome")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("NomeFantasia")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("RazaoSocial")
+                        .HasMaxLength(150)
+                        .HasColumnType("nvarchar(150)");
+
+                    b.Property<string>("ResponsavelCompra")
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
 
                     b.Property<int>("RoleId")
                         .HasColumnType("int");
@@ -502,112 +527,53 @@ namespace BlazorShop.Api.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<int>("TipoPessoa")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("CNPJ")
+                        .IsUnique()
+                        .HasFilter("[CNPJ] IS NOT NULL");
 
                     b.HasIndex("Email")
                         .IsUnique();
-
-                    b.HasIndex("RoleId");
-
-                    b.ToTable("Usuario", (string)null);
-
-                    b.UseTptMappingStrategy();
-                });
-
-            modelBuilder.Entity("BlazorShop.Api.Entities.UsuarioFisico", b =>
-                {
-                    b.HasBaseType("BlazorShop.Api.Entities.Usuario");
-
-                    b.Property<string>("EncryptCpf")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("HashCpf")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("Nome")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
 
                     b.HasIndex("HashCpf")
                         .IsUnique()
                         .HasFilter("[HashCpf] IS NOT NULL");
 
-                    b.ToTable("UsuarioFisico", (string)null);
+                    b.HasIndex("RoleId");
+
+                    b.ToTable("Usuarios");
 
                     b.HasData(
                         new
                         {
                             Id = 1,
                             Email = "alex@email.com",
+                            EncryptCpf = "12345678901",
                             Endereco = "Rua das Flores, 123",
+                            Nome = "Alex Borges",
                             RoleId = 1,
-                            Senha = "AQAAAAIAAYagAAAAEDRKDH1tUeR1uzSsIVa9zS3ljP3Figuiwxs5u9IJSOCxBcUgtQAhY8qHhKKRw/NY5w==",
+                            Senha = "123456",
                             Telefone = "11999999999",
-                            EncryptCpf = "NV6tGALKS92igfUJ.g6XgZW/bBbVi09kJP037dQ==.7461FoB/Z/fpLTg=",
-                            HashCpf = "7vFUhvLFsZnsLTce6e8qqmdjZINTX40kHDIGEw0FzNo=",
-                            Nome = "Alex Borges"
-                        });
-                });
-
-            modelBuilder.Entity("BlazorShop.Api.Entities.UsuarioJuridico", b =>
-                {
-                    b.HasBaseType("BlazorShop.Api.Entities.Usuario");
-
-                    b.Property<string>("EncryptCNPJ")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("HashCNPJ")
-                        .IsRequired()
-                        .HasMaxLength(250)
-                        .HasColumnType("nvarchar(250)");
-
-                    b.Property<string>("InscricaoEstadual")
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("NomeFantasia")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("RazaoSocial")
-                        .IsRequired()
-                        .HasMaxLength(150)
-                        .HasColumnType("nvarchar(150)");
-
-                    b.Property<string>("ResponsavelCompra")
-                        .IsRequired()
-                        .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
-
-                    b.HasIndex("HashCNPJ")
-                        .IsUnique()
-                        .HasFilter("[HashCNPJ] IS NOT NULL");
-
-                    b.ToTable("UsuarioJuridico", (string)null);
-
-                    b.HasData(
+                            TipoPessoa = 0
+                        },
                         new
                         {
                             Id = 2,
+                            CNPJ = "12345678000199",
                             Email = "compras@empresa.com.br",
                             Endereco = "Av. Paulista, 1000",
-                            RoleId = 2,
-                            Senha = "AQAAAAIAAYagAAAAEHBa642eVy878j89Ka4dX+wHVaHs2sxwPaA0pl0WaUNR/6GmiTitvk5lvoWzO7nFKA==",
-                            Telefone = "1133334444",
-                            EncryptCNPJ = "cK8XsbgyHhWuJYkw.fBGmxry9giCT9SsnTbEnpw==.EZO6vb7nH9hur/V8t/E=",
-                            HashCNPJ = "U8MZKklyxn4O80sLxVuZ9feCBjNQKlIdxRvy0D4G+7c=",
                             InscricaoEstadual = "123456789",
                             NomeFantasia = "Empresa XPTO",
                             RazaoSocial = "Empresa XPTO Comércio LTDA",
-                            ResponsavelCompra = "João Silva"
+                            ResponsavelCompra = "João Silva",
+                            RoleId = 2,
+                            Senha = "123456",
+                            Telefone = "1133334444",
+                            TipoPessoa = 1
                         });
                 });
 
@@ -672,24 +638,6 @@ namespace BlazorShop.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Role");
-                });
-
-            modelBuilder.Entity("BlazorShop.Api.Entities.UsuarioFisico", b =>
-                {
-                    b.HasOne("BlazorShop.Api.Entities.Usuario", null)
-                        .WithOne()
-                        .HasForeignKey("BlazorShop.Api.Entities.UsuarioFisico", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("BlazorShop.Api.Entities.UsuarioJuridico", b =>
-                {
-                    b.HasOne("BlazorShop.Api.Entities.Usuario", null)
-                        .WithOne()
-                        .HasForeignKey("BlazorShop.Api.Entities.UsuarioJuridico", "Id")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
                 });
 
             modelBuilder.Entity("BlazorShop.Api.Entities.Carrinho", b =>
