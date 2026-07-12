@@ -1,8 +1,8 @@
 ﻿using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.TokensDto;
-using BlazorShop.Models.DTOs.UsuarioDtos;
+using BlazorShop.Models.DTOs.UsuarioDtos.Login;
 
-namespace BlazorShop.Api.Services.Interfaces;
+namespace BlazorShop.Api.Services.Auth.Interfaces;
 
 public interface IAuthService
 {

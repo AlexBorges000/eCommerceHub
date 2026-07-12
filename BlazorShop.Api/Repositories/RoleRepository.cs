@@ -11,12 +11,12 @@ public class RoleRepository(AppDbContext appDbContext) : IRoleRepository
 
     public async Task<Role?> GetRoleByIdAsync(int roleId)
     {
-        return await _context.Role.FindAsync(roleId);
+        return await _context.Roles.FindAsync(roleId);
     }
 
     public async Task<Role?> GetRoleByNameAsync(string nome)
     {
-        return await _context.Role
+        return await _context.Roles
                      .SingleOrDefaultAsync(r => r.Name == nome); 
     }
 }

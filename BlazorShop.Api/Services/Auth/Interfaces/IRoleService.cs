@@ -1,7 +1,7 @@
 ﻿using BlazorShop.Api.Entities;
 using BlazorShop.Models.Commons;
 
-namespace BlazorShop.Api.Services.Interfaces;
+namespace BlazorShop.Api.Services.Auth.Interfaces;
 
 public interface IRoleService
 {

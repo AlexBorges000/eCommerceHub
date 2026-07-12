@@ -1,16 +1,17 @@
 ﻿using BlazorShop.Api.Entities;
 using BlazorShop.Api.Repositories.Interfaces;
-using BlazorShop.Api.Services.Interfaces;
+using BlazorShop.Api.Services.Auth.Interfaces;
+using BlazorShop.Api.Services.Security.Interfaces;
 using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.TokensDto;
-using BlazorShop.Models.DTOs.UsuarioDtos;
+using BlazorShop.Models.DTOs.UsuarioDtos.Login;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace BlazorShop.Api.Services;
+namespace BlazorShop.Api.Services.Auth;
 
 public class AuthService(IUsuarioRepository usuarioRepository,
                          IPasswordService passwordService,
@@ -26,7 +27,7 @@ public class AuthService(IUsuarioRepository usuarioRepository,
 
     public async Task<OperationResult<ResponseLoginDto>> LoginAsync(RequestLoginDto loginDto)
     {
-        var usuario = await _usuarioRepository.GetAsync(loginDto.Email);
+        var usuario = await _usuarioRepository.GetByEmailAsync(loginDto.Email);
         if (usuario is null)
             return OperationResult<ResponseLoginDto>.Fail("EMAIL OU SENHA INVALIDOS");
 
