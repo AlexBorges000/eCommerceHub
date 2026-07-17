@@ -10,7 +10,6 @@ namespace BlazorShop.Api.Seeds
                //senha = 123456
                Id= 1,
                Email = "alex@email.com",
-               Endereco = "Rua das Flores, 123",
                Telefone = "11999999999",
                Senha = "AQAAAAIAAYagAAAAEDRKDH1tUeR1uzSsIVa9zS3ljP3Figuiwxs5u9IJSOCxBcUgtQAhY8qHhKKRw/NY5w==",
                RoleId = 1,

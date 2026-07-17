@@ -1,7 +1,8 @@
 ﻿using BlazorShop.Api.Entities;
 using BlazorShop.Api.Repositories.Interfaces;
+using BlazorShop.Api.Security.Authentication.Interfaces;
+using BlazorShop.Api.Security.Password.Intefaces;
 using BlazorShop.Api.Services.Auth.Interfaces;
-using BlazorShop.Api.Services.Security.Interfaces;
 using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.TokensDto;
 using BlazorShop.Models.DTOs.UsuarioDtos.Login;
@@ -11,7 +12,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace BlazorShop.Api.Services.Auth;
+namespace BlazorShop.Api.Security.Authentication;
 
 public class AuthService(IUsuarioRepository usuarioRepository,
                          IPasswordService passwordService,

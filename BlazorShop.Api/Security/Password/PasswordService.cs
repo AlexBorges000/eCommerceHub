@@ -1,8 +1,8 @@
 ﻿using BlazorShop.Api.Entities;
-using BlazorShop.Api.Services.Security.Interfaces;
+using BlazorShop.Api.Security.Password.Intefaces;
 using Microsoft.AspNetCore.Identity;
 
-namespace BlazorShop.Api.Services.Security;
+namespace BlazorShop.Api.Security.Password;
 
 public class PasswordService : IPasswordService
 {

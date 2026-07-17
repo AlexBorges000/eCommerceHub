@@ -1,26 +1,17 @@
 ﻿using BlazorShop.Api.Entities;
-
 using BlazorShop.Api.Repositories.Interfaces;
-using BlazorShop.Api.Services.Auth.Interfaces;
-using BlazorShop.Api.Services.Security.Interfaces;
+using BlazorShop.Api.Security.Password.Intefaces;
 using BlazorShop.Api.Services.Usuarios.Interfaces;
 using BlazorShop.Models.Commons;
-using BlazorShop.Models.DTOs.UsuarioDtos.Cadastro;
 using BlazorShop.Models.DTOs.UsuarioDtos.Update;
 
 namespace BlazorShop.Api.Services.Usuarios;
 
 public class UsuarioService(IPasswordService passwordService,
-                            IUsuarioRepository usuarioRepository,
-                            IRoleService roleService,
-                            IAesService aesService,
-                            IHashService hashService) : IUsuarioService
+                            IUsuarioRepository usuarioRepository) : IUsuarioService
 {
     private readonly IPasswordService _passwordService = passwordService;
     private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
-    private readonly IRoleService _roleService = roleService;
-    private readonly IHashService _hashService = hashService;
-    private readonly IAesService _aesService = aesService;
 
     public async Task<OperationResult<Usuario>> ChangePassword(int id, RequestUpdateSenhaUsuarioDto updateSenhaUsuarioDto)
     {
@@ -47,7 +38,7 @@ public class UsuarioService(IPasswordService passwordService,
         return OperationResult<Usuario>.Ok(usuario);
     }
 
-    public async Task<OperationResult<Usuario>> GetAsync(string email)
+    public async Task<OperationResult<Usuario>> GetByEmailAsync(string email)
     {
 
         var user = await _usuarioRepository.GetByEmailAsync(email);
