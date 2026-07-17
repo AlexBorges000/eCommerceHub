@@ -1,8 +1,8 @@
-﻿using BlazorShop.Api.Services.Security.Interfaces;
+﻿using BlazorShop.Api.Security.Security.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace BlazorShop.Api.Services.Security
+namespace BlazorShop.Api.Security.Security
 {
     public class HashService : IHashService
     {

@@ -1,7 +1,8 @@
 ﻿using BlazorShop.Api.Entities;
 using BlazorShop.Api.Repositories.Interfaces;
+using BlazorShop.Api.Security.Password.Intefaces;
+using BlazorShop.Api.Security.Security.Interfaces;
 using BlazorShop.Api.Services.Auth.Interfaces;
-using BlazorShop.Api.Services.Security.Interfaces;
 using BlazorShop.Api.Services.Usuarios.Interfaces;
 using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.UsuarioDtos.Cadastro;
@@ -68,7 +69,7 @@ public class UsuarioJuridicoService(IUsuarioRepository usuarioRepository,
         return new UsuarioJuridico
         {
             Email = dto.Email,
-            Endereco = dto.Endereco,
+            //Endereco = dto.Endereco,
             InscricaoEstadual = dto.InscricaoEstadual,
             NomeFantasia = dto.NomeFantasia,
             RazaoSocial = dto.RazaoSocial,
@@ -95,7 +96,7 @@ public class UsuarioJuridicoService(IUsuarioRepository usuarioRepository,
         usuario.RazaoSocial = updateCadastroPjUsuario.RazaoSocial ?? usuario.RazaoSocial;
         usuario.ResponsavelCompra = updateCadastroPjUsuario.ResponsavelCompra ?? usuario.ResponsavelCompra;
         usuario.InscricaoEstadual = updateCadastroPjUsuario.InscricaoEstadual ?? usuario.InscricaoEstadual;
-        usuario.Endereco = updateCadastroPjUsuario.Endereco ?? usuario.Endereco;
+        //usuario.Endereco = updateCadastroPjUsuario.Endereco ?? usuario.Endereco;
         usuario.Telefone = updateCadastroPjUsuario.Telefone ?? usuario.Telefone;
         usuario.Email = updateCadastroPjUsuario.Email ?? usuario.Email;
 

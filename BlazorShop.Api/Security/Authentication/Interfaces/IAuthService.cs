@@ -2,7 +2,7 @@
 using BlazorShop.Models.DTOs.TokensDto;
 using BlazorShop.Models.DTOs.UsuarioDtos.Login;
 
-namespace BlazorShop.Api.Services.Auth.Interfaces;
+namespace BlazorShop.Api.Security.Authentication.Interfaces;
 
 public interface IAuthService
 {

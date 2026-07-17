@@ -11,7 +11,7 @@ public class UsuarioPjSeed()
             //senha = 123456
             Id = 2,
             Email = "compras@empresa.com.br",
-            Endereco = "Av. Paulista, 1000",
+            //Endereco = "Av. Paulista, 1000",
             Telefone = "1133334444",
             Senha = "AQAAAAIAAYagAAAAEHBa642eVy878j89Ka4dX+wHVaHs2sxwPaA0pl0WaUNR/6GmiTitvk5lvoWzO7nFKA==",
             RoleId = 2,

@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorShop.Api.Controllers;
 
-[Route("api/Usuarios")]
+[Route("api/[controller]")]
 [ApiController]
 [Tags("Usuarios")]
 public class UsuarioController : ControllerBase
@@ -15,19 +15,24 @@ public class UsuarioController : ControllerBase
     private readonly IUsuarioService _usuarioService;
     private readonly IUsuarioFisicoService _usuarioFisicoService;
     private readonly IUsuarioJuridicoService _usuarioJuridicoService;
+    private readonly IEnderecoService _enderecoService;
 
-    public UsuarioController(IUsuarioService usuarioService, IUsuarioFisicoService usuarioFisicoService, IUsuarioJuridicoService usuarioJuridicoService)
+    public UsuarioController(IUsuarioService usuarioService
+                           , IUsuarioFisicoService usuarioFisicoService
+                           , IUsuarioJuridicoService usuarioJuridicoService
+                           , IEnderecoService enderecoService)
     {
         _usuarioService = usuarioService;
         _usuarioFisicoService = usuarioFisicoService;
         _usuarioJuridicoService = usuarioJuridicoService;
+        _enderecoService = enderecoService;
     }
 
     [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<RequestLoginDto>> GetUsuario([FromQuery] string email)
     {
-        var usuario = await _usuarioService.GetAsync(email);
+        var usuario = await _usuarioService.GetByEmailAsync(email);
         if (!usuario.Success)
         {
             return NotFound(usuario.Message);
@@ -104,5 +109,6 @@ public class UsuarioController : ControllerBase
         }
         return Ok(usuario.Message);
     }
+
 
 }

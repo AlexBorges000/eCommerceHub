@@ -1,7 +1,8 @@
 ﻿using BlazorShop.Api.Entities;
 using BlazorShop.Api.Repositories.Interfaces;
+using BlazorShop.Api.Security.Password.Intefaces;
+using BlazorShop.Api.Security.Security.Interfaces;
 using BlazorShop.Api.Services.Auth.Interfaces;
-using BlazorShop.Api.Services.Security.Interfaces;
 using BlazorShop.Api.Services.Usuarios.Interfaces;
 using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.UsuarioDtos.Cadastro;
@@ -55,7 +56,7 @@ public class UsuarioFisicoService(IUsuarioRepository usuarioRepository,
         return new UsuarioFisico
         {
             Email = dto.Email,
-            Endereco = dto.Endereco,
+           // Endereco = dto.Endereco,
             Nome = dto.Nome,
             Telefone = dto.Telefone
         };
@@ -90,7 +91,7 @@ public class UsuarioFisicoService(IUsuarioRepository usuarioRepository,
         {
             return OperationResult<UsuarioFisico>.Fail("Falha ao encontrar o Usuario");
         }
-        usuario.Endereco = updateCadastroPfUsuario.Endereco ?? usuario.Endereco;
+       //usuario.Endereco = updateCadastroPfUsuario.Endereco ?? usuario.Endereco;
         usuario.Telefone = updateCadastroPfUsuario.Telefone ?? usuario.Telefone;
         usuario.Email = updateCadastroPfUsuario.Email ?? usuario.Email;
 

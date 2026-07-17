@@ -16,7 +16,7 @@ public class AppDbContext : DbContext
     public DbSet<Role> Roles { get; set; } = null!;
     public DbSet<UsuarioFisico> UsuariosFisicos { get; set; } = null!;
     public DbSet<UsuarioJuridico> UsuariosJuridicos { get; set; } = null!;
-
+    public DbSet<Endereco> Endereco { get; set; } = null!;
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
