@@ -1,9 +1,7 @@
-﻿using BlazorShop.Api.Entities;
-using BlazorShop.Api.Mappings;
+﻿using BlazorShop.Api.Mappings;
+using BlazorShop.Api.Mappings.Produtos;
 using BlazorShop.Api.Repositories.Interfaces;
-using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.ProdutoDtos;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorShop.Api.Controllers;
@@ -34,8 +32,8 @@ public class ProdutosController : ControllerBase
         }
         else
         {
-            var produtosDto = produtos.Value.ConverterProdutosParaDto();
-            return Ok(produtosDto.Value);
+            var produtosDto = produtos.Value.ToDto();
+            return Ok(produtosDto);
         }
     }
 
@@ -52,8 +50,8 @@ public class ProdutosController : ControllerBase
         {
             return NotFound("Produto não encontrado");
         }
-        var produtosDto = produto.Value.ConverterProdutoParaDto();
-        return Ok(produtosDto.Value);
+        var produtosDto = produto.Value.ToDto();
+        return Ok(produtosDto);
 
     }
 
@@ -70,8 +68,8 @@ public class ProdutosController : ControllerBase
         {
             return NotFound("Produtos não encontrados");
         }
-        var produtosDto = produtos.Value.ConverterProdutosParaDto();
-        return Ok(produtosDto.Value);
+        var produtosDto = produtos.Value.ToDto();
+        return Ok(produtosDto);
     }
 
 }

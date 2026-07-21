@@ -111,17 +111,11 @@ public class CarrinhoCompraRepository : ICarrinhoCompraRepository
 
     public async Task<OperationResult<IEnumerable<CarrinhoItem>>> GetItens(int usuarioId)
     {
-        var item = await (from carrinho in _context.Carrinhos
-                          join carrinhoItem in _context.CarrinhoItens
-                          on carrinho.Id equals carrinhoItem.CarrinhoId
-                          where carrinho.UsuarioId == usuarioId
-                          select new CarrinhoItem
-                          {
-                              Id = carrinhoItem.Id,
-                              CarrinhoId = carrinhoItem.CarrinhoId,
-                              ProdutoId = carrinhoItem.ProdutoId,
-                              Quantidade = carrinhoItem.Quantidade
-                          }).ToListAsync();
+        var item = await _context.CarrinhoItens
+                                  .Include(ci => ci.Produto)
+                                  .Include(ci => ci.Carrinho)
+                                  .Where(ci => ci.Carrinho.UsuarioId == usuarioId)
+                                  .ToListAsync();
         if (item.Any())
         {
             return OperationResult<IEnumerable<CarrinhoItem>>.Ok(item);

@@ -1,5 +1,5 @@
 ﻿using BlazorShop.Api.Security.Authentication.Interfaces;
-using BlazorShop.Api.Services.Usuarios.Interfaces;
+using BlazorShop.Api.Services.Address.Interfaces;
 using BlazorShop.Models.DTOs.Endereco;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

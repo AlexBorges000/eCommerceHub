@@ -1,10 +1,10 @@
 ﻿using BlazorShop.Api.Entities;
 using BlazorShop.Api.Repositories.Interfaces;
-using BlazorShop.Api.Services.Usuarios.Interfaces;
+using BlazorShop.Api.Services.Address.Interfaces;
 using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.Endereco;
 
-namespace BlazorShop.Api.Services.Usuarios
+namespace BlazorShop.Api.Services.Address
 {
     public class EnderecoService(IEnderecoRepository enderecoRepository) : IEnderecoService
     {

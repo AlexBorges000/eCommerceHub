@@ -38,8 +38,6 @@
     private IMudDialogInstance MudDialog { get; set; } = null!;
     [Parameter]
     public string Email { get; set; } = string.Empty;
-    [Parameter]
-    public ResponseGetUsuarioDto responseGetUsuarioDto { get; set; }
     public string Senha { get; set; } = string.Empty;
 
     private void Cancel() => MudDialog.Cancel();

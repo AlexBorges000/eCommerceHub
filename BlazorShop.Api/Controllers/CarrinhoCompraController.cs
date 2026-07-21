@@ -1,5 +1,4 @@
-﻿using BlazorShop.Api.Entities;
-using BlazorShop.Api.Mappings;
+﻿using BlazorShop.Api.Mappings.CarrinhoItens;
 using BlazorShop.Api.Repositories.Interfaces;
 using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.CarrinhoDtos;
@@ -45,8 +44,8 @@ public class CarrinhoCompraController : ControllerBase
         {
             return NotFound("Produtos não encontrados");
         }
-        var carrinhoItensDto = carrinhoItens.Value.ConverterCarrinhoItemParaDto(produtos.Value);
-        return Ok(carrinhoItensDto.Value);
+        var carrinhoItensDto = carrinhoItens.Value.ToDto();
+        return Ok(carrinhoItensDto);
     }
 
     [Authorize]
@@ -67,8 +66,8 @@ public class CarrinhoCompraController : ControllerBase
         {
             return NotFound(OperationResult<RequestGetCarrinhoItemDto>.Fail("NENHUM PRODUTO ENCONTRADO"));
         }
-        var carrinhoItemDto = carrinhoItem.Value.ConverterCarrinhoItemParaDto(produto.Value);
-        return Ok(carrinhoItemDto.Value);
+        var carrinhoItemDto = carrinhoItem.Value.ToDto();
+        return Ok(carrinhoItemDto);
     }
 
     [Authorize]
@@ -89,12 +88,12 @@ public class CarrinhoCompraController : ControllerBase
         {
             return NotFound($"Produto com ID {novoCarrinhoItem.Value.ProdutoId} não encontrado.");
         }
-        var carrinhoItemDto = novoCarrinhoItem.Value.ConverterCarrinhoItemParaDto(produto.Value);
-        if (carrinhoItemDto.Value is null)
+        var carrinhoItemDto = novoCarrinhoItem.Value.ToDto();
+        if (carrinhoItemDto is null)
         {
             return NotFound("Nada encontrado no carrinho");
         }
-        return CreatedAtAction(nameof(GetItem), new { id = carrinhoItemDto.Value.Id }, carrinhoItemDto);
+        return CreatedAtAction(nameof(GetItem), new { id = carrinhoItemDto.Id }, carrinhoItemDto);
     }
 
     [Authorize]
@@ -116,8 +115,8 @@ public class CarrinhoCompraController : ControllerBase
             return NotFound("PRODUTO PARA DELETAR NÃO ENCONTRADO");
 
         await _carrinhoCompraRepository.DeleteItem(carrinhoItem.Value.Id);
-        var carrinhoItemDto = carrinhoItem.Value.ConverterCarrinhoItemParaDto(produto.Value);
-        return Ok(carrinhoItemDto.Value);
+        var carrinhoItemDto = carrinhoItem.Value.ToDto();
+        return Ok(carrinhoItemDto);
     }
 
     [Authorize]
@@ -135,8 +134,8 @@ public class CarrinhoCompraController : ControllerBase
         var produto = await _produtoRepository.GetItem(carrinhoItem.Value.ProdutoId);
         if (produto.Value is null)
             return NotFound("PRODUTO PARA DELETAR NÃO ENCONTRADO");
-        var carrinhoItemDto = carrinhoItem.Value.ConverterCarrinhoItemParaDto(produto.Value);
-        return Ok(carrinhoItemDto.Value);
+        var carrinhoItemDto = carrinhoItem.Value.ToDto();
+        return Ok(carrinhoItemDto);
     }
 
 }

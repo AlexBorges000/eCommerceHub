@@ -2,7 +2,7 @@
 using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.Endereco;
 
-namespace BlazorShop.Api.Services.Usuarios.Interfaces;
+namespace BlazorShop.Api.Services.Address.Interfaces;
 
 public interface IEnderecoService
 {

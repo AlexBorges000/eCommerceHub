@@ -31,8 +31,10 @@ public class AuthController(IAuthService authService) : ControllerBase
     public async Task<IActionResult> RefreshToken(RequestRefreshTokenDto requestRefreshTokenDto)
     {
         var response = await _authService.RefreshAsync(requestRefreshTokenDto.RefreshToken);
+
         if (!response.Success)
             return Unauthorized(response);
+
         return Ok(response);
     }
 }

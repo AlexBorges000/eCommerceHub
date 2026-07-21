@@ -7,6 +7,6 @@ namespace BlazorShop.Api.Services.Usuarios.Interfaces;
 
 public interface IUsuarioJuridicoService
 {
-    Task<OperationResult<UsuarioJuridico>> InsertUsuarioPjAsync(RequestCadastroUsuarioPjDto requestCadastroUsuarioDto);
+    Task<OperationResult<ResponseLoginDto>> InsertUsuarioPjAsync(RequestCadastroUsuarioPjDto requestCadastroUsuarioDto);
     Task<OperationResult<UsuarioJuridico>> UpdateUsuarioPjAsync(int id, RequestUpdateUsuarioPjDto updateCadastroPjUsuario);
 }

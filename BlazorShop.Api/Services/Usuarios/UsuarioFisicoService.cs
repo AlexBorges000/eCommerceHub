@@ -1,5 +1,7 @@
 ﻿using BlazorShop.Api.Entities;
+using BlazorShop.Api.Mappings.Usuarios;
 using BlazorShop.Api.Repositories.Interfaces;
+using BlazorShop.Api.Security.Authentication.Interfaces;
 using BlazorShop.Api.Security.Password.Intefaces;
 using BlazorShop.Api.Security.Security.Interfaces;
 using BlazorShop.Api.Services.Auth.Interfaces;
@@ -14,7 +16,8 @@ public class UsuarioFisicoService(IUsuarioRepository usuarioRepository,
                                 IHashService hashService,
                                 IAesService aesService,
                                 IRoleService roleService,
-                                IPasswordService passwordService) : IUsuarioFisicoService
+                                IPasswordService passwordService,
+                                IAuthService authService) : IUsuarioFisicoService
 {
 
     private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
@@ -22,23 +25,24 @@ public class UsuarioFisicoService(IUsuarioRepository usuarioRepository,
     private readonly IAesService _aesService = aesService;
     private readonly IRoleService _roleService = roleService;
     private readonly IPasswordService _passwordService = passwordService;
+    private readonly IAuthService _authService = authService;
 
-    public async Task<OperationResult<UsuarioFisico>> InsertUsuarioPfAsync(RequestCadastroUsuarioPfDto requestCadastroUsuarioPfDto)
+    public async Task<OperationResult<ResponseLoginDto>> InsertUsuarioPfAsync(RequestCadastroUsuarioPfDto requestCadastroUsuarioPfDto)
     {
         var role = (await _roleService.GetClienteRoleAsync()).Value ??
             throw new InvalidOperationException("A role padrão 'Cliente' não foi encontrada."); ;
 
         if (requestCadastroUsuarioPfDto.Senha != requestCadastroUsuarioPfDto.ConfirmaSenha)
         {
-            return OperationResult<UsuarioFisico>.Fail("As senhas não coincidem");
+            return OperationResult<ResponseLoginDto>.Fail("As senhas não coincidem");
         }
 
         if (await CpfJaExiste(requestCadastroUsuarioPfDto.CPF))
         {
-            return OperationResult<UsuarioFisico>.Fail("CPF ja cadastrado!");
+            return OperationResult<ResponseLoginDto>.Fail("CPF ja cadastrado!");
         }
 
-        var usuarioFisico = CriarUsuarioFisico(requestCadastroUsuarioPfDto);
+        var usuarioFisico = requestCadastroUsuarioPfDto.ToEntity();
 
         var documento = ProtectDocumento(requestCadastroUsuarioPfDto.CPF);
 
@@ -48,18 +52,15 @@ public class UsuarioFisicoService(IUsuarioRepository usuarioRepository,
         PrepararUsuario(usuarioFisico, role, requestCadastroUsuarioPfDto.Senha);
 
         await _usuarioRepository.AddAsync(usuarioFisico);
-        return OperationResult<UsuarioFisico>.Ok(usuarioFisico);
-    }
 
-    private UsuarioFisico CriarUsuarioFisico(RequestCadastroUsuarioPfDto dto)
-    {
-        return new UsuarioFisico
-        {
-            Email = dto.Email,
-           // Endereco = dto.Endereco,
-            Nome = dto.Nome,
-            Telefone = dto.Telefone
-        };
+        var response = await _authService.CreateSessionAsync(usuarioFisico);
+
+        return OperationResult<ResponseLoginDto>
+            .Ok(new ResponseLoginDto
+            {
+                RefreshToken = response.RefreshToken,
+                Token = response.Token,
+            });
     }
 
     private (string Hash, string Encrypt) ProtectDocumento(string documento)
@@ -91,7 +92,7 @@ public class UsuarioFisicoService(IUsuarioRepository usuarioRepository,
         {
             return OperationResult<UsuarioFisico>.Fail("Falha ao encontrar o Usuario");
         }
-       //usuario.Endereco = updateCadastroPfUsuario.Endereco ?? usuario.Endereco;
+
         usuario.Telefone = updateCadastroPfUsuario.Telefone ?? usuario.Telefone;
         usuario.Email = updateCadastroPfUsuario.Email ?? usuario.Email;
 

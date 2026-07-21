@@ -1,5 +1,7 @@
 ﻿using BlazorShop.Api.Entities;
+using BlazorShop.Api.Mappings.Usuarios;
 using BlazorShop.Api.Repositories.Interfaces;
+using BlazorShop.Api.Security.Authentication.Interfaces;
 using BlazorShop.Api.Security.Password.Intefaces;
 using BlazorShop.Api.Security.Security.Interfaces;
 using BlazorShop.Api.Services.Auth.Interfaces;
@@ -14,39 +16,49 @@ public class UsuarioJuridicoService(IUsuarioRepository usuarioRepository,
                                     IHashService hashService,
                                     IAesService aesService,
                                     IRoleService roleService,
-                                    IPasswordService passwordService) : IUsuarioJuridicoService
+                                    IPasswordService passwordService,
+                                    IAuthService authService) : IUsuarioJuridicoService
 {
     private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
     private readonly IHashService _hashService = hashService;
     private readonly IAesService _aesService = aesService;
     private readonly IRoleService _roleService = roleService;
     private readonly IPasswordService _passwordService = passwordService;
+    private readonly IAuthService _authService = authService;
 
-    public async Task<OperationResult<UsuarioJuridico>> InsertUsuarioPjAsync(RequestCadastroUsuarioPjDto requestCadastroUsuarioPjDto)
+    public async Task<OperationResult<ResponseLoginDto>> InsertUsuarioPjAsync(RequestCadastroUsuarioPjDto requestCadastroUsuarioPjDto)
     {
+        if (requestCadastroUsuarioPjDto.Senha != requestCadastroUsuarioPjDto.ConfirmaSenha)
+        {
+            return OperationResult<ResponseLoginDto>.Fail("As senhas não coincidem");
+        }
+
         var role = (await _roleService.GetClienteRoleAsync()).Value ??
             throw new InvalidOperationException("A role padrão 'Cliente' não foi encontrada."); ;
 
-        if (requestCadastroUsuarioPjDto.Senha != requestCadastroUsuarioPjDto.ConfirmaSenha)
-        {
-            return OperationResult<UsuarioJuridico>.Fail("As senhas não coincidem");
-        }
-
         if (await CnpjJaExiste(requestCadastroUsuarioPjDto.CNPJ))
         {
-            return OperationResult<UsuarioJuridico>.Fail("CNPJ ja cadastrado!");
+            return OperationResult<ResponseLoginDto>.Fail("CNPJ ja cadastrado!");
         }
-        var usuarioJuridico = CriarUsuarioJuridico(requestCadastroUsuarioPjDto);
+        var usuarioJuridico = requestCadastroUsuarioPjDto.ToEntity();
 
         var documento = ProtectDocumento(requestCadastroUsuarioPjDto.CNPJ);
 
         usuarioJuridico.HashCNPJ = documento.Hash;
         usuarioJuridico.EncryptCNPJ = documento.Encrypt;
 
-        PrepararUsuario(usuarioJuridico, role, requestCadastroUsuarioPjDto.Senha);
+        PrepararUsuario(usuarioJuridico, role, requestCadastroUsuarioPjDto.Senha); 
 
         await _usuarioRepository.AddAsync(usuarioJuridico);
-        return OperationResult<UsuarioJuridico>.Ok(usuarioJuridico);
+
+        var response = await _authService.CreateSessionAsync(usuarioJuridico);
+
+        return OperationResult<ResponseLoginDto>
+            .Ok(new ResponseLoginDto
+            {
+                RefreshToken = response.RefreshToken,
+                Token = response.Token,
+            });
     }
 
     private async Task<bool> CnpjJaExiste(string documento)
@@ -69,7 +81,6 @@ public class UsuarioJuridicoService(IUsuarioRepository usuarioRepository,
         return new UsuarioJuridico
         {
             Email = dto.Email,
-            //Endereco = dto.Endereco,
             InscricaoEstadual = dto.InscricaoEstadual,
             NomeFantasia = dto.NomeFantasia,
             RazaoSocial = dto.RazaoSocial,
