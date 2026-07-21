@@ -4,7 +4,7 @@ using BlazorShop.Api.Security.Authentication.Interfaces;
 using BlazorShop.Api.Security.Password.Intefaces;
 using BlazorShop.Api.Services.Auth.Interfaces;
 using BlazorShop.Models.Commons;
-using BlazorShop.Models.DTOs.TokensDto;
+using BlazorShop.Models.DTOs.UsuarioDtos.Cadastro;
 using BlazorShop.Models.DTOs.UsuarioDtos.Login;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
@@ -39,21 +39,24 @@ public class AuthService(IUsuarioRepository usuarioRepository,
         {
             return OperationResult<ResponseLoginDto>.Fail("EMAIL OU SENHA INVALIDOS");
         }
+
+        return OperationResult<ResponseLoginDto>
+            .Ok(await CreateSessionAsync(usuario));
+    }
+
+    public async Task<ResponseLoginDto> CreateSessionAsync(Usuario usuario)
+    {
         var role = await FindRole(usuario.RoleId);
+
         var refreshToken = CreateRefreshToken(usuario.Id);
 
-        var saveRefreshToken = await _refreshTokensRepo.AddAsync(refreshToken);
-        if (saveRefreshToken is null)
-        {
-            return OperationResult<ResponseLoginDto>.Fail("Refresh Token não criado");
-        }
-        var response = new ResponseLoginDto
+        await _refreshTokensRepo.AddAsync(refreshToken);
+
+        return new ResponseLoginDto
         {
             Token = GenerateJwt(usuario, role),
             RefreshToken = refreshToken.Token
         };
-
-        return OperationResult<ResponseLoginDto>.Ok(response, message: "Usuario Autentificado!");
     }
 
     private async Task<string> FindRole(int roleId)

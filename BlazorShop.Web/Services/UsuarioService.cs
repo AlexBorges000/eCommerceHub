@@ -1,7 +1,6 @@
 ﻿using BlazorShop.Models.Commons;
 using BlazorShop.Models.Config;
 using BlazorShop.Models.DTOs.UsuarioDtos.Cadastro;
-using BlazorShop.Models.DTOs.UsuarioDtos.Login;
 using BlazorShop.Models.DTOs.UsuarioDtos.Update;
 using BlazorShop.Web.Services.Interfaces;
 using System.Net;
@@ -37,19 +36,6 @@ public class UsuarioService : IUsuarioService
                                     ?? OperationResult<RequestUpdateSenhaUsuarioDto>.Fail("Não encontrado");
 
         return result;
-    }
-
-    public async Task<OperationResult<ResponseGetUsuarioDto>> GetUsuario(string email)
-    {
-        var response = await _httpClient.GetAsync($"Usuarios?email={Uri.EscapeDataString(email)}");
-        if (response.IsSuccessStatusCode && !(response.StatusCode == HttpStatusCode.NoContent))
-        {
-            var usuario = await response.Content.ReadFromJsonAsync<ResponseGetUsuarioDto>();
-            if (usuario is not null)
-                return OperationResult<ResponseGetUsuarioDto>.Ok(usuario);
-            return OperationResult<ResponseGetUsuarioDto>.Fail("Usuario não cadastrado");
-        }
-        return OperationResult<ResponseGetUsuarioDto>.Fail("Usuario não cadastrado");
     }
 
     public async Task<OperationResult<RequestCadastroUsuarioPjDto>> InsertUsuario(RequestCadastroUsuarioPjDto cadastroUsuarioDto)

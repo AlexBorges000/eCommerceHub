@@ -4,6 +4,8 @@ using BlazorShop.Api.Security.Password;
 using BlazorShop.Api.Security.Password.Intefaces;
 using BlazorShop.Api.Security.Security;
 using BlazorShop.Api.Security.Security.Interfaces;
+using BlazorShop.Api.Services.Address;
+using BlazorShop.Api.Services.Address.Interfaces;
 using BlazorShop.Api.Services.Auth;
 using BlazorShop.Api.Services.Auth.Interfaces;
 using BlazorShop.Api.Services.Usuarios;

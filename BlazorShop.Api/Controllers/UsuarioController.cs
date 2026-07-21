@@ -1,4 +1,7 @@
-﻿using BlazorShop.Api.Services.Usuarios.Interfaces;
+﻿using BlazorShop.Api.Security.Authentication;
+using BlazorShop.Api.Security.Authentication.Interfaces;
+using BlazorShop.Api.Services.Address.Interfaces;
+using BlazorShop.Api.Services.Usuarios.Interfaces;
 using BlazorShop.Models.DTOs.UsuarioDtos.Cadastro;
 using BlazorShop.Models.DTOs.UsuarioDtos.Login;
 using BlazorShop.Models.DTOs.UsuarioDtos.Update;
@@ -16,34 +19,25 @@ public class UsuarioController : ControllerBase
     private readonly IUsuarioFisicoService _usuarioFisicoService;
     private readonly IUsuarioJuridicoService _usuarioJuridicoService;
     private readonly IEnderecoService _enderecoService;
-
+    private readonly ICurrentUser _currentUser;
     public UsuarioController(IUsuarioService usuarioService
                            , IUsuarioFisicoService usuarioFisicoService
                            , IUsuarioJuridicoService usuarioJuridicoService
-                           , IEnderecoService enderecoService)
+                           , IEnderecoService enderecoService
+                           , ICurrentUser currentUser)
     {
         _usuarioService = usuarioService;
         _usuarioFisicoService = usuarioFisicoService;
         _usuarioJuridicoService = usuarioJuridicoService;
         _enderecoService = enderecoService;
-    }
-
-    [AllowAnonymous]
-    [HttpGet]
-    public async Task<ActionResult<RequestLoginDto>> GetUsuario([FromQuery] string email)
-    {
-        var usuario = await _usuarioService.GetByEmailAsync(email);
-        if (!usuario.Success)
-        {
-            return NotFound(usuario.Message);
-        }
-        return Ok(usuario.Value);
+        _currentUser = currentUser;
     }
 
     [Authorize]
-    [HttpPatch("{id:int}/senha")]
+    [HttpPatch("me/senha")]
     public async Task<ActionResult> ChangePassword(int id, RequestUpdateSenhaUsuarioDto updateSenhaUsuarioDto)
     {
+        id = _currentUser.UserId;
         var response = await _usuarioService.ChangePassword(id, updateSenhaUsuarioDto);
         if (!response.Success)
         {
@@ -53,9 +47,10 @@ public class UsuarioController : ControllerBase
     }
 
     [Authorize]
-    [HttpPatch("pj/{id:int}")]
+    [HttpPatch("pj/me")]
     public async Task<ActionResult> UpdateUsuarioPj(int id, RequestUpdateUsuarioPjDto updateCadastroUsuarioDto)
     {
+        id = _currentUser.UserId;
         var user = await _usuarioJuridicoService.UpdateUsuarioPjAsync(id, updateCadastroUsuarioDto);
         if (!user.Success)
         {
@@ -65,9 +60,10 @@ public class UsuarioController : ControllerBase
     }
 
     [Authorize]
-    [HttpPatch("pf/{id:int}")]
+    [HttpPatch("pf/me")]
     public async Task<ActionResult> UpdateUsuarioPf(int id, RequestUpdateUsuarioPfDto updateCadastroUsuarioDto)
     {
+        id = _currentUser.UserId;
         var user = await _usuarioFisicoService.UpdateUsuarioPfAsync(id, updateCadastroUsuarioDto);
         if (!user.Success)
         {
@@ -84,7 +80,7 @@ public class UsuarioController : ControllerBase
         {
             return BadRequest(usuario.Message);
         }
-        return Ok(cadastroUsuarioDto);
+        return Ok(usuario.Value);
     }
 
     [HttpPost("pf")]
@@ -95,13 +91,14 @@ public class UsuarioController : ControllerBase
         {
             return BadRequest(usuario.Message);
         }
-        return Ok(cadastroUsuarioDto);
+        return Ok(usuario.Value);
     }
 
     [Authorize]
-    [HttpDelete("{id:int}")]
+    [HttpDelete("me")]
     public async Task<ActionResult> DeleteUsuario(int id)
     {
+        id = _currentUser.UserId;
         var usuario = await _usuarioService.DeleteUsuarioAsync(id);
         if (!usuario.Success)
         {
@@ -109,6 +106,4 @@ public class UsuarioController : ControllerBase
         }
         return Ok(usuario.Message);
     }
-
-
 }

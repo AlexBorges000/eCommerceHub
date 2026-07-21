@@ -15,6 +15,8 @@ public class Produto
     [Column(TypeName = "decimal(10,2)")]
     public decimal Preco { get; set; }
     public int Quantidade { get; set; }
+    [MaxLength(250)]
+    public string Slug { get; set; } = string.Empty;
     public int CategoriaId { get; set; }
     public Categoria? Categoria { get; set; }
     public ICollection<CarrinhoItem> CarrinhoItens { get; set; }
