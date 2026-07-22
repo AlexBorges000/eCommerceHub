@@ -76,18 +76,6 @@ public class UsuarioJuridicoService(IUsuarioRepository usuarioRepository,
         return (hash, encrypt);
     }
 
-    private UsuarioJuridico CriarUsuarioJuridico(RequestCadastroUsuarioPjDto dto)
-    {
-        return new UsuarioJuridico
-        {
-            Email = dto.Email,
-            InscricaoEstadual = dto.InscricaoEstadual,
-            NomeFantasia = dto.NomeFantasia,
-            RazaoSocial = dto.RazaoSocial,
-            ResponsavelCompra = dto.ResponsavelCompra,
-            Telefone = dto.Telefone
-        };
-    }
     private void PrepararUsuario(Usuario usuario, Role role, string senha)
     {
         usuario.Carrinho = new Carrinho();
@@ -102,14 +90,7 @@ public class UsuarioJuridicoService(IUsuarioRepository usuarioRepository,
         {
             return OperationResult<UsuarioJuridico>.Fail("Falha ao encontrar o Usuario");
         }
-
-        usuario.NomeFantasia = updateCadastroPjUsuario.NomeFantasia ?? usuario.NomeFantasia;
-        usuario.RazaoSocial = updateCadastroPjUsuario.RazaoSocial ?? usuario.RazaoSocial;
-        usuario.ResponsavelCompra = updateCadastroPjUsuario.ResponsavelCompra ?? usuario.ResponsavelCompra;
-        usuario.InscricaoEstadual = updateCadastroPjUsuario.InscricaoEstadual ?? usuario.InscricaoEstadual;
-        //usuario.Endereco = updateCadastroPjUsuario.Endereco ?? usuario.Endereco;
-        usuario.Telefone = updateCadastroPjUsuario.Telefone ?? usuario.Telefone;
-        usuario.Email = updateCadastroPjUsuario.Email ?? usuario.Email;
+        updateCadastroPjUsuario.UpdateEntity(usuario);
 
         await _usuarioRepository.UpdateAsync(usuario);
         return OperationResult<UsuarioJuridico>.Ok(usuario);

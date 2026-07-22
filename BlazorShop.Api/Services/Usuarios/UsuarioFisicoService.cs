@@ -87,14 +87,16 @@ public class UsuarioFisicoService(IUsuarioRepository usuarioRepository,
 
     public async Task<OperationResult<UsuarioFisico>> UpdateUsuarioPfAsync(int id, RequestUpdateUsuarioPfDto updateCadastroPfUsuario)
     {
+        if (string.IsNullOrWhiteSpace(updateCadastroPfUsuario.Telefone))
+            return OperationResult<UsuarioFisico>.Fail("Necessario Telefone para atulizar");
+
         var usuario = await _usuarioRepository.GetPfByIdAsync(id);
         if (usuario is null)
         {
             return OperationResult<UsuarioFisico>.Fail("Falha ao encontrar o Usuario");
         }
 
-        usuario.Telefone = updateCadastroPfUsuario.Telefone ?? usuario.Telefone;
-        usuario.Email = updateCadastroPfUsuario.Email ?? usuario.Email;
+        updateCadastroPfUsuario.UpdateEntity(usuario);
 
         await _usuarioRepository.UpdateAsync(usuario);
         return OperationResult<UsuarioFisico>.Ok(usuario);
