@@ -33,7 +33,7 @@ public class ProdutoRepository : IProdutoRepository
              .Include(c => c.Categoria)
              .ToListAsync();
 
-        if (produtos is null)
+        if (!produtos.Any())
         {
             return OperationResult<IEnumerable<Produto>>.Fail("PRODUTOS NÃO ENCONTRADO");
         }
@@ -47,7 +47,7 @@ public class ProdutoRepository : IProdutoRepository
              .Where(c => c.CategoriaId == id)
              .ToListAsync();
 
-        if ( produtos is null)
+        if (!produtos.Any())
         {
             return OperationResult<IEnumerable<Produto>>.Fail("PRODUTOS NÃO ENCONTRADO");
         }

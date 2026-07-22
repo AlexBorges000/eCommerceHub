@@ -16,8 +16,7 @@
                           Variant="Variant.Outlined"
                           FullWidth="true" />
             <MudButton Variant="Variant.Filled"
-                       Color="Color.Primary"
-                       OnClick="() => FindUsuario(Email)">
+                       Color="Color.Primary">
                 Entrar
             </MudButton>
         </MudStack>
@@ -41,23 +40,11 @@
 
     private void Cancel() => MudDialog.Cancel();
 
-    protected async Task<OperationResult<ResponseGetUsuarioDto>> FindUsuario(string email)
-    {
-        var response = await UsuarioService.GetUsuario(email) ?? OperationResult<ResponseGetUsuarioDto>.Fail("Usuario Não cadastrado");
-        if (response.Success)
-        {
-            await LoginDialog(Email, response.Value);
-            return response;
-        }
-        return OperationResult<ResponseGetUsuarioDto>.Fail("Usuario Não cadastrado");
-    }
-
-    private async Task LoginDialog(string email, ResponseGetUsuarioDto responseGetUsuarioDto)
+    private async Task LoginDialog(string email)
     {
         var parameters = new DialogParameters
         {
             {nameof(LoginUsuarioDialog.Email),  email},
-            {nameof(LoginUsuarioDialog.responseGetUsuarioDto), responseGetUsuarioDto}
         };
         await DialogService.ShowAsync<LoginUsuarioDialog>("Login", parameters, _topCenter);
     }

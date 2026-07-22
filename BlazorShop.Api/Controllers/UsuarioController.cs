@@ -1,72 +1,109 @@
-﻿using BlazorShop.Api.Mappings;
-using BlazorShop.Api.Repositories.Interfaces;
-using BlazorShop.Models.Commons;
-using BlazorShop.Models.DTOs.UsuarioDtos;
+﻿using BlazorShop.Api.Security.Authentication;
+using BlazorShop.Api.Security.Authentication.Interfaces;
+using BlazorShop.Api.Services.Address.Interfaces;
+using BlazorShop.Api.Services.Usuarios.Interfaces;
+using BlazorShop.Models.DTOs.UsuarioDtos.Cadastro;
+using BlazorShop.Models.DTOs.UsuarioDtos.Login;
+using BlazorShop.Models.DTOs.UsuarioDtos.Update;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorShop.Api.Controllers;
 
-[Route("api/Usuarios")]
+[Route("api/[controller]")]
 [ApiController]
 [Tags("Usuarios")]
 public class UsuarioController : ControllerBase
 {
-    private readonly IUsuarioRepository _usuarioRepository;
-    private ILogger<UsuarioController> _logger;
-
-    public UsuarioController(IUsuarioRepository usuarioRepository, ILogger<UsuarioController> logger)
+    private readonly IUsuarioService _usuarioService;
+    private readonly IUsuarioFisicoService _usuarioFisicoService;
+    private readonly IUsuarioJuridicoService _usuarioJuridicoService;
+    private readonly IEnderecoService _enderecoService;
+    private readonly ICurrentUser _currentUser;
+    public UsuarioController(IUsuarioService usuarioService
+                           , IUsuarioFisicoService usuarioFisicoService
+                           , IUsuarioJuridicoService usuarioJuridicoService
+                           , IEnderecoService enderecoService
+                           , ICurrentUser currentUser)
     {
-        _usuarioRepository = usuarioRepository;
-        _logger = logger;
+        _usuarioService = usuarioService;
+        _usuarioFisicoService = usuarioFisicoService;
+        _usuarioJuridicoService = usuarioJuridicoService;
+        _enderecoService = enderecoService;
+        _currentUser = currentUser;
     }
 
-    [HttpGet]
-    public async Task<ActionResult<OperationResult<ResponseGetUsuarioDto>>> GetUsuario([FromQuery] string email)
-    {
-        var usuario = await _usuarioRepository.GetAsync(email);
-        if (usuario is null)
-        {
-            return NotFound();
-        }
-        return Ok(usuario);
-    }
     [Authorize]
-    [HttpPatch("{id:int}/senha")]
-    public async Task<ActionResult<OperationResult<RequestUpdateSenhaUsuarioDto>>> ChangePassword(int id, RequestUpdateSenhaUsuarioDto updateSenhaUsuarioDto)
+    [HttpPatch("me/senha")]
+    public async Task<ActionResult> ChangePassword(int id, RequestUpdateSenhaUsuarioDto updateSenhaUsuarioDto)
     {
-        var response = await _usuarioRepository.ChangePassword(id, updateSenhaUsuarioDto);
+        id = _currentUser.UserId;
+        var response = await _usuarioService.ChangePassword(id, updateSenhaUsuarioDto);
         if (!response.Success)
         {
-            return BadRequest(OperationResult<RequestUpdateCadastroUsuarioDto>.Fail(response.Message));
+            return BadRequest(response.Message);
         }
-        return Ok(response);
+        return Ok();
     }
 
-    [HttpPatch("{id:int}")]
-    public async Task<ActionResult<OperationResult<RequestUpdateCadastroUsuarioDto>>> UpdateUser(int id, RequestUpdateCadastroUsuarioDto updateCadastroUsuarioDto)
+    [Authorize]
+    [HttpPatch("pj/me")]
+    public async Task<ActionResult> UpdateUsuarioPj(int id, RequestUpdateUsuarioPjDto updateCadastroUsuarioDto)
     {
-        var user = await _usuarioRepository.UpdateAsync(id, updateCadastroUsuarioDto);
+        id = _currentUser.UserId;
+        var user = await _usuarioJuridicoService.UpdateUsuarioPjAsync(id, updateCadastroUsuarioDto);
         if (!user.Success)
         {
-            return BadRequest();
+            return BadRequest(user.Message);
         }
-        var userDto = user.Value.ConverterUsuarioParaDto();
-        return Ok(userDto.Value);
+        return Ok(user.Value);
     }
 
-    [HttpPost]
-    public async Task<ActionResult<OperationResult<RequestCadastroUsuarioDto>>> InsertUsuario(RequestCadastroUsuarioDto cadastroUsuarioDto)
+    [Authorize]
+    [HttpPatch("pf/me")]
+    public async Task<ActionResult> UpdateUsuarioPf(int id, RequestUpdateUsuarioPfDto updateCadastroUsuarioDto)
     {
-        var usuario = await _usuarioRepository.AddAsync(cadastroUsuarioDto);
-        if (cadastroUsuarioDto is null)
+        id = _currentUser.UserId;
+        var user = await _usuarioFisicoService.UpdateUsuarioPfAsync(id, updateCadastroUsuarioDto);
+        if (!user.Success)
         {
-            return BadRequest(OperationResult<RequestCadastroUsuarioDto>.Fail("Dados inválidos"));
+            return BadRequest(user.Message);
         }
+        return Ok();
+    }
+
+    [HttpPost("pj")]
+    public async Task<ActionResult> InsertPjUsuario(RequestCadastroUsuarioPjDto cadastroUsuarioDto)
+    {
+        var usuario = await _usuarioJuridicoService.InsertUsuarioPjAsync(cadastroUsuarioDto);
         if (!usuario.Success)
         {
-            return BadRequest(OperationResult<RequestCadastroUsuarioDto>.Fail(usuario.Message));
+            return BadRequest(usuario.Message);
         }
-        return Ok(OperationResult<RequestCadastroUsuarioDto>.Ok(cadastroUsuarioDto));
+        return Ok();
+    }
+
+    [HttpPost("pf")]
+    public async Task<ActionResult> InsertPfUsuario(RequestCadastroUsuarioPfDto cadastroUsuarioDto)
+    {
+        var usuario = await _usuarioFisicoService.InsertUsuarioPfAsync(cadastroUsuarioDto);
+        if (!usuario.Success)
+        {
+            return BadRequest(usuario.Message);
+        }
+        return Ok(usuario.Value);
+    }
+
+    [Authorize]
+    [HttpDelete("me")]
+    public async Task<ActionResult> DeleteUsuario(int id)
+    {
+        id = _currentUser.UserId;
+        var usuario = await _usuarioService.DeleteUsuarioAsync(id);
+        if (!usuario.Success)
+        {
+            return BadRequest(usuario.Message);
+        }
+        return Ok(usuario.Message);
     }
 }

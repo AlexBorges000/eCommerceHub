@@ -1,7 +1,8 @@
-﻿using BlazorShop.Api.Mappings;
+﻿using BlazorShop.Api.Mappings.CarrinhoItens;
 using BlazorShop.Api.Repositories.Interfaces;
 using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.CarrinhoDtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BlazorShop.Api.Controllers;
@@ -24,89 +25,117 @@ public class CarrinhoCompraController : ControllerBase
         _logger = logger;
     }
 
-
+    [Authorize]
     [HttpGet]
     [Route("{usuarioId}/GetItens")]
-    public async Task<ActionResult<OperationResult<IEnumerable<RequestGetCarrinhoItemDto>>>> GetItens(int usuarioId)
+    public async Task<ActionResult<IEnumerable<RequestGetCarrinhoItemDto>>> GetItens(int usuarioId)
     {
         var carrinhoItens = await _carrinhoCompraRepository.GetItens(usuarioId);
         if (!carrinhoItens.Success)
         {
-            return NotFound(OperationResult<IEnumerable<RequestGetCarrinhoItemDto>>.Fail("NENHUM ITEM ENCONTRADO"));
+            return BadRequest("NENHUM ITEM ENCONTRADO");
         }
         var produtos = await _produtoRepository.GetItens();
         if (!produtos.Success)
         {
-            return NotFound(OperationResult<IEnumerable<RequestGetCarrinhoItemDto>>.Fail("NENHUM ITEM ENCONTRADO"));
+            return BadRequest(OperationResult<IEnumerable<RequestGetCarrinhoItemDto>>.Fail("NENHUM ITEM ENCONTRADO"));
         }
-        var carrinhoItensDto = carrinhoItens.Value.ConverterCarrinhoItemParaDto(produtos.Value);
-        return Ok(carrinhoItensDto.Value);
+        if(produtos.Value is null)
+        {
+            return NotFound("Produtos não encontrados");
+        }
+        var carrinhoItensDto = carrinhoItens.Value.ToDto();
+        return Ok(carrinhoItensDto);
     }
 
+    [Authorize]
     [HttpGet("{id:int}")]
-    public async Task<ActionResult<OperationResult<RequestGetCarrinhoItemDto>>> GetItem(int id)
+    public async Task<ActionResult<RequestGetCarrinhoItemDto>> GetItem(int id)
     {
         var carrinhoItem = await _carrinhoCompraRepository.GetItem(id);
         if (!carrinhoItem.Success)
         {
-            return NotFound(OperationResult<RequestGetCarrinhoItemDto>.Fail($"Erro ao encontrar o carrinho do ID: {id}"));
+            return NotFound($"Erro ao encontrar o carrinho");
+        }
+        if (carrinhoItem.Value is null)
+        {
+            return NotFound("Carrinho não encontrados");
         }
         var produto = await _produtoRepository.GetItem(carrinhoItem.Value.ProdutoId);
-        if (produto is null)
+        if (produto.Value is null)
         {
             return NotFound(OperationResult<RequestGetCarrinhoItemDto>.Fail("NENHUM PRODUTO ENCONTRADO"));
         }
-        var carrinhoItemDto = carrinhoItem.Value.ConverterCarrinhoItemParaDto(produto.Value);
-        return Ok(carrinhoItemDto.Value);
+        var carrinhoItemDto = carrinhoItem.Value.ToDto();
+        return Ok(carrinhoItemDto);
     }
 
+    [Authorize]
     [HttpPost]
-    public async Task<ActionResult<OperationResult<RequestGetCarrinhoItemDto>>> PostItem([FromBody] RequestCarrinhoItemAdicionaDto carrinhoItemAdicionaDto)
+    public async Task<ActionResult<RequestGetCarrinhoItemDto>> PostItem([FromBody] RequestCarrinhoItemAdicionaDto carrinhoItemAdicionaDto)
     {
         var novoCarrinhoItem = await _carrinhoCompraRepository.AdicionaItem(carrinhoItemAdicionaDto);
         if (!novoCarrinhoItem.Success)
         {
             return NoContent();
         }
-        var produto = await _produtoRepository.GetItem(novoCarrinhoItem.Value.ProdutoId);
-        if (produto is null)
+        if (novoCarrinhoItem.Value is null)
         {
-            return NotFound(OperationResult<RequestGetCarrinhoItemDto>.Fail($"Produto com ID {novoCarrinhoItem.Value.ProdutoId} não encontrado."));
+            return NotFound(OperationResult<RequestGetCarrinhoItemDto>.Fail("NENHUM PRODUTO PARA ADICIONAR ENCONTRADO"));
         }
-        var carrinhoItemDto = novoCarrinhoItem.Value.ConverterCarrinhoItemParaDto(produto.Value);
-        return CreatedAtAction(nameof(GetItem), new { id = carrinhoItemDto.Value.Id }, carrinhoItemDto);
+        var produto = await _produtoRepository.GetItem(novoCarrinhoItem.Value.ProdutoId);
+        if (produto.Value is null)
+        {
+            return NotFound($"Produto com ID {novoCarrinhoItem.Value.ProdutoId} não encontrado.");
+        }
+        var carrinhoItemDto = novoCarrinhoItem.Value.ToDto();
+        if (carrinhoItemDto is null)
+        {
+            return NotFound("Nada encontrado no carrinho");
+        }
+        return CreatedAtAction(nameof(GetItem), new { id = carrinhoItemDto.Id }, carrinhoItemDto);
     }
 
+    [Authorize]
     [HttpDelete("{id:int}")]
-    public async Task<ActionResult<OperationResult<RequestGetCarrinhoItemDto>>> DeleteItem(int id)
+    public async Task<ActionResult<RequestGetCarrinhoItemDto>> DeleteItem(int id)
     {
         var carrinhoItem = await _carrinhoCompraRepository.GetItem(id);
         if (!carrinhoItem.Success)
         {
-            return NotFound(OperationResult<RequestGetCarrinhoItemDto>.Fail("PRODUTO PARA DELETAR NÃO ENCONTRADO"));
+            return BadRequest("PRODUTO PARA DELETAR NÃO ENCONTRADO");
+        }
+        if (carrinhoItem.Value is null)
+        {
+            return NotFound($"NENHUM PRODUTO ENCONTRADO NO CARRINHO PARA DELETAR");
         }
         var produto = await _produtoRepository.GetItem(carrinhoItem.Value.ProdutoId);
 
-        if (produto is null)
-            return NotFound(OperationResult<RequestGetCarrinhoItemDto>.Fail("PRODUTO PARA DELETAR NÃO ENCONTRADO"));
+        if (produto.Value is null)
+            return NotFound("PRODUTO PARA DELETAR NÃO ENCONTRADO");
 
         await _carrinhoCompraRepository.DeleteItem(carrinhoItem.Value.Id);
-        var carrinhoItemDto = carrinhoItem.Value.ConverterCarrinhoItemParaDto(produto.Value);
-        return Ok(carrinhoItemDto.Value);
+        var carrinhoItemDto = carrinhoItem.Value.ToDto();
+        return Ok(carrinhoItemDto);
     }
 
+    [Authorize]
     [HttpPatch("{id:int}")]
-    public async Task<ActionResult<OperationResult<RequestGetCarrinhoItemDto>>> AtualizaQuantidade(int id, RequestCarrinhoItemAtualizaQuantidadeDto carrinhoItemAtualizaQuantidadeDto)
+    public async Task<ActionResult<RequestGetCarrinhoItemDto>> AtualizaQuantidade(int id, RequestCarrinhoItemAtualizaQuantidadeDto carrinhoItemAtualizaQuantidadeDto)
     {
         var carrinhoItem = await _carrinhoCompraRepository.AtualizaQuantidade(id,
                                carrinhoItemAtualizaQuantidadeDto);
         if (!carrinhoItem.Success)
         {
-            return NotFound(OperationResult<RequestGetCarrinhoItemDto>.Fail("PRODUTO NÃO ENCONTRADO PARA ATULIZAR A QUANTIDADE NO CARRINHO"));
+            return NotFound("PRODUTO NÃO ENCONTRADO PARA ATULIZAR A QUANTIDADE NO CARRINHO");
         }
+        if (carrinhoItem.Value is null)
+            return NotFound("PRODUTO PARA DELETAR NÃO ENCONTRADO");
         var produto = await _produtoRepository.GetItem(carrinhoItem.Value.ProdutoId);
-        var carrinhoItemDto = carrinhoItem.Value.ConverterCarrinhoItemParaDto(produto.Value);
-        return Ok(carrinhoItemDto.Value);
+        if (produto.Value is null)
+            return NotFound("PRODUTO PARA DELETAR NÃO ENCONTRADO");
+        var carrinhoItemDto = carrinhoItem.Value.ToDto();
+        return Ok(carrinhoItemDto);
     }
 
 }
