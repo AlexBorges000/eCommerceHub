@@ -54,7 +54,7 @@ public class UsuarioController : ControllerBase
         var user = await _usuarioJuridicoService.UpdateUsuarioPjAsync(id, updateCadastroUsuarioDto);
         if (!user.Success)
         {
-            return BadRequest();
+            return BadRequest(user.Message);
         }
         return Ok(user.Value);
     }
@@ -67,9 +67,9 @@ public class UsuarioController : ControllerBase
         var user = await _usuarioFisicoService.UpdateUsuarioPfAsync(id, updateCadastroUsuarioDto);
         if (!user.Success)
         {
-            return BadRequest();
+            return BadRequest(user.Message);
         }
-        return Ok(user.Value);
+        return Ok();
     }
 
     [HttpPost("pj")]
@@ -80,7 +80,7 @@ public class UsuarioController : ControllerBase
         {
             return BadRequest(usuario.Message);
         }
-        return Ok(usuario.Value);
+        return Ok();
     }
 
     [HttpPost("pf")]

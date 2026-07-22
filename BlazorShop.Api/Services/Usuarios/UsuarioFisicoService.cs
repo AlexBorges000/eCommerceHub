@@ -87,6 +87,9 @@ public class UsuarioFisicoService(IUsuarioRepository usuarioRepository,
 
     public async Task<OperationResult<UsuarioFisico>> UpdateUsuarioPfAsync(int id, RequestUpdateUsuarioPfDto updateCadastroPfUsuario)
     {
+        if (string.IsNullOrWhiteSpace(updateCadastroPfUsuario.Telefone))
+            return OperationResult<UsuarioFisico>.Fail("Necessario Telefone para atulizar");
+
         var usuario = await _usuarioRepository.GetPfByIdAsync(id);
         if (usuario is null)
         {

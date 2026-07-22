@@ -29,7 +29,7 @@ public static class UsuarioMappers
     }
     public static void UpdateEntity(this RequestUpdateUsuarioPfDto dto, UsuarioFisico entity)
     {
-        if (dto.Telefone != null)
+        if (!string.IsNullOrWhiteSpace(dto.Telefone))
             entity.Telefone = dto.Telefone;
     }
 
