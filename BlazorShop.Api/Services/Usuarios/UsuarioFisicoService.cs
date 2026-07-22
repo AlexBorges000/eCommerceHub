@@ -93,8 +93,7 @@ public class UsuarioFisicoService(IUsuarioRepository usuarioRepository,
             return OperationResult<UsuarioFisico>.Fail("Falha ao encontrar o Usuario");
         }
 
-        usuario.Telefone = updateCadastroPfUsuario.Telefone ?? usuario.Telefone;
-        usuario.Email = updateCadastroPfUsuario.Email ?? usuario.Email;
+        updateCadastroPfUsuario.UpdateEntity(usuario);
 
         await _usuarioRepository.UpdateAsync(usuario);
         return OperationResult<UsuarioFisico>.Ok(usuario);
