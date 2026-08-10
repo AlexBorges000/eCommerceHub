@@ -2,6 +2,7 @@ using BlazorShop.Api.Context;
 using BlazorShop.Api.ExceptionsHandler;
 using BlazorShop.Api.Extensions;
 using BlazorShop.Api.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.RateLimiting;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,7 +24,7 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddRepository();
 builder.Services.AddServices();
 builder.Services.AddJwtAuthentication(builder.Configuration);
-
+builder.Services.AddRateLimites();
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 var app = builder.Build();
@@ -40,7 +41,7 @@ app.UseHttpsRedirection();
 app.UseCors(policy => policy.WithOrigins("https://localhost:7279")
                             .AllowAnyMethod()
                             .AllowAnyHeader());
-
+app.UseRateLimiter();
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

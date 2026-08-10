@@ -3,6 +3,7 @@ using BlazorShop.Models.DTOs.TokenDto;
 using BlazorShop.Models.DTOs.UsuarioDtos.Login;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace BlazorShop.Api.Controllers;
 
@@ -11,9 +12,10 @@ public class AuthController(IAuthService authService) : ControllerBase
 {
     private readonly IAuthService _authService = authService;
 
+    [EnableRateLimiting("LoginLimiter")]
     [AllowAnonymous]
     [HttpPost]
-    public async Task<IActionResult> RequestToken([FromBody] RequestLoginDto requestLoginDto)
+    public async Task<IActionResult> RequestToken(RequestLoginDto requestLoginDto)
     {
         var response = await _authService.LoginAsync(requestLoginDto);
         if (response is null)

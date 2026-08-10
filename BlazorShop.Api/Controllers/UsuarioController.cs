@@ -1,12 +1,12 @@
-﻿using BlazorShop.Api.Security.Authentication;
-using BlazorShop.Api.Security.Authentication.Interfaces;
+﻿using BlazorShop.Api.Security.Authentication.Interfaces;
 using BlazorShop.Api.Services.Address.Interfaces;
 using BlazorShop.Api.Services.Usuarios.Interfaces;
 using BlazorShop.Models.DTOs.UsuarioDtos.Cadastro;
-using BlazorShop.Models.DTOs.UsuarioDtos.Login;
+using BlazorShop.Models.DTOs.UsuarioDtos.Delete;
 using BlazorShop.Models.DTOs.UsuarioDtos.Update;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.RateLimiting;
 
 namespace BlazorShop.Api.Controllers;
 
@@ -33,6 +33,7 @@ public class UsuarioController : ControllerBase
         _currentUser = currentUser;
     }
 
+    [EnableRateLimiting("PasswordChangesLimiter")]
     [Authorize]
     [HttpPatch("me/senha")]
     public async Task<ActionResult> ChangePassword(int id, RequestUpdateSenhaUsuarioDto updateSenhaUsuarioDto)
@@ -72,6 +73,7 @@ public class UsuarioController : ControllerBase
         return Ok();
     }
 
+    [EnableRateLimiting("CadastroLimiter")]
     [HttpPost("pj")]
     public async Task<ActionResult> InsertPjUsuario(RequestCadastroUsuarioPjDto cadastroUsuarioDto)
     {
@@ -83,6 +85,7 @@ public class UsuarioController : ControllerBase
         return Ok();
     }
 
+    [EnableRateLimiting("CadastroLimiter")]
     [HttpPost("pf")]
     public async Task<ActionResult> InsertPfUsuario(RequestCadastroUsuarioPfDto cadastroUsuarioDto)
     {
@@ -96,10 +99,10 @@ public class UsuarioController : ControllerBase
 
     [Authorize]
     [HttpDelete("me")]
-    public async Task<ActionResult> DeleteUsuario(int id)
+    public async Task<ActionResult> DeleteUsuario(int id, DeleteAccountDto deleteAccountDto)
     {
         id = _currentUser.UserId;
-        var usuario = await _usuarioService.DeleteUsuarioAsync(id);
+        var usuario = await _usuarioService.DeleteUsuarioAsync(id, deleteAccountDto);
         if (!usuario.Success)
         {
             return BadRequest(usuario.Message);

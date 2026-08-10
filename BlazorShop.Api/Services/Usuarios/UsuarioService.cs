@@ -3,6 +3,7 @@ using BlazorShop.Api.Repositories.Interfaces;
 using BlazorShop.Api.Security.Password.Intefaces;
 using BlazorShop.Api.Services.Usuarios.Interfaces;
 using BlazorShop.Models.Commons;
+using BlazorShop.Models.DTOs.UsuarioDtos.Delete;
 using BlazorShop.Models.DTOs.UsuarioDtos.Update;
 
 namespace BlazorShop.Api.Services.Usuarios;
@@ -59,13 +60,15 @@ public class UsuarioService(IPasswordService passwordService,
         return OperationResult<Usuario>.Ok(user);
     }
 
-    public async Task<OperationResult<Usuario>> DeleteUsuarioAsync(int id)
+    public async Task<OperationResult<Usuario>> DeleteUsuarioAsync(int id, DeleteAccountDto deleteAccountDto)
     {
         var usuario = await _usuarioRepository.GetByIdAsync(id);
         if (usuario is null)
-        {
-            return OperationResult<Usuario>.Fail("Usuario Não encontrado para deletar");
-        }
+            return OperationResult<Usuario>.Fail("Usuario Não encontrado!");
+        if (!_passwordService.IsInvalidPassword(usuario
+            , hashedPassword: usuario.Senha
+            , password: deleteAccountDto.Senha))
+            return OperationResult<Usuario>.Fail("Senha Incorreta");
         await _usuarioRepository.DeleteUsuarioAsync(usuario);
         return OperationResult<Usuario>.Ok(usuario, message: "Usuario deletado com sucesso");
 
