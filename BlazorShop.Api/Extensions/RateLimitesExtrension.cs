@@ -11,6 +11,7 @@ namespace BlazorShop.Api.Extensions
                 LoginRateLimitPolicy.AddRateLimites(options);
                 CadastroRateLimitePolicy.AddRateLimites(options);
                 PasswordChangePolicy.AddRateLimites(options);
+                RefreshTokenRateLimitePolicy.AddRateLimites(options);
             });
             return services;
         }

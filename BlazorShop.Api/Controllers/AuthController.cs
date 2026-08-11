@@ -28,9 +28,11 @@ public class AuthController(IAuthService authService) : ControllerBase
         }
         return Ok(response.Value);
     }
+
+    [EnableRateLimiting("RefreshTokenLimiter")]
     [AllowAnonymous]
     [HttpPost("Refresh")]
-    public async Task<IActionResult> RefreshToken(RequestRefreshTokenDto requestRefreshTokenDto)
+    public async Task<IActionResult> RefreshToken([FromBody]RequestRefreshTokenDto requestRefreshTokenDto)
     {
         var response = await _authService.RefreshAsync(requestRefreshTokenDto.RefreshToken);
 
