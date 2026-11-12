@@ -24,7 +24,7 @@ public class CarrinhoCompraService : ICarrinhoCompraService
                 .PostAsJsonAsync<CarrinhoItemAdicionaDto>("CarrinhoCompra", carrinhoItemAdicionaDto);
             if (response.IsSuccessStatusCode)
             {
-                if (response.StatusCode == System.Net.HttpStatusCode.NoContent)
+                if (response.StatusCode == HttpStatusCode.NoContent)
                 {
                     return OperationResult<CarrinhoItemDto>.Ok(new CarrinhoItemDto());
                 }
@@ -70,7 +70,7 @@ public class CarrinhoCompraService : ICarrinhoCompraService
         try
         {
             var response = await _httpClient.GetAsync($"CarrinhoCompra/{usuarioId}/GetItens");
-
+            Console.WriteLine(response);
             if (response.IsSuccessStatusCode)
             {
                 if (response.StatusCode == HttpStatusCode.NoContent)
@@ -78,6 +78,7 @@ public class CarrinhoCompraService : ICarrinhoCompraService
                     return OperationResult<List<CarrinhoItemDto>>.Ok(new List<CarrinhoItemDto>());
                 }
                 var carrinhos = await response.Content.ReadFromJsonAsync<List<CarrinhoItemDto>>();
+                Console.WriteLine(carrinhos);
                 if (carrinhos != null)
                 {
                     return OperationResult<List<CarrinhoItemDto>>.Ok(carrinhos);

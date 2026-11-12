@@ -1,6 +1,5 @@
 using BlazorShop.Web;
 using BlazorShop.Web.Components;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorComponents()
