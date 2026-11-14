@@ -1,0 +1,143 @@
+@page "/CarrinhoCompra"
+@rendermode InteractiveServer
+@if (ShoppingCartItems?.Count < 1 && ErrorMessage is null)
+{
+    <DisplaySpinner />
+}
+else if (ErrorMessage is not null)
+{
+    <ErrorDisplay ErrorMessage="@ErrorMessage" />
+}
+else
+{
+
+    <h3 class="mb-5">Carrinho</h3>
+    @if (ShoppingCartItems != null)
+    {
+        <MudGrid Class="mb-5">
+            <MudItem xs="12" md="9">
+                @foreach (var item in ShoppingCartItems)
+                {
+                    <DisplayCart Item="item"
+                                    OnDelete="DeleteCartItem_Click"
+                                    OnInput="OnInput"
+                                    Id="item.ProductId" />
+                }
+            </MudItem>
+
+            <MudItem xs="12" md="3">
+                <CloseCart Total="FinalValue()" />
+            </MudItem>
+        </MudGrid>
+    }
+    else
+    {
+        <div>
+            <h3><b>O carrinho está vazio.</b></h3>
+        </div>
+    }
+}
+
+
+
+@code {
+    [Inject]
+    public IShoppingCartService ShoppingCartService { get; set; } = null!;
+
+    [Parameter]
+    public IEnumerable<ProductRequestDto>? Products { get; set; }
+
+    public List<CartItemDto> ShoppingCartItems { get; set; } = null!;
+    public string? ErrorMessage { get; set; }
+    private readonly Dictionary<int, CancellationTokenSource> _tokens = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        var result = await ShoppingCartService.GetItems(LoggedInUser.CartId);
+        if (result is null)
+        {
+            ErrorMessage = "Carrinho Nulo";
+            return;
+        }
+        if (!result.Success)
+        {
+            ErrorMessage = result.Message;
+            return;
+        }
+        ShoppingCartItems = result.Value;
+    }
+
+    protected async Task DeleteCartItem_Click(int id)
+    {
+        var cartItemDto = await ShoppingCartService.DeleteItem(id);
+
+        await RemoveCartItem(id);
+    }
+
+    private CartItemDto GetCartItem(int id)
+    {
+        var products = ShoppingCartItems.SingleOrDefault(x => x.Id == id)
+        ?? throw new Exception("Item não encontrado no carrinho");
+        return products;
+    }
+
+    private decimal FinalValue()
+    {
+        return ShoppingCartItems
+        .Sum(items => items.Price * items.Quantity);
+    }
+
+    private async Task UpdateQuantity(int id)
+    {
+        var product = ShoppingCartItems
+            .SingleOrDefault(x => x.Id == id);
+        if (product is not null)
+        {
+            var cartdto = new CartItemQuantityUpdateRequestDto
+                {
+                    CartItemId = id,
+                    Quantity = product.Quantity
+                };
+
+            if (cartdto.Quantity > 0)
+            {
+                await ShoppingCartService.UpdateQuantity(cartdto);
+            }
+            else
+            {
+                await DeleteCartItem_Click(product.Id);
+            }
+        }
+
+    }
+
+    private async Task RemoveCartItem(int id)
+    {
+        var cartItemDto = GetCartItem(id);
+        ShoppingCartItems.Remove(cartItemDto);
+    }
+
+    private async Task OnInput(int id)
+    {
+        if (_tokens.TryGetValue(id, out var cts))
+        {
+            cts.Cancel();
+            cts.Dispose();
+        }
+
+        cts = new CancellationTokenSource();
+
+        _tokens[id] = cts;
+
+        try
+        {
+            await Task.Delay(TimeSpan.FromSeconds(50), cts.Token);
+            await UpdateQuantity(id);
+        }
+        catch (TaskCanceledException)
+        {
+            return;
+        }
+    }
+    
+}

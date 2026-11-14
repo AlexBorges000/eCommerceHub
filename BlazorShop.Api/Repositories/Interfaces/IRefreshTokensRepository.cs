@@ -1,4 +1,4 @@
-﻿using BlazorShop.Api.Entities;
+using BlazorShop.Api.Entities;
 using BlazorShop.Models.Commons;
 using BlazorShop.Models.DTOs.TokenDto;
 

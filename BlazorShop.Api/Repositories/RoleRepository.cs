@@ -1,4 +1,4 @@
-﻿using BlazorShop.Api.Context;
+using BlazorShop.Api.Context;
 using BlazorShop.Api.Entities;
 using BlazorShop.Api.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -14,10 +14,10 @@ public class RoleRepository(AppDbContext appDbContext) : IRoleRepository
         return await _context.Roles.FindAsync(roleId);
     }
 
-    public async Task<Role?> GetRoleByNameAsync(string nome)
+    public async Task<Role?> GetRoleByNameAsync(string name)
     {
         return await _context.Roles
-                     .SingleOrDefaultAsync(r => r.Name == nome); 
+                     .SingleOrDefaultAsync(r => r.Name == name); 
     }
 }
     

@@ -1,4 +1,4 @@
-﻿using BlazorShop.Api.Entities;
+using BlazorShop.Api.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using System.Reflection.Emit;
@@ -9,9 +9,9 @@ namespace BlazorShop.Api.Configurations
     {
         public void Configure(EntityTypeBuilder<RefreshTokens> builder)
         {
-            builder.HasOne(x => x.Usuario)
+            builder.HasOne(x => x.User)
             .WithMany(x => x.RefreshTokens)
-            .HasForeignKey(x => x.UsuarioId);
+            .HasForeignKey(x => x.UserId);
         }
     }
 }

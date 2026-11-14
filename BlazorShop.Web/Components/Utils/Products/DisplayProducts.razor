@@ -1,0 +1,34 @@
+<MudGrid Class="produtos-grid">
+    @foreach (var item in Products)
+    {
+        <MudItem xs="15" sm="6" md="3">
+            <MudCard Class="produto-card" @onclick="() => OpenProduct(item.Id)">
+                <MudPaper Class="produto-imagem-container">
+                    <MudImage Src="@item.ImageUrl" Height="200"  Class="produto-imagem" />
+                </MudPaper>
+                <MudCardContent>
+                    <MudText Typo="Typo.h5">@item.Name</MudText>
+                    <MudText Typo="Typo.body2">@item.Description</MudText>
+                </MudCardContent>
+                <MudCardActions>
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" StartIcon="@Icons.Material.Filled.LocalMall">Comprar</MudButton><br>
+                    <MudSpacer />
+                    <MudButton Variant="Variant.Text" Color="Color.Primary" StartIcon="@Icons.Material.Filled.AddShoppingCart">Adicionar Ao Carrinho</MudButton>
+                </MudCardActions>
+            </MudCard>
+        </MudItem>
+    }
+</MudGrid>
+
+    @code {
+    [Parameter]
+    public IEnumerable<ProductRequestDto>? Products { get; set; }
+    [Inject]
+    public NavigationManager NavigationManager { get; set; } = default!;
+
+    private void OpenProduct(int id)
+    {
+        NavigationManager.NavigateTo($"/ProdutoDetalhes/{id}");
+    }
+}
+
