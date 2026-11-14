@@ -37,6 +37,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Product>(entity =>
         {
             entity.ToTable("Produtos");
+            entity.Ignore(x => x.Slug);
             entity.Property(x => x.Name).HasColumnName("Nome");
             entity.Property(x => x.ImageUrl).HasColumnName("ImagemUrl");
             entity.Property(x => x.Description).HasColumnName("Descricao");
@@ -81,7 +82,10 @@ public class AppDbContext : DbContext
             entity.Property(x => x.PostalCode).HasColumnName("CEP");
             entity.Property(x => x.IsPrimary).HasColumnName("Principal");
         });
-        modelBuilder.Entity<RefreshTokens>()
-            .Property(x => x.ExpirationDate).HasColumnName("DataExpiracao");
+        modelBuilder.Entity<RefreshTokens>(entity =>
+        {
+            entity.Property(x => x.ExpirationDate).HasColumnName("DataExpiracao");
+            entity.Property(x => x.UserId).HasColumnName("UsuarioId");
+        });
     }
 }

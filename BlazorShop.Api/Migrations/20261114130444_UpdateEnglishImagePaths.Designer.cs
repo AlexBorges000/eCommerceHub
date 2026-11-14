@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorShop.Api.Migrations;
 
 [DbContext(typeof(AppDbContext))]
-[Migration("20261114125705_EnglishEntityNames")]
-partial class _20261114125705_EnglishEntityNames
+[Migration("20261114130444_UpdateEnglishImagePaths")]
+partial class _20261114130444_UpdateEnglishImagePaths
 {
     /// <inheritdoc />
     protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -266,11 +266,6 @@ partial class _20261114125705_EnglishEntityNames
                     .HasColumnType("int")
                     .HasColumnName("Quantidade");
 
-                b.Property<string>("Slug")
-                    .IsRequired()
-                    .HasMaxLength(250)
-                    .HasColumnType("nvarchar(250)");
-
                 b.HasKey("Id");
 
                 b.HasIndex("CategoryId");
@@ -286,11 +281,10 @@ partial class _20261114125705_EnglishEntityNames
                         Id = 1,
                         CategoryId = 1,
                         Description = "Um kit fornecido pela Natura, contendo produtos para cuidados com a pele",
-                        ImageUrl = "/Images/Beleza/Beleza1.png",
+                        ImageUrl = "/images/Beauty/Beauty1.png",
                         Name = "Glossier - Beleza Kit",
                         Price = 100m,
-                        Quantity = 100,
-                        Slug = ""
+                        Quantity = 100
                     },
                     new
                     {
@@ -300,250 +294,227 @@ partial class _20261114125705_EnglishEntityNames
                         ImageUrl = "Teste",
                         Name = "Teste",
                         Price = 100m,
-                        Quantity = 100,
-                        Slug = ""
+                        Quantity = 100
                     },
                     new
                     {
                         Id = 2,
                         CategoryId = 1,
                         Description = "Um kit fornecido pela Curology, contendo produtos para cuidados com a pele",
-                        ImageUrl = "/Images/Beleza/Beleza2.png",
+                        ImageUrl = "/images/Beauty/Beauty2.png",
                         Name = "Curology - Kit para Pele",
                         Price = 50m,
-                        Quantity = 45,
-                        Slug = ""
+                        Quantity = 45
                     },
                     new
                     {
                         Id = 3,
                         CategoryId = 1,
                         Description = "Um kit fornecido pela Glossier, contendo produtos para cuidados com a pele",
-                        ImageUrl = "/Images/Beleza/Beleza3.png",
+                        ImageUrl = "/images/Beauty/Beauty3.png",
                         Name = "Óleo de Coco Orgânico",
                         Price = 20m,
-                        Quantity = 30,
-                        Slug = ""
+                        Quantity = 30
                     },
                     new
                     {
                         Id = 4,
                         CategoryId = 1,
                         Description = "Um kit fornecido pela Curology, contendo produtos para cuidados com a pele",
-                        ImageUrl = "/Images/Beleza/Beleza4.png",
+                        ImageUrl = "/images/Beauty/Beauty4.png",
                         Name = "Schwarzkopf - Kit de cuidados com a pele e cabelo",
                         Price = 50m,
-                        Quantity = 60,
-                        Slug = ""
+                        Quantity = 60
                     },
                     new
                     {
                         Id = 5,
                         CategoryId = 1,
                         Description = "Kit de cuidados com a pele, contendo produtos para cuidados com a pele e cabelos",
-                        ImageUrl = "/Images/Beleza/Beleza5.png",
+                        ImageUrl = "/images/Beauty/Beauty5.png",
                         Name = "Kit de cuidados com a pele",
                         Price = 30m,
-                        Quantity = 85,
-                        Slug = ""
+                        Quantity = 85
                     },
                     new
                     {
                         Id = 6,
                         CategoryId = 3,
                         Description = "Air Pods - fones de ouvido sem fio intra-auriculares",
-                        ImageUrl = "/Images/Eletronicos/eletronico1.png",
+                        ImageUrl = "/images/Electronics/electronics1.png",
                         Name = "Fones de ouvidos",
                         Price = 100m,
-                        Quantity = 120,
-                        Slug = ""
+                        Quantity = 120
                     },
                     new
                     {
                         Id = 7,
                         CategoryId = 3,
                         Description = "Fones de ouvido dourados na orelha - esses fones de ouvido não são sem fio",
-                        ImageUrl = "/Images/Eletronicos/eletronico2.png",
+                        ImageUrl = "/images/Electronics/electronics2.png",
                         Name = "Fones de ouvido dourados",
                         Price = 40m,
-                        Quantity = 200,
-                        Slug = ""
+                        Quantity = 200
                     },
                     new
                     {
                         Id = 8,
                         CategoryId = 3,
                         Description = "Fones de ouvido pretos na orelha - esses fones de ouvido não são sem fio",
-                        ImageUrl = "/Images/Eletronicos/eletronico3.png",
+                        ImageUrl = "/images/Electronics/electronics3.png",
                         Name = "Fones de ouvido pretos",
                         Price = 40m,
-                        Quantity = 300,
-                        Slug = ""
+                        Quantity = 300
                     },
                     new
                     {
                         Id = 9,
                         CategoryId = 3,
                         Description = "Câmera Digital Sennheiser - Câmera digital de alta qualidade fornecida pela Sennheiser - inclui tripé",
-                        ImageUrl = "/Images/Eletronicos/eletronico4.png",
+                        ImageUrl = "/images/Electronics/electronics4.png",
                         Name = "Câmera digital Sennheiser com tripé",
                         Price = 600m,
-                        Quantity = 20,
-                        Slug = ""
+                        Quantity = 20
                     },
                     new
                     {
                         Id = 10,
                         CategoryId = 3,
                         Description = "Canon Digital Camera - Câmera digital de alta qualidade fornecida pela Canon",
-                        ImageUrl = "/Images/Eletronicos/eletronico5.png",
+                        ImageUrl = "/images/Electronics/electronics5.png",
                         Name = "Câmera Digital Canon",
                         Price = 500m,
-                        Quantity = 15,
-                        Slug = ""
+                        Quantity = 15
                     },
                     new
                     {
                         Id = 11,
                         CategoryId = 3,
                         Description = "Gameboy - Fornecido por Nintendo",
-                        ImageUrl = "/Images/Eletronicos/tecnologia6.png",
+                        ImageUrl = "/images/Electronics/technology6.png",
                         Name = "Nintendo Gameboy",
                         Price = 100m,
-                        Quantity = 60,
-                        Slug = ""
+                        Quantity = 60
                     },
                     new
                     {
                         Id = 12,
                         CategoryId = 2,
                         Description = "Cadeira de escritório em couro preto muito confortável",
-                        ImageUrl = "/Images/Moveis/moveis1.png",
+                        ImageUrl = "/images/Furniture/furniture1.png",
                         Name = "Cadeira de escritório de couro preto",
                         Price = 50m,
-                        Quantity = 212,
-                        Slug = ""
+                        Quantity = 212
                     },
                     new
                     {
                         Id = 13,
                         CategoryId = 2,
                         Description = "Cadeira de escritório em couro rosa muito confortável",
-                        ImageUrl = "/Images/Moveis/moveis2.png",
+                        ImageUrl = "/images/Furniture/furniture2.png",
                         Name = "Cadeira de escritório de couro rosa",
                         Price = 50m,
-                        Quantity = 112,
-                        Slug = ""
+                        Quantity = 112
                     },
                     new
                     {
                         Id = 14,
                         CategoryId = 2,
                         Description = "Poltrona muito confortável",
-                        ImageUrl = "/Images/Moveis/moveis3.png",
+                        ImageUrl = "/images/Furniture/furniture3.png",
                         Name = "Espreguiçadeira",
                         Price = 70m,
-                        Quantity = 90,
-                        Slug = ""
+                        Quantity = 90
                     },
                     new
                     {
                         Id = 15,
                         CategoryId = 2,
                         Description = "Poltrona prateada muito confortável",
-                        ImageUrl = "/Images/Moveis/moveis4.png",
+                        ImageUrl = "/images/Furniture/furniture4.png",
                         Name = "Silver Lounge Chair",
                         Price = 120m,
-                        Quantity = 95,
-                        Slug = ""
+                        Quantity = 95
                     },
                     new
                     {
                         Id = 16,
                         CategoryId = 2,
                         Description = "Abajur de mesa de porcelana branco e azul",
-                        ImageUrl = "/Images/Moveis/moveis6.png",
+                        ImageUrl = "/images/Furniture/furniture6.png",
                         Name = "Luminária de mesa de porcelana",
                         Price = 15m,
-                        Quantity = 100,
-                        Slug = ""
+                        Quantity = 100
                     },
                     new
                     {
                         Id = 17,
                         CategoryId = 2,
                         Description = "Abajur de mesa de escritório",
-                        ImageUrl = "/Images/Moveis/moveis7.png",
+                        ImageUrl = "/images/Furniture/furniture7.png",
                         Name = "Office Table Lamp",
                         Price = 20m,
-                        Quantity = 73,
-                        Slug = ""
+                        Quantity = 73
                     },
                     new
                     {
                         Id = 18,
                         CategoryId = 4,
                         Description = "Tênis Puma confortáveis na maioria dos tamanhos",
-                        ImageUrl = "/Images/Calcados/calcado1.png",
+                        ImageUrl = "/images/Shoes/shoe1.png",
                         Name = "Tênis Puma",
                         Price = 100m,
-                        Quantity = 50,
-                        Slug = ""
+                        Quantity = 50
                     },
                     new
                     {
                         Id = 19,
                         CategoryId = 4,
                         Description = "Tênis coloridos - disponíveis na maioria dos tamanhos",
-                        ImageUrl = "/Images/Calcados/calcado2.png",
+                        ImageUrl = "/images/Shoes/shoe2.png",
                         Name = "Tênis Colodiros",
                         Price = 150m,
-                        Quantity = 60,
-                        Slug = ""
+                        Quantity = 60
                     },
                     new
                     {
                         Id = 20,
                         CategoryId = 4,
                         Description = "Tênis Nike azul - disponível na maioria dos tamanhos",
-                        ImageUrl = "/Images/Calcados/calcado3.png",
+                        ImageUrl = "/images/Shoes/shoe3.png",
                         Name = "Tênis Nike Azul",
                         Price = 200m,
-                        Quantity = 70,
-                        Slug = ""
+                        Quantity = 70
                     },
                     new
                     {
                         Id = 21,
                         CategoryId = 4,
                         Description = "Treinadores Hummel coloridos - disponíveis na maioria dos tamanhos",
-                        ImageUrl = "/Images/Calcados/calcado4.png",
+                        ImageUrl = "/images/Shoes/shoe4.png",
                         Name = "Tênis Hummel Coloridos",
                         Price = 120m,
-                        Quantity = 120,
-                        Slug = ""
+                        Quantity = 120
                     },
                     new
                     {
                         Id = 22,
                         CategoryId = 4,
                         Description = "Tênis Nike vermelho - disponível na maioria dos tamanhos",
-                        ImageUrl = "/Images/Calcados/calcado5.png",
+                        ImageUrl = "/images/Shoes/shoe5.png",
                         Name = "Tênis Nike Vermelho",
                         Price = 200m,
-                        Quantity = 100,
-                        Slug = ""
+                        Quantity = 100
                     },
                     new
                     {
                         Id = 23,
                         CategoryId = 4,
                         Description = "Sandálias Birkenstock - disponíveis na maioria dos tamanhos",
-                        ImageUrl = "/Images/Calcados/calcado6.png",
+                        ImageUrl = "/images/Shoes/shoe6.png",
                         Name = "Sandálidas Birkenstock",
                         Price = 50m,
-                        Quantity = 150,
-                        Slug = ""
+                        Quantity = 150
                     });
             });
 
@@ -567,7 +538,8 @@ partial class _20261114125705_EnglishEntityNames
                     .HasColumnType("nvarchar(max)");
 
                 b.Property<int>("UserId")
-                    .HasColumnType("int");
+                    .HasColumnType("int")
+                    .HasColumnName("UsuarioId");
 
                 b.HasKey("Id");
 

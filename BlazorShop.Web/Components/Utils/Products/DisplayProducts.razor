@@ -1,10 +1,10 @@
-<MudGrid Class="produtos-grid">
+<MudGrid Class="products-grid">
     @foreach (var item in Products)
     {
         <MudItem xs="15" sm="6" md="3">
-            <MudCard Class="produto-card" @onclick="() => OpenProduct(item.Id)">
-                <MudPaper Class="produto-imagem-container">
-                    <MudImage Src="@item.ImageUrl" Height="200"  Class="produto-imagem" />
+            <MudCard Class="product-card" @onclick="() => OpenProduct(item.Id)">
+                <MudPaper Class="product-image-container">
+                    <MudImage Src="@item.ImageUrl" Height="200"  Class="product-image" />
                 </MudPaper>
                 <MudCardContent>
                     <MudText Typo="Typo.h5">@item.Name</MudText>
@@ -28,7 +28,7 @@
 
     private void OpenProduct(int id)
     {
-        NavigationManager.NavigateTo($"/ProdutoDetalhes/{id}");
+        NavigationManager.NavigateTo($"/products/{id}");
     }
 }
 

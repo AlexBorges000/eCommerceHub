@@ -1,4 +1,4 @@
-@page "/ProdutoDetalhes/{id:int}"
+@page "/products/{id:int}"
 
 @if (Product is null)
 {
@@ -96,6 +96,6 @@ else
         };
 
         var cartItemDto = await ShoppingCartService.AddItem(dto);
-        NavigationManager.NavigateTo("/CarrinhoCompra");    
+        NavigationManager.NavigateTo("/shopping-cart");    
     }
 }
