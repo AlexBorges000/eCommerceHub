@@ -120,7 +120,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     });
             });
 
-        modelBuilder.Entity("BlazorShop.Api.Entities.Cart", b =>
+        modelBuilder.Entity("BlazorShop.Api.Entities.Order", b =>
             {
                 var id = b.Property<int>("Id")
                     .ValueGeneratedOnAdd()
@@ -152,7 +152,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     });
             });
 
-        modelBuilder.Entity("BlazorShop.Api.Entities.CartItem", b =>
+        modelBuilder.Entity("BlazorShop.Api.Entities.OrderItem", b =>
             {
                 var id = b.Property<int>("Id")
                     .ValueGeneratedOnAdd()
@@ -160,7 +160,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
 
                 SqlServerPropertyBuilderExtensions.UseIdentityColumn(id);
 
-                b.Property<int>("CartId")
+                b.Property<int>("OrderId")
                     .HasColumnType("int")
                     .HasColumnName("CarrinhoId");
 
@@ -174,7 +174,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
 
                 b.HasKey("Id");
 
-                b.HasIndex("CartId");
+                b.HasIndex("OrderId");
 
                 b.HasIndex("ProductId");
 
@@ -626,13 +626,13 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
             {
                 b.HasBaseType("BlazorShop.Api.Entities.User");
 
-                b.Property<string>("EncryptBusinessTaxId")
+                b.Property<string>("EncryptCnpj")
                     .IsRequired()
                     .HasMaxLength(250)
                     .HasColumnType("nvarchar(250)")
                     .HasColumnName("EncryptCNPJ");
 
-                b.Property<string>("HashBusinessTaxId")
+                b.Property<string>("HashCnpj")
                     .IsRequired()
                     .HasMaxLength(250)
                     .HasColumnType("nvarchar(250)")
@@ -661,7 +661,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     .HasColumnType("nvarchar(100)")
                     .HasColumnName("NomeFantasia");
 
-                b.HasIndex("HashBusinessTaxId")
+                b.HasIndex("HashCnpj")
                     .IsUnique()
                     .HasFilter("[HashCNPJ] IS NOT NULL");
 
@@ -675,8 +675,8 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         Password = "AQAAAAIAAYagAAAAEHBa642eVy878j89Ka4dX+wHVaHs2sxwPaA0pl0WaUNR/6GmiTitvk5lvoWzO7nFKA==",
                         Phone = "1133334444",
                         RoleId = 2,
-                        EncryptBusinessTaxId = "cK8XsbgyHhWuJYkw.fBGmxry9giCT9SsnTbEnpw==.EZO6vb7nH9hur/V8t/E=",
-                        HashBusinessTaxId = "U8MZKklyxn4O80sLxVuZ9feCBjNQKlIdxRvy0D4G+7c=",
+                        EncryptCnpj = "cK8XsbgyHhWuJYkw.fBGmxry9giCT9SsnTbEnpw==.EZO6vb7nH9hur/V8t/E=",
+                        HashCnpj = "U8MZKklyxn4O80sLxVuZ9feCBjNQKlIdxRvy0D4G+7c=",
                         LegalName = "Empresa XPTO Comércio LTDA",
                         PurchasingContact = "João Silva",
                         StateRegistration = "123456789",
@@ -688,13 +688,13 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
             {
                 b.HasBaseType("BlazorShop.Api.Entities.User");
 
-                b.Property<string>("EncryptTaxId")
+                b.Property<string>("EncryptCpf")
                     .IsRequired()
                     .HasMaxLength(250)
                     .HasColumnType("nvarchar(250)")
                     .HasColumnName("EncryptCpf");
 
-                b.Property<string>("HashTaxId")
+                b.Property<string>("HashCpf")
                     .IsRequired()
                     .HasMaxLength(250)
                     .HasColumnType("nvarchar(250)")
@@ -706,7 +706,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     .HasColumnType("nvarchar(100)")
                     .HasColumnName("Nome");
 
-                b.HasIndex("HashTaxId")
+                b.HasIndex("HashCpf")
                     .IsUnique()
                     .HasFilter("[HashCpf] IS NOT NULL");
 
@@ -720,8 +720,8 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                         Password = "AQAAAAIAAYagAAAAEDRKDH1tUeR1uzSsIVa9zS3ljP3Figuiwxs5u9IJSOCxBcUgtQAhY8qHhKKRw/NY5w==",
                         Phone = "11999999999",
                         RoleId = 1,
-                        EncryptTaxId = "NV6tGALKS92igfUJ.g6XgZW/bBbVi09kJP037dQ==.7461FoB/Z/fpLTg=",
-                        HashTaxId = "7vFUhvLFsZnsLTce6e8qqmdjZINTX40kHDIGEw0FzNo=",
+                        EncryptCpf = "NV6tGALKS92igfUJ.g6XgZW/bBbVi09kJP037dQ==.7461FoB/Z/fpLTg=",
+                        HashCpf = "7vFUhvLFsZnsLTce6e8qqmdjZINTX40kHDIGEw0FzNo=",
                         Name = "Alex Borges"
                     });
             });
@@ -737,32 +737,32 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                 b.Navigation("User");
             });
 
-        modelBuilder.Entity("BlazorShop.Api.Entities.Cart", b =>
+        modelBuilder.Entity("BlazorShop.Api.Entities.Order", b =>
             {
                 b.HasOne("BlazorShop.Api.Entities.User", "User")
-                    .WithOne("Cart")
-                    .HasForeignKey("BlazorShop.Api.Entities.Cart", "UserId")
+                    .WithOne("Order")
+                    .HasForeignKey("BlazorShop.Api.Entities.Order", "UserId")
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
 
                 b.Navigation("User");
             });
 
-        modelBuilder.Entity("BlazorShop.Api.Entities.CartItem", b =>
+        modelBuilder.Entity("BlazorShop.Api.Entities.OrderItem", b =>
             {
-                b.HasOne("BlazorShop.Api.Entities.Cart", "Cart")
+                b.HasOne("BlazorShop.Api.Entities.Order", "Order")
                     .WithMany("Items")
-                    .HasForeignKey("CartId")
+                    .HasForeignKey("OrderId")
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
 
                 b.HasOne("BlazorShop.Api.Entities.Product", "Product")
-                    .WithMany("CartItems")
+                    .WithMany("OrderItems")
                     .HasForeignKey("ProductId")
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
 
-                b.Navigation("Cart");
+                b.Navigation("Order");
 
                 b.Navigation("Product");
             });
@@ -818,7 +818,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
                     .IsRequired();
             });
 
-        modelBuilder.Entity("BlazorShop.Api.Entities.Cart", b =>
+        modelBuilder.Entity("BlazorShop.Api.Entities.Order", b =>
             {
                 b.Navigation("Items");
             });
@@ -830,7 +830,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
 
         modelBuilder.Entity("BlazorShop.Api.Entities.Product", b =>
             {
-                b.Navigation("CartItems");
+                b.Navigation("OrderItems");
             });
 
         modelBuilder.Entity("BlazorShop.Api.Entities.Role", b =>
@@ -842,7 +842,7 @@ partial class AppDbContextModelSnapshot : ModelSnapshot
             {
                 b.Navigation("Addresses");
 
-                b.Navigation("Cart")
+                b.Navigation("Order")
                     .IsRequired();
 
                 b.Navigation("RefreshTokens");

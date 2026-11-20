@@ -15,6 +15,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     [HttpPost]
     public async Task<IActionResult> RequestToken([FromBody] RequestLoginDto requestLoginDto)
     {
+
         var response = await _authService.LoginAsync(requestLoginDto);
         if (response is null)
         {
@@ -30,6 +31,7 @@ public class AuthController(IAuthService authService) : ControllerBase
     [HttpPost("Refresh")]
     public async Task<IActionResult> RefreshToken(RequestRefreshTokenDto requestRefreshTokenDto)
     {
+
         var response = await _authService.RefreshAsync(requestRefreshTokenDto.RefreshToken);
 
         if (!response.Success)

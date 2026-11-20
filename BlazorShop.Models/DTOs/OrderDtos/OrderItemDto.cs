@@ -1,9 +1,9 @@
-namespace BlazorShop.Models.DTOs.CartDtos;
+namespace BlazorShop.Models.DTOs.OrderDtos;
 
-public class CartItemDto
+public class OrderItemDto
 {
     public int Id { get; set; }
-    public int CartId { get; set; }
+    public int OrderId { get; set; }
     public int ProductId { get; set; }
     public int Quantity { get; set; }
     public string? ProductName { get; set; }

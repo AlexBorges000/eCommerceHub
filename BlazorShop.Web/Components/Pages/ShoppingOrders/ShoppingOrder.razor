@@ -1,6 +1,6 @@
-@page "/shopping-cart"
+@page "/shopping-order"
 @rendermode InteractiveServer
-@if (ShoppingCartItems?.Count < 1 && ErrorMessage is null)
+@if (ShoppingOrderItems?.Count < 1 && ErrorMessage is null)
 {
     <DisplaySpinner />
 }
@@ -12,21 +12,21 @@ else
 {
 
     <h3 class="mb-5">Carrinho</h3>
-    @if (ShoppingCartItems != null)
+    @if (ShoppingOrderItems != null)
     {
         <MudGrid Class="mb-5">
             <MudItem xs="12" md="9">
-                @foreach (var item in ShoppingCartItems)
+                @foreach (var item in ShoppingOrderItems)
                 {
-                    <DisplayCart Item="item"
-                                    OnDelete="DeleteCartItem_Click"
+                    <DisplayOrder Item="item"
+                                    OnDelete="DeleteOrderItem_Click"
                                     OnInput="OnInput"
                                     Id="item.ProductId" />
                 }
             </MudItem>
 
             <MudItem xs="12" md="3">
-                <CloseCart Total="FinalValue()" />
+                <CloseOrder Total="FinalValue()" />
             </MudItem>
         </MudGrid>
     }
@@ -42,18 +42,18 @@ else
 
 @code {
     [Inject]
-    public IShoppingCartService ShoppingCartService { get; set; } = null!;
+    public IShoppingOrderService ShoppingOrderService { get; set; } = null!;
 
     [Parameter]
     public IEnumerable<ProductRequestDto>? Products { get; set; }
 
-    public List<CartItemDto> ShoppingCartItems { get; set; } = null!;
+    public List<OrderItemDto> ShoppingOrderItems { get; set; } = null!;
     public string? ErrorMessage { get; set; }
     private readonly Dictionary<int, CancellationTokenSource> _tokens = [];
 
     protected override async Task OnInitializedAsync()
     {
-        var result = await ShoppingCartService.GetItems(LoggedInUser.CartId);
+        var result = await ShoppingOrderService.GetItems(LoggedInUser.OrderId);
         if (result is null)
         {
             ErrorMessage = "Carrinho Nulo";
@@ -64,57 +64,57 @@ else
             ErrorMessage = result.Message;
             return;
         }
-        ShoppingCartItems = result.Value;
+        ShoppingOrderItems = result.Value;
     }
 
-    protected async Task DeleteCartItem_Click(int id)
+    protected async Task DeleteOrderItem_Click(int id)
     {
-        var cartItemDto = await ShoppingCartService.DeleteItem(id);
+        var orderItemDto = await ShoppingOrderService.DeleteItem(id);
 
-        await RemoveCartItem(id);
+        await RemoveOrderItem(id);
     }
 
-    private CartItemDto GetCartItem(int id)
+    private OrderItemDto GetOrderItem(int id)
     {
-        var products = ShoppingCartItems.SingleOrDefault(x => x.Id == id)
+        var products = ShoppingOrderItems.SingleOrDefault(x => x.Id == id)
         ?? throw new Exception("Item não encontrado no carrinho");
         return products;
     }
 
     private decimal FinalValue()
     {
-        return ShoppingCartItems
+        return ShoppingOrderItems
         .Sum(items => items.Price * items.Quantity);
     }
 
     private async Task UpdateQuantity(int id)
     {
-        var product = ShoppingCartItems
+        var product = ShoppingOrderItems
             .SingleOrDefault(x => x.Id == id);
         if (product is not null)
         {
-            var cartdto = new CartItemQuantityUpdateRequestDto
+            var orderdto = new OrderItemQuantityUpdateRequestDto
                 {
-                    CartItemId = id,
+                    OrderItemId = id,
                     Quantity = product.Quantity
                 };
 
-            if (cartdto.Quantity > 0)
+            if (orderdto.Quantity > 0)
             {
-                await ShoppingCartService.UpdateQuantity(cartdto);
+                await ShoppingOrderService.UpdateQuantity(orderdto);
             }
             else
             {
-                await DeleteCartItem_Click(product.Id);
+                await DeleteOrderItem_Click(product.Id);
             }
         }
 
     }
 
-    private async Task RemoveCartItem(int id)
+    private async Task RemoveOrderItem(int id)
     {
-        var cartItemDto = GetCartItem(id);
-        ShoppingCartItems.Remove(cartItemDto);
+        var orderItemDto = GetOrderItem(id);
+        ShoppingOrderItems.Remove(orderItemDto);
     }
 
     private async Task OnInput(int id)

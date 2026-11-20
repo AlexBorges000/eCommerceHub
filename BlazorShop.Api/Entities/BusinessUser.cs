@@ -18,9 +18,9 @@ public class BusinessUser : User
     public string? StateRegistration { get; set; }
     [Required]
     [MaxLength(250)]
-    public string HashBusinessTaxId { get; set; } = string.Empty;
+    public string HashCnpj { get; set; } = string.Empty;
     [Required]
     [MaxLength(250)]
-    public string EncryptBusinessTaxId { get; set; } = string.Empty;
+    public string EncryptCnpj { get; set; } = string.Empty;
 
 }

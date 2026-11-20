@@ -6,11 +6,11 @@ public class IndividualUser : User
 {
     [Required]
     [MaxLength(100)]
-    public string? Name { get; set; }
+    public string Name { get; set; } = string.Empty;
     [Required]
     [MaxLength(250)]
-    public string? EncryptTaxId { get; set; }
+    public string? EncryptCpf { get; set; }
     [Required]
     [MaxLength(250)]
-    public string? HashTaxId { get; set; }
+    public string? HashCpf { get; set; }
 }

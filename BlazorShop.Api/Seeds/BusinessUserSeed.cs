@@ -19,7 +19,7 @@ public class BusinessUserSeed()
             LegalName = "Empresa XPTO Comércio LTDA",
             PurchasingContact = "João Silva",
             StateRegistration = "123456789",
-            HashBusinessTaxId = "U8MZKklyxn4O80sLxVuZ9feCBjNQKlIdxRvy0D4G+7c=",
-            EncryptBusinessTaxId = "cK8XsbgyHhWuJYkw.fBGmxry9giCT9SsnTbEnpw==.EZO6vb7nH9hur/V8t/E=",
+            HashCnpj = "U8MZKklyxn4O80sLxVuZ9feCBjNQKlIdxRvy0D4G+7c=",
+            EncryptCnpj = "cK8XsbgyHhWuJYkw.fBGmxry9giCT9SsnTbEnpw==.EZO6vb7nH9hur/V8t/E=",
         };
 }

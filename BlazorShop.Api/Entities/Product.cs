@@ -19,6 +19,6 @@ public class Product
     public string Slug { get; set; } = string.Empty;
     public int CategoryId { get; set; }
     public Category? Category { get; set; }
-    public ICollection<CartItem> CartItems { get; set; }
-            = new List<CartItem>();
+    public ICollection<OrderItem> OrderItems { get; set; }
+            = new List<OrderItem>();
 }

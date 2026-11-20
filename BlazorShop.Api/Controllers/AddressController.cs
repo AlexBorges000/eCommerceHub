@@ -19,6 +19,7 @@ public class AddressController(IAddressService addressService,
     [HttpPost()]
     public async Task<ActionResult> InsertAddressAsync(AddressAddRequestDto requestAddAddressDto)
     {
+
         var userId = _currentUser.UserId;
         var address = await _addressService.AddAsync(userId, requestAddAddressDto);
         if (!address.Success)
@@ -32,6 +33,7 @@ public class AddressController(IAddressService addressService,
     [HttpPatch("{id:int}")]
     public async Task<ActionResult> UpdateAddressAsync(int id, AddressUpdateRequestDto requestUpdateAddressDto)
     {
+
         var userId = _currentUser.UserId;
         var address = await _addressService.UpdateAsync(id, userId, requestUpdateAddressDto);
         if (!address.Success)

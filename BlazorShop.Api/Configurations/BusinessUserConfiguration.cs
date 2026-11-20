@@ -9,7 +9,7 @@ namespace BlazorShop.Api.Configurations
     {
         public void Configure(EntityTypeBuilder<BusinessUser> builder)
         {
-            builder.HasIndex(x => x.HashBusinessTaxId).IsUnique();
+            builder.HasIndex(x => x.HashCnpj).IsUnique();
             builder.ToTable("UsuarioJuridico");
             builder.HasData(BusinessUserSeed.User);
         }

@@ -2,13 +2,22 @@ using BlazorShop.Api.Context;
 using BlazorShop.Api.ExceptionsHandler;
 using BlazorShop.Api.Extensions;
 using BlazorShop.Api.Extensions.DependencyInjection;
+using BlazorShop.Api.Validations;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>())
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.InvalidModelStateResponseFactory = context =>
+            new BadRequestObjectResult(new ValidationProblemDetails(
+                context.ModelState.Where(x => x.Value?.Errors.Count > 0)
+                    .ToDictionary(x => x.Key, _ => new[] { "Valor inválido." })));
+    });
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddCors();
 builder.Services.AddEndpointsApiExplorer();
@@ -23,9 +32,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 builder.Services.AddRepository();
 builder.Services.AddServices();
 builder.Services.AddJwtAuthentication(builder.Configuration);
-
 builder.Services.AddProblemDetails();
 builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+
 var app = builder.Build();
 app.UseExceptionHandler();
 

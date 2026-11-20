@@ -5,10 +5,10 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace BlazorShop.Api.Configurations;
 
-public class CartConfiguration : IEntityTypeConfiguration<Cart>
+public class OrderConfiguration : IEntityTypeConfiguration<Order>
 {
-    public void Configure(EntityTypeBuilder<Cart> builder)
+    public void Configure(EntityTypeBuilder<Order> builder)
     {
-        builder.HasData(CartSeed.Cart);
+        builder.HasData(OrderSeed.Order);
     }
 }

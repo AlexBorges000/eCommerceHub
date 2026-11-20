@@ -2,21 +2,21 @@ using BlazorShop.Api.Entities;
 
 namespace BlazorShop.Api.Seeds;
 
-public class CartSeed
+public class OrderSeed
 {
-    public static readonly Cart[] Cart = CreateCart();
+    public static readonly Order[] Order = CreateOrder();
 
-    private static Cart[] CreateCart()
+    private static Order[] CreateOrder()
     {
         return
         [
-            new Cart
+            new Order
             {
             Id = 1,
                 UserId = 1
 
             },
-            new Cart
+            new Order
             {
             Id = 2,
                 UserId = 2

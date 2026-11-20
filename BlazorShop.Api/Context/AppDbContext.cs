@@ -7,8 +7,8 @@ public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     { }
-    public DbSet<Cart> Carts { get; set; } = null!;
-    public DbSet<CartItem> CartItems { get; set; } = null!;
+    public DbSet<Order> Orders { get; set; } = null!;
+    public DbSet<OrderItem> OrderItems { get; set; } = null!;
     public DbSet<Product> Products { get; set; } = null!;
     public DbSet<Category> Categories { get; set; } = null!;
     public DbSet<User> Users { get; set; } = null!;
@@ -22,15 +22,15 @@ public class AppDbContext : DbContext
         base.OnModelCreating(modelBuilder);
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(AppDbContext).Assembly);
 
-        modelBuilder.Entity<Cart>(entity =>
+        modelBuilder.Entity<Order>(entity =>
         {
             entity.ToTable("Carrinhos");
             entity.Property(x => x.UserId).HasColumnName("UsuarioId");
         });
-        modelBuilder.Entity<CartItem>(entity =>
+        modelBuilder.Entity<OrderItem>(entity =>
         {
             entity.ToTable("CarrinhoItens");
-            entity.Property(x => x.CartId).HasColumnName("CarrinhoId");
+            entity.Property(x => x.OrderId).HasColumnName("CarrinhoId");
             entity.Property(x => x.ProductId).HasColumnName("ProdutoId");
             entity.Property(x => x.Quantity).HasColumnName("Quantidade");
         });
@@ -58,8 +58,8 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<IndividualUser>(entity =>
         {
             entity.Property(x => x.Name).HasColumnName("Nome");
-            entity.Property(x => x.EncryptTaxId).HasColumnName("EncryptCpf");
-            entity.Property(x => x.HashTaxId).HasColumnName("HashCpf");
+            entity.Property(x => x.EncryptCpf).HasColumnName("EncryptCpf");
+            entity.Property(x => x.HashCpf).HasColumnName("HashCpf");
         });
         modelBuilder.Entity<BusinessUser>(entity =>
         {
@@ -67,8 +67,8 @@ public class AppDbContext : DbContext
             entity.Property(x => x.LegalName).HasColumnName("RazaoSocial");
             entity.Property(x => x.PurchasingContact).HasColumnName("ResponsavelCompra");
             entity.Property(x => x.StateRegistration).HasColumnName("InscricaoEstadual");
-            entity.Property(x => x.HashBusinessTaxId).HasColumnName("HashCNPJ");
-            entity.Property(x => x.EncryptBusinessTaxId).HasColumnName("EncryptCNPJ");
+            entity.Property(x => x.HashCnpj).HasColumnName("HashCNPJ");
+            entity.Property(x => x.EncryptCnpj).HasColumnName("EncryptCNPJ");
         });
         modelBuilder.Entity<Address>(entity =>
         {

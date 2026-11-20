@@ -1,11 +1,11 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace BlazorShop.Models.DTOs.CartDtos;
+namespace BlazorShop.Models.DTOs.OrderDtos;
 
-public class CartItemAddRequestDto
+public class OrderItemAddRequestDto
 {
     [Required]
-    public int CartId { get; set; }
+    public int OrderId { get; set; }
     [Required]
     public int ProductId { get; set; }
     [Required]

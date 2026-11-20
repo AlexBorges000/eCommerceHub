@@ -1,3 +1,4 @@
+using BlazorShop.Api.Entities;
 using BlazorShop.Api.Security.Authentication;
 using BlazorShop.Api.Security.Authentication.Interfaces;
 using BlazorShop.Api.Security.Password;
@@ -10,6 +11,9 @@ using BlazorShop.Api.Services.Auth;
 using BlazorShop.Api.Services.Auth.Interfaces;
 using BlazorShop.Api.Services.Users;
 using BlazorShop.Api.Services.Users.Interfaces;
+using BlazorShop.Api.Validations;
+using BlazorShop.Models.DTOs.UserDtos.Registration;
+using FluentValidation;
 
 namespace BlazorShop.Api.Extensions.DependencyInjection
 {
@@ -29,7 +33,7 @@ namespace BlazorShop.Api.Extensions.DependencyInjection
             services.AddScoped<IAddressService, AddressService>();
             services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUser, CurrentUser>();
-
+            services.AddValidatorsFromAssemblyContaining<ValidationFilter>();
             return services;
         }
     }

@@ -9,7 +9,7 @@ public static class DependecyInjection
     public static IServiceCollection WebRazorDepencies(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IProductService, ProductService>();
-        services.AddScoped<IShoppingCartService, ShoppingCartService>();
+        services.AddScoped<IShoppingOrderService, ShoppingOrderService>();
         services.AddScoped<IUserService, UserService>();
         ConfigureAddHttpClient(services);
         return services;

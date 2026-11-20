@@ -10,7 +10,7 @@ namespace BlazorShop.Api.Configurations
     {
         public void Configure(EntityTypeBuilder<IndividualUser> builder)
         {
-            builder.HasIndex(x => x.HashTaxId).IsUnique();
+            builder.HasIndex(x => x.HashCpf).IsUnique();
             builder.ToTable("UsuarioFisico");
             builder.HasData(IndividualUserSeed.User);
         }

@@ -54,14 +54,14 @@ public class UserRepository : IUserRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<User?> GetByTaxIdHashAsync(string hashTaxId)
+    public async Task<User?> GetByCpfHashAsync(string hashCpf)
     {
         return await _context.IndividualUsers
-            .SingleOrDefaultAsync(u => u.HashTaxId == hashTaxId);
+            .SingleOrDefaultAsync(u => u.HashCpf == hashCpf);
     }
-    public async Task<User?> GetByBusinessTaxIdHashAsync(string hashBusinessTaxId)
+    public async Task<User?> GetByCnpjHashAsync(string hashCnpj)
     {
         return await _context.BusinessUsers
-            .SingleOrDefaultAsync(u => u.HashBusinessTaxId == hashBusinessTaxId);
+            .SingleOrDefaultAsync(u => u.HashCnpj == hashCnpj);
     }
 }

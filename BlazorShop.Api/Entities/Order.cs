@@ -1,10 +1,10 @@
 namespace BlazorShop.Api.Entities;
 
-public class Cart
+public class Order
 {
     public int Id { get; set; }
     public int UserId { get; set; }
-    public ICollection<CartItem> Items { get; set; }
-            = new List<CartItem>();
+    public ICollection<OrderItem> Items { get; set; }
+            = new List<OrderItem>();
     public User User { get; set; } = null!;
 }

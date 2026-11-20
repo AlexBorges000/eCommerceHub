@@ -49,7 +49,7 @@ else
                            Variant="Variant.Filled"
                            Color="Color.Success"
                            StartIcon="@Icons.Material.Filled.ShoppingCart"
-                           OnClick="AddToCart_Click">
+                           OnClick="AddToOrder_Click">
 
                     Incluir no Carrinho
                 </MudButton>
@@ -62,7 +62,7 @@ else
     [Inject]
     public IProductService ProductService { get; set; } = null!;
     [Inject]
-    public IShoppingCartService ShoppingCartService { get; set; } = null!;
+    public IShoppingOrderService ShoppingOrderService { get; set; } = null!;
     [Inject]
     public NavigationManager NavigationManager { get; set; }= default!;
 
@@ -86,16 +86,16 @@ else
         }
     }
 
-    protected async Task AddToCart_Click()
+    protected async Task AddToOrder_Click()
     {
-        var dto = new CartItemAddRequestDto
+        var dto = new OrderItemAddRequestDto
         {
-            CartId = LoggedInUser.CartId,
+            OrderId = LoggedInUser.OrderId,
             ProductId = Product!.Id,
             Quantity = ProductQuantity
         };
 
-        var cartItemDto = await ShoppingCartService.AddItem(dto);
-        NavigationManager.NavigateTo("/shopping-cart");    
+        var orderItemDto = await ShoppingOrderService.AddItem(dto);
+        NavigationManager.NavigateTo("/shopping-order");    
     }
 }

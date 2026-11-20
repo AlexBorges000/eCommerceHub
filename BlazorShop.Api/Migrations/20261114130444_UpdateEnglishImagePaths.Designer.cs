@@ -118,7 +118,7 @@ partial class _20261114130444_UpdateEnglishImagePaths
                     });
             });
 
-        modelBuilder.Entity("BlazorShop.Api.Entities.Cart", b =>
+        modelBuilder.Entity("BlazorShop.Api.Entities.Order", b =>
             {
                 var id = b.Property<int>("Id")
                     .ValueGeneratedOnAdd()
@@ -150,7 +150,7 @@ partial class _20261114130444_UpdateEnglishImagePaths
                     });
             });
 
-        modelBuilder.Entity("BlazorShop.Api.Entities.CartItem", b =>
+        modelBuilder.Entity("BlazorShop.Api.Entities.OrderItem", b =>
             {
                 var id = b.Property<int>("Id")
                     .ValueGeneratedOnAdd()
@@ -158,7 +158,7 @@ partial class _20261114130444_UpdateEnglishImagePaths
 
                 SqlServerPropertyBuilderExtensions.UseIdentityColumn(id);
 
-                b.Property<int>("CartId")
+                b.Property<int>("OrderId")
                     .HasColumnType("int")
                     .HasColumnName("CarrinhoId");
 
@@ -172,7 +172,7 @@ partial class _20261114130444_UpdateEnglishImagePaths
 
                 b.HasKey("Id");
 
-                b.HasIndex("CartId");
+                b.HasIndex("OrderId");
 
                 b.HasIndex("ProductId");
 
@@ -735,32 +735,32 @@ partial class _20261114130444_UpdateEnglishImagePaths
                 b.Navigation("User");
             });
 
-        modelBuilder.Entity("BlazorShop.Api.Entities.Cart", b =>
+        modelBuilder.Entity("BlazorShop.Api.Entities.Order", b =>
             {
                 b.HasOne("BlazorShop.Api.Entities.User", "User")
-                    .WithOne("Cart")
-                    .HasForeignKey("BlazorShop.Api.Entities.Cart", "UserId")
+                    .WithOne("Order")
+                    .HasForeignKey("BlazorShop.Api.Entities.Order", "UserId")
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
 
                 b.Navigation("User");
             });
 
-        modelBuilder.Entity("BlazorShop.Api.Entities.CartItem", b =>
+        modelBuilder.Entity("BlazorShop.Api.Entities.OrderItem", b =>
             {
-                b.HasOne("BlazorShop.Api.Entities.Cart", "Cart")
+                b.HasOne("BlazorShop.Api.Entities.Order", "Order")
                     .WithMany("Items")
-                    .HasForeignKey("CartId")
+                    .HasForeignKey("OrderId")
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
 
                 b.HasOne("BlazorShop.Api.Entities.Product", "Product")
-                    .WithMany("CartItems")
+                    .WithMany("OrderItems")
                     .HasForeignKey("ProductId")
                     .OnDelete(DeleteBehavior.Cascade)
                     .IsRequired();
 
-                b.Navigation("Cart");
+                b.Navigation("Order");
 
                 b.Navigation("Product");
             });
@@ -816,7 +816,7 @@ partial class _20261114130444_UpdateEnglishImagePaths
                     .IsRequired();
             });
 
-        modelBuilder.Entity("BlazorShop.Api.Entities.Cart", b =>
+        modelBuilder.Entity("BlazorShop.Api.Entities.Order", b =>
             {
                 b.Navigation("Items");
             });
@@ -828,7 +828,7 @@ partial class _20261114130444_UpdateEnglishImagePaths
 
         modelBuilder.Entity("BlazorShop.Api.Entities.Product", b =>
             {
-                b.Navigation("CartItems");
+                b.Navigation("OrderItems");
             });
 
         modelBuilder.Entity("BlazorShop.Api.Entities.Role", b =>
@@ -840,7 +840,7 @@ partial class _20261114130444_UpdateEnglishImagePaths
             {
                 b.Navigation("Addresses");
 
-                b.Navigation("Cart")
+                b.Navigation("Order")
                     .IsRequired();
 
                 b.Navigation("RefreshTokens");

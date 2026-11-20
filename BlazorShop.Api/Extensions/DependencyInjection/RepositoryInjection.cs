@@ -9,7 +9,7 @@ public static class RepositoryInjection
         this IServiceCollection services)
     {
         services.AddScoped<IProductRepository, ProductRepository>();
-        services.AddScoped<IShoppingCartRepository, ShoppingCartRepository>();
+        services.AddScoped<IShoppingOrderRepository, ShoppingOrderRepository>();
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IRefreshTokensRepository, RefreshTokensRepository>();
         services.AddScoped<IRoleRepository, RoleRepository>();

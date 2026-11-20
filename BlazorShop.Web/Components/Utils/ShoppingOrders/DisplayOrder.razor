@@ -41,7 +41,7 @@
     [Inject]
     public IProductService ProductService { get; set; } = null!;
     [Parameter]
-    public CartItemDto Item { get; set; } = null!;
+    public OrderItemDto Item { get; set; } = null!;
     [Parameter]
     public EventCallback<int> OnDelete { get; set; }
     [Parameter]

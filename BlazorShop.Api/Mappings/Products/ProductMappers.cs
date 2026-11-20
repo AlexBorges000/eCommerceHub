@@ -21,7 +21,7 @@ public static class ProductMappers
             ImageUrl = product.ImageUrl,
             Quantity = product.Quantity,
             CategoryId = product.CategoryId,
-            CategoryName = product.Category.Name
+            CategoryName = product.Category?.Name
         };
     }
 }

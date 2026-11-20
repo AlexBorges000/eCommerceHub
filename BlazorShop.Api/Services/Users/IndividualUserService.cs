@@ -32,22 +32,22 @@ public class IndividualUserService(IUserRepository userRepository,
         var role = (await _roleService.GetClienteRoleAsync()).Value ??
             throw new InvalidOperationException("A role padrão 'Cliente' não foi encontrada."); ;
 
-        if (requestRegistrationIndividualUserDto.Password != requestRegistrationIndividualUserDto.ConfirmaPassword)
+        if (requestRegistrationIndividualUserDto.Password != requestRegistrationIndividualUserDto.ConfirmPassword)
         {
             return OperationResult<ResponseLoginDto>.Fail("As senhas não coincidem");
         }
 
-        if (await TaxIdAlreadyExists(requestRegistrationIndividualUserDto.TaxId))
+        if (await CpfAlreadyExists(requestRegistrationIndividualUserDto.CPF))
         {
             return OperationResult<ResponseLoginDto>.Fail("CPF ja cadastrado!");
         }
 
         var userFisico = requestRegistrationIndividualUserDto.ToEntity();
 
-        var documento = ProtectDocumento(requestRegistrationIndividualUserDto.TaxId);
+        var documento = ProtectCpf(requestRegistrationIndividualUserDto.CPF);
 
-        userFisico.HashTaxId = documento.Hash;
-        userFisico.EncryptTaxId = documento.Encrypt;
+        userFisico.HashCpf = documento.Hash;
+        userFisico.EncryptCpf = documento.Encrypt;
 
         PrepareUser(userFisico, role, requestRegistrationIndividualUserDto.Password);
 
@@ -63,24 +63,24 @@ public class IndividualUserService(IUserRepository userRepository,
             });
     }
 
-    private (string Hash, string Encrypt) ProtectDocumento(string documento)
+    private (string Hash, string Encrypt) ProtectCpf(string cpf)
     {
-        var hash = _hashService.GetHash(documento);
-        var encrypt = _aesService.Encrypt(documento);
+        var hash = _hashService.GetHash(cpf);
+        var encrypt = _aesService.Encrypt(cpf);
 
         return (hash, encrypt);
     }
 
-    private async Task<bool> TaxIdAlreadyExists(string documento)
+    private async Task<bool> CpfAlreadyExists(string cpf)
     {
-        var hash = _hashService.GetHash(documento);
+        var hash = _hashService.GetHash(cpf);
 
-        return await _userRepository.GetByTaxIdHashAsync(hash) != null;
+        return await _userRepository.GetByCpfHashAsync(hash) != null;
     }
 
     private void PrepareUser(User user, Role role, string password)
     {
-        user.Cart = new Cart();
+        user.Order = new Order();
         user.Role = role;
         user.Password = _passwordService.HashedPassword(user, password);
     }

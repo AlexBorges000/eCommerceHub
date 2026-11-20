@@ -9,9 +9,9 @@ namespace BlazorShop.Api.Configurations
         public void Configure(EntityTypeBuilder<User> builder)
         {
             builder.ToTable("Usuario");
-            builder.HasOne(x => x.Cart)
+            builder.HasOne(x => x.Order)
             .WithOne(x => x.User)
-            .HasForeignKey<Cart>(x => x.UserId);
+            .HasForeignKey<Order>(x => x.UserId);
 
             builder.HasOne(x => x.Role)
                 .WithMany(x => x.Users)

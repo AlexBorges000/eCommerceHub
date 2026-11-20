@@ -28,7 +28,7 @@ public class BusinessUserService(IUserRepository userRepository,
 
     public async Task<OperationResult<ResponseLoginDto>> InsertBusinessUserAsync(BusinessUserRegistrationRequestDto requestRegistrationBusinessUserDto)
     {
-        if (requestRegistrationBusinessUserDto.Password != requestRegistrationBusinessUserDto.ConfirmaPassword)
+        if (requestRegistrationBusinessUserDto.Password != requestRegistrationBusinessUserDto.ConfirmPassword)
         {
             return OperationResult<ResponseLoginDto>.Fail("As senhas não coincidem");
         }
@@ -36,16 +36,16 @@ public class BusinessUserService(IUserRepository userRepository,
         var role = (await _roleService.GetClienteRoleAsync()).Value ??
             throw new InvalidOperationException("A role padrão 'Cliente' não foi encontrada."); ;
 
-        if (await BusinessTaxIdAlreadyExists(requestRegistrationBusinessUserDto.BusinessTaxId))
+        if (await CnpjAlreadyExists(requestRegistrationBusinessUserDto.CNPJ))
         {
             return OperationResult<ResponseLoginDto>.Fail("CNPJ ja cadastrado!");
         }
         var userJuridico = requestRegistrationBusinessUserDto.ToEntity();
 
-        var documento = ProtectDocumento(requestRegistrationBusinessUserDto.BusinessTaxId);
+        var documento = ProtectDocumento(requestRegistrationBusinessUserDto.CNPJ);
 
-        userJuridico.HashBusinessTaxId = documento.Hash;
-        userJuridico.EncryptBusinessTaxId = documento.Encrypt;
+        userJuridico.HashCnpj = documento.Hash;
+        userJuridico.EncryptCnpj = documento.Encrypt;
 
         PrepareUser(userJuridico, role, requestRegistrationBusinessUserDto.Password); 
 
@@ -61,11 +61,11 @@ public class BusinessUserService(IUserRepository userRepository,
             });
     }
 
-    private async Task<bool> BusinessTaxIdAlreadyExists(string documento)
+    private async Task<bool> CnpjAlreadyExists(string documento)
     {
         var hash = _hashService.GetHash(documento);
 
-        return await _userRepository.GetByBusinessTaxIdHashAsync(hash) != null;
+        return await _userRepository.GetByCnpjHashAsync(hash) != null;
     }
 
     private (string Hash, string Encrypt) ProtectDocumento(string documento)
@@ -78,7 +78,7 @@ public class BusinessUserService(IUserRepository userRepository,
 
     private void PrepareUser(User user, Role role, string password)
     {
-        user.Cart = new Cart();
+        user.Order = new Order();
         user.Role = role;
         user.Password = _passwordService.HashedPassword(user, password);
     }

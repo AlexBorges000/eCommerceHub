@@ -2,11 +2,14 @@ using BlazorShop.Api.Security.Authentication;
 using BlazorShop.Api.Security.Authentication.Interfaces;
 using BlazorShop.Api.Services.Address.Interfaces;
 using BlazorShop.Api.Services.Users.Interfaces;
-using BlazorShop.Models.DTOs.UserDtos.Registration;
+using BlazorShop.Api.Validations;
+using BlazorShop.Api.Validations.Users.Registration;
 using BlazorShop.Models.DTOs.UserDtos.Login;
+using BlazorShop.Models.DTOs.UserDtos.Registration;
 using BlazorShop.Models.DTOs.UserDtos.Update;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 
 namespace BlazorShop.Api.Controllers;
 

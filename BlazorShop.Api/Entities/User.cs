@@ -19,5 +19,5 @@ public abstract class User
     public int RoleId { get; set; }
     public ICollection<RefreshTokens> RefreshTokens { get; set; } = [];
     public ICollection<Address> Addresses { get; set; } = new List<Address>();
-    public Cart Cart { get; set; } = null!;
+    public Order Order { get; set; } = null!;
 }
