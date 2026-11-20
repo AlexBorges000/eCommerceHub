@@ -1,4 +1,4 @@
-﻿namespace BlazorShop.Api.Security.Authentication.Interfaces
+namespace BlazorShop.Api.Security.Authentication.Interfaces
 {
     public interface ICurrentUser
     {

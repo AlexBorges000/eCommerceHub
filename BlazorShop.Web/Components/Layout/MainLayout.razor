@@ -1,4 +1,4 @@
-﻿@inherits LayoutComponentBase
+@inherits LayoutComponentBase
 @inject IDialogService DialogService
 
 <MudThemeProvider />
@@ -48,6 +48,6 @@
     }
     private Task OpenDialogAsync()
     {
-        return DialogService.ShowAsync<VerifyUsuarioDialog>("Cadastro", _topCenter);
+        return DialogService.ShowAsync<VerifyUserDialog>("Cadastro", _topCenter);
     }
 }

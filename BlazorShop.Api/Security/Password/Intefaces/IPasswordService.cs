@@ -1,9 +1,9 @@
-﻿using BlazorShop.Api.Entities;
+using BlazorShop.Api.Entities;
 
 namespace BlazorShop.Api.Security.Password.Intefaces;
 
 public interface IPasswordService
 {
-    string HashedPassword(Usuario usuario, string password);
-    bool IsInvalidPassword(Usuario usuario, string hashedPassword, string password);
+    string HashedPassword(User user, string password);
+    bool IsInvalidPassword(User user, string hashedPassword, string password);
 }

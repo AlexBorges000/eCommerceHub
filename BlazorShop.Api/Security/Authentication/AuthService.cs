@@ -1,11 +1,11 @@
-﻿using BlazorShop.Api.Entities;
+using BlazorShop.Api.Entities;
 using BlazorShop.Api.Repositories.Interfaces;
 using BlazorShop.Api.Security.Authentication.Interfaces;
 using BlazorShop.Api.Security.Password.Intefaces;
 using BlazorShop.Api.Services.Auth.Interfaces;
 using BlazorShop.Models.Commons;
-using BlazorShop.Models.DTOs.UsuarioDtos.Cadastro;
-using BlazorShop.Models.DTOs.UsuarioDtos.Login;
+using BlazorShop.Models.DTOs.UserDtos.Registration;
+using BlazorShop.Models.DTOs.UserDtos.Login;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -14,13 +14,13 @@ using System.Text;
 
 namespace BlazorShop.Api.Security.Authentication;
 
-public class AuthService(IUsuarioRepository usuarioRepository,
+public class AuthService(IUserRepository userRepository,
                          IPasswordService passwordService,
                          IConfiguration configuration,
                          IRefreshTokensRepository refreshTokensRepository,
                          IRoleService roleService) : IAuthService
 {
-    private readonly IUsuarioRepository _usuarioRepository = usuarioRepository;
+    private readonly IUserRepository _userRepository = userRepository;
     private readonly IPasswordService _passwordService = passwordService;
     private readonly IConfiguration _configuration = configuration;
     private readonly IRefreshTokensRepository _refreshTokensRepo = refreshTokensRepository;
@@ -28,33 +28,33 @@ public class AuthService(IUsuarioRepository usuarioRepository,
 
     public async Task<OperationResult<ResponseLoginDto>> LoginAsync(RequestLoginDto loginDto)
     {
-        var usuario = await _usuarioRepository.GetByEmailAsync(loginDto.Email);
-        if (usuario is null)
+        var user = await _userRepository.GetByEmailAsync(loginDto.Email);
+        if (user is null)
             return OperationResult<ResponseLoginDto>.Fail("EMAIL OU SENHA INVALIDOS");
 
         if (_passwordService
-            .IsInvalidPassword(usuario: usuario,
-            hashedPassword: usuario.Senha,
-            password: loginDto.Senha))
+            .IsInvalidPassword(user: user,
+            hashedPassword: user.Password,
+            password: loginDto.Password))
         {
             return OperationResult<ResponseLoginDto>.Fail("EMAIL OU SENHA INVALIDOS");
         }
 
         return OperationResult<ResponseLoginDto>
-            .Ok(await CreateSessionAsync(usuario));
+            .Ok(await CreateSessionAsync(user));
     }
 
-    public async Task<ResponseLoginDto> CreateSessionAsync(Usuario usuario)
+    public async Task<ResponseLoginDto> CreateSessionAsync(User user)
     {
-        var role = await FindRole(usuario.RoleId);
+        var role = await FindRole(user.RoleId);
 
-        var refreshToken = CreateRefreshToken(usuario.Id);
+        var refreshToken = CreateRefreshToken(user.Id);
 
         await _refreshTokensRepo.AddAsync(refreshToken);
 
         return new ResponseLoginDto
         {
-            Token = GenerateJwt(usuario, role),
+            Token = GenerateJwt(user, role),
             RefreshToken = refreshToken.Token
         };
     }
@@ -70,12 +70,12 @@ public class AuthService(IUsuarioRepository usuarioRepository,
         return role.Value.Name;
     }
 
-    private string GenerateJwt(Usuario usuario, string roleName)
+    private string GenerateJwt(User user, string roleName)
     {
         var claims = new[]
         {
-            new Claim(ClaimTypes.NameIdentifier, usuario.Id.ToString()),
-            new Claim(ClaimTypes.Name, usuario.Email),
+            new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+            new Claim(ClaimTypes.Name, user.Email),
             new Claim(ClaimTypes.Role, roleName)
         };
 
@@ -101,13 +101,13 @@ public class AuthService(IUsuarioRepository usuarioRepository,
         return Convert.ToBase64String(randomBytes);
     }
 
-    private RefreshTokens CreateRefreshToken(int usuarioId)
+    private RefreshTokens CreateRefreshToken(int userId)
     {
         return new RefreshTokens
         {
-            UsuarioId = usuarioId,
+            UserId = userId,
             Token = GenerateRefreshToken(),
-            DataExpiracao = DateTime.UtcNow.AddDays(30)
+            ExpirationDate = DateTime.UtcNow.AddDays(30)
         };
     }
 
@@ -123,21 +123,21 @@ public class AuthService(IUsuarioRepository usuarioRepository,
         {
             return OperationResult<ResponseLoginDto>.Fail("Token revogado!");
         }
-        if (storedToken.DataExpiracao < DateTime.UtcNow)
+        if (storedToken.ExpirationDate < DateTime.UtcNow)
         {
             await _refreshTokensRepo.RevokeAsync(refreshToken);
             return OperationResult<ResponseLoginDto>.Fail("Token expirado!");
         }
-        var usuario = await _usuarioRepository.GetByIdAsync(storedToken.UsuarioId);
-        if (usuario is null)
+        var user = await _userRepository.GetByIdAsync(storedToken.UserId);
+        if (user is null)
         {
             return OperationResult<ResponseLoginDto>.Fail("Usuario não encontrado!");
         }
 
-        var role = await FindRole(usuario.RoleId);
-        var jwt = GenerateJwt(usuario, role);
+        var role = await FindRole(user.RoleId);
+        var jwt = GenerateJwt(user, role);
 
-        var newRefreshToken = CreateRefreshToken(usuario.Id);
+        var newRefreshToken = CreateRefreshToken(user.Id);
         await _refreshTokensRepo.AddAsync(newRefreshToken);
         await _refreshTokensRepo.RevokeAsync(storedToken.Token);
 

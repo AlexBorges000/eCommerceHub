@@ -1,4 +1,4 @@
-﻿namespace BlazorShop.Models.Commons;
+namespace BlazorShop.Models.Commons;
 
 public class OperationResult
 {

@@ -1,4 +1,4 @@
-﻿using BlazorShop.Api.Entities;
+using BlazorShop.Api.Entities;
 using BlazorShop.Api.Seeds;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;

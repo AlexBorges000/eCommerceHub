@@ -1,4 +1,5 @@
-﻿using BlazorShop.Api.Security.Authentication;
+using BlazorShop.Api.Entities;
+using BlazorShop.Api.Security.Authentication;
 using BlazorShop.Api.Security.Authentication.Interfaces;
 using BlazorShop.Api.Security.Password;
 using BlazorShop.Api.Security.Password.Intefaces;
@@ -8,8 +9,11 @@ using BlazorShop.Api.Services.Address;
 using BlazorShop.Api.Services.Address.Interfaces;
 using BlazorShop.Api.Services.Auth;
 using BlazorShop.Api.Services.Auth.Interfaces;
-using BlazorShop.Api.Services.Usuarios;
-using BlazorShop.Api.Services.Usuarios.Interfaces;
+using BlazorShop.Api.Services.Users;
+using BlazorShop.Api.Services.Users.Interfaces;
+using BlazorShop.Api.Validations;
+using BlazorShop.Models.DTOs.UserDtos.Registration;
+using FluentValidation;
 
 namespace BlazorShop.Api.Extensions.DependencyInjection
 {
@@ -20,16 +24,16 @@ namespace BlazorShop.Api.Extensions.DependencyInjection
         {
             services.AddScoped<IPasswordService, PasswordService>();
             services.AddScoped<IAuthService, AuthService>();
-            services.AddScoped<IUsuarioService, UsuarioService>();
+            services.AddScoped<IUserService, UserService>();
             services.AddScoped<IRoleService, RoleService>();
             services.AddScoped<IAesService, AesService>();
             services.AddScoped<IHashService, HashService>();
-            services.AddScoped<IUsuarioJuridicoService, UsuarioJuridicoService>();
-            services.AddScoped<IUsuarioFisicoService, UsuarioFisicoService>();
-            services.AddScoped<IEnderecoService, EnderecoService>();
+            services.AddScoped<IBusinessUserService, BusinessUserService>();
+            services.AddScoped<IIndividualUserService, IndividualUserService>();
+            services.AddScoped<IAddressService, AddressService>();
             services.AddHttpContextAccessor();
             services.AddScoped<ICurrentUser, CurrentUser>();
-
+            services.AddValidatorsFromAssemblyContaining<ValidationFilter>();
             return services;
         }
     }

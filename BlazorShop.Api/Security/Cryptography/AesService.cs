@@ -1,4 +1,4 @@
-﻿using BlazorShop.Api.Security.Security.Interfaces;
+using BlazorShop.Api.Security.Security.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
 

@@ -1,4 +1,4 @@
-﻿using BlazorShop.Api.Entities;
+using BlazorShop.Api.Entities;
 using BlazorShop.Models.Commons;
 
 namespace BlazorShop.Api.Services.Auth.Interfaces;

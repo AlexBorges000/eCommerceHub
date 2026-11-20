@@ -1,12 +1,12 @@
-﻿using BlazorShop.Api.Entities;
+using BlazorShop.Api.Entities;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlazorShop.Api.Seeds;
 
 public class RoleSeed
 {
-    public static readonly Role[] Roles = CriarRoles();
-    private static Role[] CriarRoles()
+    public static readonly Role[] Roles = CreateRoles();
+    private static Role[] CreateRoles()
     {
         return
         [
