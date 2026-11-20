@@ -1,42 +1,55 @@
 using BlazorShop.Api.Context;
-using BlazorShop.Api.Repositories;
-using BlazorShop.Api.Repositories.Interfaces;
+using BlazorShop.Api.ExceptionsHandler;
+using BlazorShop.Api.Extensions;
+using BlazorShop.Api.Extensions.DependencyInjection;
+using BlazorShop.Api.Validations;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 
 
-builder.Services.AddControllers();
-builder.Services.AddOpenApi();
+builder.Services.AddControllers(options => options.Filters.Add<ValidationFilter>())
+    .ConfigureApiBehaviorOptions(options =>
+    {
+        options.InvalidModelStateResponseFactory = context =>
+            new BadRequestObjectResult(new ValidationProblemDetails(
+                context.ModelState.Where(x => x.Value?.Errors.Count > 0)
+                    .ToDictionary(x => x.Key, _ => new[] { "Valor inválido." })));
+    });
+// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddCors();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
 
-    
+
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
-builder.Services.AddScoped<IProdutoRepository, ProdutoRepository>();
-builder.Services.AddScoped<ICarrinhoCompraRepository, CarrinhoCompraRepository>();
+builder.Services.AddRepository();
+builder.Services.AddServices();
+builder.Services.AddJwtAuthentication(builder.Configuration);
+builder.Services.AddProblemDetails();
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
 
 var app = builder.Build();
+app.UseExceptionHandler();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.MapOpenApi();
+    app.UseSwagger();
+    app.UseSwaggerUI();
 }
 
-app.UseCors(policy => policy.WithOrigins("https://localhost:7279, https://localhost:7279")
-.AllowAnyMethod()
-.AllowAnyHeader()
-.WithHeaders(HeaderNames.ContentType));
-
 app.UseHttpsRedirection();
+app.UseCors(policy => policy.WithOrigins("https://localhost:7279")
+                            .AllowAnyMethod()
+                            .AllowAnyHeader());
 
+app.UseAuthentication();
 app.UseAuthorization();
-
 app.MapControllers();
-
 app.Run();

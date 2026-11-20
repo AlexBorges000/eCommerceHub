@@ -1,0 +1,101 @@
+@page "/products/{id:int}"
+
+@if (Product is null)
+{
+    <DisplaySpinner />
+}
+else if (ErrorMessage is not null)
+{
+    <ErrorDisplay ErrorMessage="@ErrorMessage" />
+}
+else
+{ 
+    <MudText Typo="Typo.h3" Class="mb-5">
+        Detalhes do Produto
+    </MudText>
+    <MudPaper Class="pa-6" Elevation="2">
+        <MudGrid Spacing="4">
+            <MudItem xs="12" md="6">
+                <MudImage Src="@Product.ImageUrl"
+                          Alt="@Product.Name"
+                          Fluid="true"
+                          Class="rounded" />
+            </MudItem>
+            <MudItem xs="12" md="6">
+
+                <MudText Typo="Typo.h4" GutterBottom="true">
+                    @Product.Name
+                </MudText>
+
+                <MudText Typo="Typo.body1" Class="mb-4">
+                    @Product.Description
+                </MudText>
+
+                <MudText Typo="Typo.h6" Color="Color.Primary">
+                    @Product.Price.ToString("C")
+                </MudText>
+
+                <MudText Typo="Typo.body2" Class="mb-4">
+                    @Product.Quantity itens em estoque
+                </MudText>
+                <MudNumericField T="int"
+                                 Label="Quantidade"
+                                 @bind-value="ProductQuantity"
+                                 Min="1"
+                                 Max="@Product.Quantity"
+                                 Variant="Variant.Outlined"
+                                 Style="max-width:150px;" />
+                <MudButton Class="mt-4"
+                           Variant="Variant.Filled"
+                           Color="Color.Success"
+                           StartIcon="@Icons.Material.Filled.ShoppingCart"
+                           OnClick="AddToOrder_Click">
+
+                    Incluir no Carrinho
+                </MudButton>
+            </MudItem>
+        </MudGrid>
+    </MudPaper>
+}
+
+@code {
+    [Inject]
+    public IProductService ProductService { get; set; } = null!;
+    [Inject]
+    public IShoppingOrderService ShoppingOrderService { get; set; } = null!;
+    [Inject]
+    public NavigationManager NavigationManager { get; set; }= default!;
+
+    [Parameter]
+    public int Id { get; set; }
+    public ProductRequestDto? Product { get; set; } = null!;
+    public string? ErrorMessage { get; set; }
+    public int ProductQuantity { get; set; } = 1;
+    @inject HttpClient Http
+
+    protected override async Task OnInitializedAsync()
+    {
+        OperationResult<ProductRequestDto> result = await ProductService.GetItem(Id);
+        if (result.Success)
+        {
+            Product = result.Value ?? new ProductRequestDto();
+        }
+        else
+        {
+            ErrorMessage = result.Message;
+        }
+    }
+
+    protected async Task AddToOrder_Click()
+    {
+        var dto = new OrderItemAddRequestDto
+        {
+            OrderId = LoggedInUser.OrderId,
+            ProductId = Product!.Id,
+            Quantity = ProductQuantity
+        };
+
+        var orderItemDto = await ShoppingOrderService.AddItem(dto);
+        NavigationManager.NavigateTo("/shopping-order");    
+    }
+}
