@@ -1,4 +1,4 @@
-﻿namespace BlazorShop.Models.DTOs.TokenDto;
+namespace BlazorShop.Models.DTOs.TokenDto;
 
 public class RequestRefreshTokenDto
 {

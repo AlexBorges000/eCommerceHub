@@ -1,4 +1,4 @@
-﻿using BlazorShop.Models.Config;
+using BlazorShop.Models.Config;
 using BlazorShop.Web.Services;
 using BlazorShop.Web.Services.Interfaces;
 
@@ -8,9 +8,9 @@ public static class DependecyInjection
 {
     public static IServiceCollection WebRazorDepencies(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddScoped<IProdutoService, ProdutoService>();
-        services.AddScoped<ICarrinhoCompraService, CarrinhoCompraService>();
-        services.AddScoped<IUsuarioService, UsuarioService>();
+        services.AddScoped<IProductService, ProductService>();
+        services.AddScoped<IShoppingOrderService, ShoppingOrderService>();
+        services.AddScoped<IUserService, UserService>();
         ConfigureAddHttpClient(services);
         return services;
     }
@@ -23,12 +23,12 @@ public static class DependecyInjection
             opts.Timeout = TimeSpan.FromSeconds(100);
         });
 
-        services.AddHttpClient(HttpConfiguration.Produtos, opts =>
+        services.AddHttpClient(HttpConfiguration.Products, opts =>
         {
             opts.BaseAddress = new Uri(HttpConfiguration.BaseUrl);
             opts.Timeout = TimeSpan.FromSeconds(100);
         });
-        services.AddHttpClient(HttpConfiguration.Usuario, opts => {
+        services.AddHttpClient(HttpConfiguration.User, opts => {
             opts.BaseAddress = new Uri(HttpConfiguration.BaseUrl);
             opts.Timeout = TimeSpan.FromSeconds(100);
             });

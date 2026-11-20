@@ -1,4 +1,4 @@
-﻿using BlazorShop.Api.Context;
+using BlazorShop.Api.Context;
 using BlazorShop.Api.Entities;
 using BlazorShop.Api.Repositories.Interfaces;
 using BlazorShop.Models.Commons;

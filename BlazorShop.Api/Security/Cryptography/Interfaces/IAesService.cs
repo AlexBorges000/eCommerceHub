@@ -1,4 +1,4 @@
-﻿namespace BlazorShop.Api.Security.Security.Interfaces;
+namespace BlazorShop.Api.Security.Security.Interfaces;
 
 public interface IAesService
 {

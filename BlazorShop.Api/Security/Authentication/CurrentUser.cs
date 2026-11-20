@@ -1,4 +1,4 @@
-﻿using BlazorShop.Api.Security.Authentication.Interfaces;
+using BlazorShop.Api.Security.Authentication.Interfaces;
 using System.Security.Claims;
 
 namespace BlazorShop.Api.Security.Authentication;
